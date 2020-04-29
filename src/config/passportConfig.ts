@@ -1,6 +1,6 @@
-import * as express from 'express';
-import * as passport from 'passport';
-import * as passportLocal from 'passport-local';
+import express from 'express';
+import passport from 'passport';
+import passportLocal from 'passport-local';
 import { getRepository } from 'typeorm';
 import { User } from '../entity/User';
 

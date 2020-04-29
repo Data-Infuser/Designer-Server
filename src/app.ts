@@ -1,13 +1,13 @@
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import * as methodOverride from "method-override";
+import express from "express";
+import bodyParser from "body-parser";
+import methodOverride from "method-override";
 import defaultRoutes from "./routes/defaultRoutes"
-import * as compileSass from "express-compile-sass";
-import * as path from "path";
+import compileSass from "express-compile-sass";
+import path from "path";
 import setupPassport from "./config/passportConfig";
-import * as session from "express-session";
-import * as morgan from "morgan";
-import flash from "connect-flash";
+import session from "express-session";
+import morgan from "morgan";
+import flash from "express-flash";
 import {createConnection} from "typeorm";
 import setupRoutes from "./routes/setupRoutes";
 

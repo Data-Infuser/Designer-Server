@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import DefaultController from "../controllers/DefaultController";
-import * as passport from "passport";
+import passport from "passport";
 import { needAuth } from "../middlewares/checkAuth";
 
 
