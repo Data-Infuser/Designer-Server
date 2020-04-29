@@ -1,0 +1,32 @@
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport')
+    link(href="css/bootstrap.css" rel="stylesheet")
+    script(src='/vendor/jquery/jquery.min.js')
+    script(src="js/bootstrap.js")
+    link(href="/style/main.scss" rel="stylesheet")
+    script(type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=tf5mvpmopy")
+    
+  body#page-top
+    #mainNav.navbar.navbar-expand-lg.bg-secondary.text-uppercase.fixed-top
+      .container
+        a.navbar-brand.js-scroll-trigger(href='#page-top') Title
+    
+    #main-content
+      .container.mt-5
+        .card.card-login.mx-auto.mt-5
+          .card-header 로그인
+          .card-body
+            form(action="/login" method="post")
+              .form-group
+                .form-label-group
+                  label(for='inputEmail') 사용자 계정
+                  input#inputEmail.form-control(name="username", type='text', placeholder='username', required='required', autofocus='autofocus')
+                  
+              .form-group
+                .form-label-group
+                  label(for='inputPassword') 비밀번호
+                  input#inputPassword.form-control(name="password", type='password', placeholder='Password', required='required')
+                  
+              input.btn.btn-primary.btn-block(type="submit", value="로그인")

@@ -1,0 +1,45 @@
+{
+  "name": "api-gen",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "set debug=* && ts-node-dev --ignore-watch node_modules --respawn --transpileOnly ./src/index.ts",
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.2",
+    "ts-node": "3.3.0",
+    "@types/node": "^8.0.29",
+    "typescript": "3.3.3333"
+  },
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/body-parser": "^1.19.0",
+    "@types/express": "^4.17.3",
+    "@types/method-override": "0.0.31",
+    "@types/passport": "^1.0.3",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.4.1",
+    "class-validator": "^0.12.2",
+    "connect-flash": "^0.1.1",
+    "express": "^4.17.1",
+    "express-compile-sass": "^4.0.0",
+    "express-session": "^1.17.0",
+    "method-override": "^3.0.0",
+    "morgan": "^1.10.0",
+    "mysql": "^2.14.1",
+    "node-sass": "^4.14.0",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.4",
+    "reflect-metadata": "^0.1.10",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typeorm": "0.2.24",
+    "typescript": "^3.8.3"
+  },
+  "description": ""
+}
