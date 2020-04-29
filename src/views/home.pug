@@ -22,7 +22,18 @@ html(lang='en')
               a.nav-link.py-3.px-0.px-lg-3.rounded.js-scroll-trigger(href='/logout') logout
     
     #main-content
-      | #{currentUser.username}
+      .container.mt-5
+        .row
+          .col-6
+            form(action="/apis", method="post", enctype="multipart/form-data")
+              div.form-group
+                label(for="tableNameInput") 테이블 명을 입력해주세요.
+                input.form-control(type="text", name="title", id="tableNameInput")
+              div.form-group
+                label(for="fileUploadInput") xlsx 파일을 업로드하세요
+                input.form-control-file(type="file", name="upload", multiple="multiple", id="fileUploadInput")
+              
+              input.btn.btn-outline-primary(type="submit", value="Upload")
       
 
 
