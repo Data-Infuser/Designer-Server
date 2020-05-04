@@ -1,7 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
 import methodOverride from "method-override";
-import defaultRoutes from "./routes/defaultRoutes"
 import compileSass from "express-compile-sass";
 import path from "path";
 import setupPassport from "./config/passportConfig";

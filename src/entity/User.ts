@@ -1,6 +1,7 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, OneToMany} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import { Meta } from "./Meta";
 
 
 
@@ -26,6 +27,9 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @OneToMany(type => Meta, meta => meta.user)
+  metas: Meta[];
+
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);
   }
@@ -33,5 +37,5 @@ export class User {
   checkIfUnencryptedPasswordIsValid(unencryptedPassword: string) {
     return bcrypt.compareSync(unencryptedPassword, this.password);
   }
-
+  
 }
