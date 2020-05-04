@@ -66,7 +66,7 @@ class ApiController {
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await metaRepo.save(meta);
         await metaColRepo.save(columns);
-    })
+      })
 
       res.redirect("/home");
     } catch (err) {

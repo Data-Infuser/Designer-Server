@@ -7,7 +7,7 @@ class DefaultController {
 
   static getHome = async(req: Request, res: Response) => {
     res.render("home", {
-      currentUser: req["user"]
+      current_user: req.user
     })
   }
 }
