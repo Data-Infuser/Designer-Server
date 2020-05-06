@@ -1,14 +1,4 @@
 extends layout
 
 block content
-  .row
-    .col-6
-      form(action="/apis", method="post", enctype="multipart/form-data")
-        div.form-group
-          label(for="tableNameInput") api명을 입력해주세요.
-          input.form-control(type="text", name="title", id="tableNameInput")
-        div.form-group
-          label(for="fileUploadInput") xlsx 파일을 업로드하세요
-          input.form-control-file(type="file", name="upload", multiple="multiple", id="fileUploadInput")
-        
-        input.btn.btn-outline-primary(type="submit", value="Upload")
+  | 기본적인 통계를 보여주자

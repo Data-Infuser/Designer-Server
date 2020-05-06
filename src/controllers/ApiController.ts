@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as multiparty from 'multiparty';
 import * as Excel from 'exceljs';
 import { getConnection, LessThanOrEqual, getRepository, getManager } from "typeorm";
@@ -74,6 +74,26 @@ class ApiController {
     }
   }
   
+  static getIndex = async(req: Request, res: Response, next: NextFunction) => {
+    const metaRepo = getRepository(Meta);
+
+    try {
+      const apis = await metaRepo.find();
+
+      res.render("apis/index.pug", {
+        apis: apis,
+        current_user: <User>req.user
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  static getNew = async(req: Request, res: Response, next: NextFunction) => {
+    res.render("apis/new.pug", {
+      current_user: req.user
+    })
+  }
 }
 
 export default ApiController;

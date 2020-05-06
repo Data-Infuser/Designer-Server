@@ -5,6 +5,8 @@ import { needAuth } from "../middlewares/checkAuth";
 
 
 const router = Router();
-router.post("/", needAuth, ApiController.uploadXlsxFile)
+router.post("/", needAuth, ApiController.uploadXlsxFile);
+router.get("/", needAuth, ApiController.getIndex);
+router.get("/new", needAuth, ApiController.getNew);
 
 export default router;
