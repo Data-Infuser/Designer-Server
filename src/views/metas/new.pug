@@ -3,7 +3,7 @@ extends ../layout
 block content
   ol.breadcrumb
     li.breadcrumb-item.active 
-        a(href="/apis") API 관리
+        a(href="/metas") API 관리
         
   .card.mb-3
     .card-header
@@ -13,7 +13,7 @@ block content
     .card-body
       .row
         .col-6
-          form(action="/apis", method="post", enctype="multipart/form-data")
+          form(action="/metas", method="post", enctype="multipart/form-data")
             div.form-group
               label(for="tableNameInput") api명을 입력해주세요.
               input.form-control(type="text", name="title", id="tableNameInput")

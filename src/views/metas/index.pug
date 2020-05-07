@@ -3,7 +3,7 @@ extends ../layout
 block content
   ol.breadcrumb
     li.breadcrumb-item.active 
-        a(href="/apis") API 관리
+        a(href="/metas") API 관리
 
   .card.mb-3
     .card-header
@@ -11,7 +11,7 @@ block content
         span.ml-3 API 목록
 
     .card-body
-      a.mb-3.btn.btn-primary(href="/apis/new") 파일 업로드
+      a.mb-3.btn.btn-primary(href="/metas/new") 파일 업로드
       .table-responsive
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
@@ -26,7 +26,7 @@ block content
               tr
                 td #{api.id}
                 td 
-                  a(href=`/apis/${api.id}`) #{api.title}
+                  a(href=`/metas/${api.id}`) #{api.title}
                 td #{api.rowCounts}
                 td #{api.extension}
                 td 비활성

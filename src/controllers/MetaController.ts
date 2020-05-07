@@ -7,7 +7,7 @@ import { MetaColumn } from "../entity/MetaColumn";
 import { User } from "../entity/User";
 
 
-class ApiController {
+class MetaController {
 
   static uploadXlsxFile = async(req: Request, res: Response) => {
     const metaRepo = getRepository(Meta);
@@ -67,7 +67,7 @@ class ApiController {
         await metaRepo.save(meta);
         await metaColRepo.save(columns);
       })
-      res.redirect(`/apis/${meta.id}`);
+      res.redirect(`/metas/${meta.id}`);
     } catch (err) {
       console.error(err);
     }
@@ -79,7 +79,7 @@ class ApiController {
     try {
       const apis = await metaRepo.find();
 
-      res.render("apis/index.pug", {
+      res.render("metas/index.pug", {
         apis: apis,
         current_user: req.user
       })
@@ -89,7 +89,7 @@ class ApiController {
   }
 
   static getNew = async(req: Request, res: Response, next: NextFunction) => {
-    res.render("apis/new.pug", {
+    res.render("metas/new.pug", {
       current_user: req.user
     })
   }
@@ -104,7 +104,7 @@ class ApiController {
           id: id
         }
       })
-      res.render("apis/show.pug", {
+      res.render("metas/show.pug", {
         current_user: req.user,
         meta: meta
       })
@@ -115,4 +115,4 @@ class ApiController {
   }
 }
 
-export default ApiController;
+export default MetaController;
