@@ -11,6 +11,8 @@ block content
         span.ml-3 메타정보 상세보기
 
     .card-body
+      .text-right.mb-3
+          a.btn.btn-outline-primary(href=`/metas/${meta.id}/api`) API 생성
       
       .table-responsive
           table.table.table-bordered(width='100%' cellspacing='0')
@@ -37,7 +39,7 @@ block content
       
       .text-right.mb-3
         a.btn.btn-outline-primary(href=`#`) 컬럼 정보 수정
-        a.ml-1.btn.btn-outline-danger(href=`#`) Meta data 삭제
+        button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Meta data 삭제
               
 
       .table-responsive
@@ -57,3 +59,17 @@ block content
                 td #{col.originalColumnName}
                 td #{col.columnName}
                 td #{col.type}
+
+  .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title 삭제하기
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        form(action=`/metas/${meta.id}?_method=DELETE`, method="post")
+          .modal-body
+            | 정말 삭제하시겠습니까?
+          .modal-footer
+            button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기
+            input.btn.btn-danger(type="submit", value="삭제")

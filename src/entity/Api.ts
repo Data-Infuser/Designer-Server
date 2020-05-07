@@ -1,14 +1,15 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
-import { Api } from "./Api";
+import { Meta } from "./Meta";
 
 
 
 @Entity()
-export class Meta {
+export class Api {
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,27 +19,14 @@ export class Meta {
 
   @Column()
   @Length(1, 100)
-  originalFileName: string;
-
-  @Column()
-  @Length(4, 100)
-  filePath: string;
-
-  @Column()
-  @Length(1, 20)
-  extension: string;
-
-  @Column()
-  rowCounts: number;
-
-  @Column({ nullable: false, default: false })
-  isActive: boolean;
+  tableName: string;
 
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
 
-  @OneToOne(type => Api, api => api.meta) // specify inverse side as a second parameter
-  api: Api;
+  @OneToOne(type => Meta)
+  @JoinColumn()
+  meta: Meta;
 
   @OneToMany(type => MetaColumn, mc => mc.meta)
   columns: MetaColumn[];
