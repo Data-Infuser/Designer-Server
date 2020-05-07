@@ -67,10 +67,9 @@ class ApiController {
         await metaRepo.save(meta);
         await metaColRepo.save(columns);
       })
-
-      res.redirect("/home");
+      res.redirect(`/apis/${meta.id}`);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
   
@@ -82,10 +81,10 @@ class ApiController {
 
       res.render("apis/index.pug", {
         apis: apis,
-        current_user: <User>req.user
+        current_user: req.user
       })
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
@@ -93,6 +92,26 @@ class ApiController {
     res.render("apis/new.pug", {
       current_user: req.user
     })
+  }
+
+  static getShow = async(req: Request, res: Response, next: NextFunction) => {
+    const metaRepo = getRepository(Meta);
+    const { id } = req.params
+    try {
+      const meta = await metaRepo.findOneOrFail({
+        relations: ["columns"],
+        where: {
+          id: id
+        }
+      })
+      res.render("apis/show.pug", {
+        current_user: req.user,
+        meta: meta
+      })
+    } catch (err) {
+      console.error(err);
+    }
+    
   }
 }
 

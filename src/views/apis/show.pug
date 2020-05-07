@@ -1,0 +1,59 @@
+extends ../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/apis") API 관리
+        
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 메타정보 상세보기
+
+    .card-body
+      
+      .table-responsive
+          table.table.table-bordered(width='100%' cellspacing='0')
+            thead
+              tr.text-center
+                th(colspan="4") Meta 정보
+              tr
+                th API명
+                td(colspan="3") #{meta.title}
+            tbody
+              tr
+                th id
+                td #{meta.id}
+                th oridinalFileName
+                td #{meta.originalFileName}
+              tr
+                th extension
+                td #{meta.extension}
+                th filePath
+                td #{meta.filePath}
+              tr
+                th rowCounts
+                td(colspan="3") #{meta.rowCounts}
+      
+      .text-right.mb-3
+        a.btn.btn-outline-primary(href=`#`) 컬럼 정보 수정
+        a.ml-1.btn.btn-outline-danger(href=`#`) Meta data 삭제
+              
+
+      .table-responsive
+        table.table.table-bordered(width='100%' cellspacing='0')
+          thead
+            tr.text-center
+              th(colspan="4") 컬럼 정보
+            tr
+              th id  
+              th OriginalColumnName
+              th ColumnName
+              th Type
+          tbody
+            each col in meta.columns
+              tr
+                td #{col.id}
+                td #{col.originalColumnName}
+                td #{col.columnName}
+                td #{col.type}
