@@ -5,7 +5,6 @@ export class InsertDefaultUser1588135759196 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<any> {
     return new Promise(async function(resolve, reject) {
-      reject(new Error("Request is failed"));
       const userReposiroty = getConnection().getRepository(User);
 
       let defaultUser = new User();
