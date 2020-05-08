@@ -8,7 +8,7 @@ block content
   .card.mb-3
     .card-header
       i.fas.fa-table
-        span.ml-3 API 목록
+        span.ml-3 meta 목록
 
     .card-body
       a.mb-3.btn.btn-primary(href="/metas/new") 파일 업로드
@@ -17,16 +17,16 @@ block content
           thead
               tr
                 th id  
-                th API명
+                th Meta명
                 th Rows
                 th 확장자
                 th 상태
           tbody
-            each api in apis
+            each meta in metas
               tr
-                td #{api.id}
+                td #{meta.id}
                 td 
-                  a(href=`/metas/${api.id}`) #{api.title}
-                td #{api.rowCounts}
-                td #{api.extension}
-                td #{api.isActive ? '활성':'비활성'}
+                  a(href=`/metas/${meta.id}`) #{meta.title}
+                td #{meta.rowCounts}
+                td #{meta.extension}
+                td #{meta.isActive ? '활성':'비활성'}

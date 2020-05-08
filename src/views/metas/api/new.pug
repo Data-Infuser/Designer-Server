@@ -17,9 +17,12 @@ block content
       .row
         .col-6
           form(action=`/metas/${meta.id}/api`, method="post")
-            div.form-group
-              label(for="tableNameInput") 배포할 API명을 입력해주세요.(실제 table명으로 사용)
-              input.form-control(type="text", name="tableName", id="tableNameInput")
+            .form-group
+              label(for="apiNameInput") 배포할 API명을 입력해주세요. ex- 공공마스크 재고 현황
+              input.form-control(type="text", name="apiName", id="tableNameInput")
+            .form-group
+              label(for="entityNameInput") Entity 명을 입력해주세요. api 호출 url에 사용됩니다. ex- mask
+              input.form-control(type="text", name="entityName", id="entityNameInput")
             
             input.btn.btn-outline-primary(type="submit", value="submit")
       

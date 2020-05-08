@@ -8,6 +8,7 @@ import { User } from "../entity/manager/User";
 import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
 import { Api } from "../entity/manager/Api";
 import ApplicationError from "../ApplicationError";
+import { ApiColumn } from "../entity/manager/ApiColumns";
 
 
 class MetaController {
@@ -97,10 +98,10 @@ class MetaController {
     const metaRepo = getRepository(Meta);
 
     try {
-      const apis = await metaRepo.find();
+      const metas = await metaRepo.find();
 
       res.render("metas/index.pug", {
-        apis: apis,
+        metas: metas,
         current_user: req.user
       })
     } catch (err) {
@@ -244,12 +245,18 @@ class MetaController {
     const metaRepo = getRepository(Meta);
     const columnRepo = getRepository(MetaColumn);
     const apiRepo = getRepository(Api);
+    const apiColumnRepo = getRepository(ApiColumn);
 
     const { id } = req.params;
-    const { tableName } = req.body;
+    const { apiName, entityName } = req.body;
 
     let tableForDelete;
-    if(tableName == undefined || tableName.length == 0) {
+    if(entityName == undefined || entityName.length == 0) {
+      req.flash('danger', 'entity 명을 입력해주세요.');
+      res.redirect(`/metas/${id}/new`);
+      return;
+    }
+    if(apiName == undefined || apiName.length == 0) {
       req.flash('danger', 'API 명을 입력해주세요.');
       res.redirect(`/metas/${id}/new`);
       return;
@@ -280,9 +287,12 @@ class MetaController {
         return;
       }
 
+      let api = new Api(apiName, entityName, meta, <User>req.user);
+
       // column data 생성
       let columns = []
       let columnNames = []
+      let apiColumns: ApiColumn[] = []
       // autoincrease 설정
       columns.push({
         name: "id",
@@ -299,12 +309,11 @@ class MetaController {
           type: column.type,
           isNullable: true
         })
+        apiColumns.push(new ApiColumn(column.columnName, column.type, api));
       });
 
       //table data 생성
       //table Name convention 필요
-
-      let api = new Api(tableName, meta, <User>req.user);
       const tableOption: TableOptions = {
         name: api.tableName,
         columns: columns
@@ -324,12 +333,15 @@ class MetaController {
       }
 
       tableForDelete = tableOption.name;
+      api.columnLength = apiColumns.length;
+      api.dataCounts = insertValues.length;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await getConnection('dataset').createQueryRunner().createTable(new Table(tableOption));
         await getConnection('dataset').manager.query(insertQuery, [insertValues])
         meta.isActive = true;
         await metaRepo.save(meta);
         await apiRepo.save(api);
+        await apiColumnRepo.save(apiColumns);
       });
       
       res.redirect(`/metas/${meta.id}`)

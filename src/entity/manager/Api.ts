@@ -4,17 +4,19 @@ import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
 import { Meta } from "./Meta";
+import { ApiColumn } from "./ApiColumns";
 
 
 const API_TABLE_PREFIX = 'api'
 @Entity()
 export class Api {
 
-  constructor(title?:string, meta?:Meta, user?:User) {
+  constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
+    if(entityName) this.entityName = entityName
     if(title) this.title = title;
     if(user) this.user = user;
     if(meta) this.meta = meta;
-    if(title && user) this.tableName = `${API_TABLE_PREFIX}_${this.user.id}_${this.title}`
+    if(entityName && user) this.tableName = `${API_TABLE_PREFIX}_${this.user.id}_${this.entityName}`
   }
 
   @PrimaryGeneratedColumn()
@@ -26,7 +28,17 @@ export class Api {
 
   @Column()
   @Length(1, 100)
+  entityName: string;
+
+  @Column()
+  @Length(1, 100)
   tableName: string;
+
+  @Column()
+  columnLength: number;
+
+  @Column()
+  dataCounts: number;
 
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
@@ -35,8 +47,8 @@ export class Api {
   @JoinColumn()
   meta: Meta;
 
-  @OneToMany(type => MetaColumn, mc => mc.meta)
-  columns: MetaColumn[];
+  @OneToMany(type => ApiColumn, ac => ac.api)
+  columns: ApiColumn[];
 
   @Column()
   @CreateDateColumn()

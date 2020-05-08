@@ -1,0 +1,39 @@
+extends ../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/apis") API 관리
+        
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 API 상세보기
+
+    .card-body
+      .table-responsive
+          table.table.table-bordered(width='100%' cellspacing='0')
+            thead
+              tr.text-center
+                th(colspan="4") API 정보
+              tr
+                th Api명
+                td(colspan="3") #{api.title}
+      
+      .text-right.mb-3
+        button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Api 삭제
+
+  .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title 삭제하기
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        form(action=`/apis/${api.id}?_method=DELETE`, method="post")
+          .modal-body
+            | 배포된 API 정보가 삭제됩니다. <br>
+            | 정말 삭제하시겠습니까?
+          .modal-footer
+            button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기
+            input.btn.btn-danger(type="submit", value="삭제")
