@@ -19,9 +19,41 @@ block content
               tr
                 th Api명
                 td(colspan="3") #{api.title}
+            tbody
+              tr
+                th id
+                td #{api.id}
+                th entityName
+                td #{api.entityName}
+              tr
+                th 컬럼수
+                td #{api.columnLength}
+                th 데이터수
+                td #{api.dataCounts} rows
+              tr
+                th endpoint
+                td(colspan="3") /dataset/#{api.tableName}
       
       .text-right.mb-3
         button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Api 삭제
+
+      .table-responsive
+        table.table.table-bordered(width='100%' cellspacing='0')
+          thead
+            tr.text-center
+              th(colspan="4") 컬럼 정보
+            tr
+              th id  
+              th columnName
+              th type
+              th hidden
+          tbody
+            each col in api.columns
+              tr
+                td #{col.id}
+                td #{col.columnName}
+                td #{col.type}
+                td #{col.hidden}
 
   .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
     .modal-dialog(role='document')

@@ -28,6 +28,7 @@ class ApiController {
 
     try {
       const api = await apiRepo.findOneOrFail({
+        relations: ["columns"],
         where: {
           id: id
         }

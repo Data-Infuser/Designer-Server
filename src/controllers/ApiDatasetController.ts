@@ -3,23 +3,30 @@ import { getRepository } from "typeorm";
 import { Meta } from "../entity/manager/Meta";
 import ApplicationError from "../ApplicationError";
 import {DatasetManager} from "../util/DatasetManager";
+import { Api } from "../entity/manager/Api";
 
 class ApiDatasetController {
 
   static getShow = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
+    const apiRepo = getRepository(Api);
     const identifier = req.params.identifier
 
     try {
-      console.log('api dataset show called');
+      const api = await apiRepo.findOneOrFail({
+        relations: ["columns"],
+        where: {
+          tableName: identifier
+        }
+      });
 
-      let dataset = await DatasetManager.getDatasetByName(identifier)
-      if (!dataset) {
-        const meta = await metaRepo.findOne(identifier)
-        if (!meta) console.log('no matching meta found')
+      let columns:string[] = []
+      api.columns.forEach(col => {
+        if(!col.hidden) columns.push(`\`${col.columnName}\``)
+      });
 
-        dataset = await DatasetManager.getDatasetByName(meta.title)
-      }
+      const selectedColumns = columns.length == 0 ? '*' : columns.join(',')
+      let dataset = await DatasetManager.getDatasetByName(identifier, selectedColumns)
 
       res.end(dataset)
     } catch (err) {

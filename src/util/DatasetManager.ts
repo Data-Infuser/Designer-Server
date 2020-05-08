@@ -1,9 +1,9 @@
 import { getManager } from "typeorm";
 
 export class DatasetManager {
-  static getDatasetByName = async (name) => {
+  static getDatasetByName = async (tableName:string, selectColumns: string = "*") => {
     const dataset = await getManager('dataset')
-    .query(`SELECT * FROM ${name}`)
+    .query(`SELECT ${selectColumns} FROM ${tableName}`)
   
     return JSON.stringify(dataset)
   }

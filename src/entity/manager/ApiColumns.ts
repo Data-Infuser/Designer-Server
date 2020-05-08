@@ -23,6 +23,9 @@ export class ApiColumn {
   @Length(1, 30)
   type: string;
 
+  @Column({ default: false })
+  hidden: boolean;
+
   @ManyToOne(type => Api, api => api.columns, { nullable: true, onDelete: 'CASCADE' })
   api: Api;
 
