@@ -35,7 +35,7 @@ class MetaController {
       const formData = await promisifyUpload(req);
 
       let files = formData.files;
-      let { title } = formData.fields;
+      let { title, skip, sheet } = formData.fields;
 
       if(files == undefined) {
         req.flash('danger', '파일이 없습니다.');
@@ -54,10 +54,10 @@ class MetaController {
       const originalFileNameTokens = originalFileName.split(".");
       const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
       const loadedWorkbook = await new Excel.Workbook().xlsx.readFile(filePath);
-      const worksheet = loadedWorkbook.worksheets[1]
+      const worksheet = loadedWorkbook.worksheets[sheet]
       const totalRowCount = worksheet.rowCount
 
-      const header = worksheet.getRow(1).values;
+      const header = worksheet.getRow(skip + 1).values;
 
       const meta = new Meta();
       meta.title = title;
@@ -65,6 +65,8 @@ class MetaController {
       meta.filePath = filePath;
       meta.rowCounts = totalRowCount - 1;
       meta.extension = ext;
+      meta.skip = skip;
+      meta.sheet = sheet;
       meta.user = <User>req.user;
       
       let columns = []
@@ -158,8 +160,20 @@ class MetaController {
 
   static delete = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
+    const apiRepo = getRepository(Api);
     const { id } = req.params;
     try {
+      const meta = await metaRepo.findOneOrFail({
+        relations: ["api"],
+        where: {
+          id: id
+        }
+      });
+      console.log(meta.api);
+      if(meta.api) {
+        await getConnection('dataset').createQueryRunner().dropTable(meta.api.tableName, true);
+        await apiRepo.delete(meta.api.id);
+      }
       await metaRepo.delete(id);
       req.flash('danger', '메타 정보가 삭제되었습니다.');
       res.redirect('/metas')
@@ -234,6 +248,7 @@ class MetaController {
     const { id } = req.params;
     const { tableName } = req.body;
 
+    let tableForDelete;
     if(tableName == undefined || tableName.length == 0) {
       req.flash('danger', 'API 명을 입력해주세요.');
       res.redirect(`/metas/${id}/new`);
@@ -281,7 +296,8 @@ class MetaController {
         columnNames.push(column.columnName)
         columns.push({
           name: column.columnName,
-          type: column.type
+          type: column.type,
+          isNullable: true
         })
       });
 
@@ -299,25 +315,27 @@ class MetaController {
       let insertValues = []
       //xlsx read
       const loadedWorkbook = await new Excel.Workbook().xlsx.readFile(meta.filePath);
-      const worksheet = loadedWorkbook.worksheets[1]
+      const worksheet = loadedWorkbook.worksheets[meta.sheet]
       const totalRowCount = worksheet.rowCount
-      for(let i = 2; i <= totalRowCount; i++) {
+      for(let i = meta.skip + 2; i <= totalRowCount; i++) {
         let row = <string[]>worksheet.getRow(i).values
         if(row.length == 0) continue;
         insertValues.push(row.slice(1));
       }
 
+      tableForDelete = tableOption.name;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await getConnection('dataset').createQueryRunner().createTable(new Table(tableOption));
         await getConnection('dataset').manager.query(insertQuery, [insertValues])
-        await apiRepo.save(api);
         meta.isActive = true;
         await metaRepo.save(meta);
+        await apiRepo.save(api);
       });
       
       res.redirect(`/metas/${meta.id}`)
     } catch (err) {
       console.error(err);
+      await getConnection('dataset').createQueryRunner().dropTable(tableForDelete, true);
       next(new ApplicationError(500, err.message));
       return;
     }

@@ -20,5 +20,11 @@ block content
             div.form-group
               label(for="fileUploadInput") xlsx 파일을 업로드하세요
               input.form-control-file(type="file", name="upload", multiple="multiple", id="fileUploadInput", required=true)
+            div.form-group
+              label(for="skipInput") 상단 skip할 row count
+              input.form-control(type="number", name="skip", id="skipInput",  step=1, value=0)
+            div.form-group
+              label(for="sheetInput") sheet number
+              input.form-control(type="number", name="sheet", id="sheetInput",  step=1, value=0)
             
             input.btn.btn-outline-primary(type="submit", value="Upload")

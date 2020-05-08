@@ -31,6 +31,12 @@ export class Meta {
   @Column()
   rowCounts: number;
 
+  @Column({ default: 0 })
+  skip: number;
+
+  @Column({ default: 0 })
+  sheet: number;
+
   @Column({ nullable: false, default: false })
   isActive: boolean;
 

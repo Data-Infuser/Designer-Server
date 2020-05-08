@@ -69,6 +69,7 @@ block content
             span(aria-hidden='true') &times;
         form(action=`/metas/${meta.id}?_method=DELETE`, method="post")
           .modal-body
+            | 배포된 API 정보도 삭제됩니다. <br>
             | 정말 삭제하시겠습니까?
           .modal-footer
             button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기
