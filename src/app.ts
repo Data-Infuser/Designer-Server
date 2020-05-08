@@ -49,6 +49,7 @@ export class Application {
 
   setupDbAndServer = async () => {
       const conn = await createConnection().catch(error => console.log(error));;
+      const datasetConn = await createConnection('dataset').catch(error => console.log(error));;
       setupPassport(this.app);
       setupRoutes(this.app);
 

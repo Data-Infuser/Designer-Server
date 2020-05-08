@@ -2,11 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import * as multiparty from 'multiparty';
 import * as Excel from 'exceljs';
 import { getConnection, LessThanOrEqual, getRepository, getManager, TableColumn, Table, Column } from "typeorm";
-import { Meta } from "../entity/Meta";
-import { MetaColumn } from "../entity/MetaColumn";
-import { User } from "../entity/User";
+import { Meta } from "../entity/manager/Meta";
+import { MetaColumn } from "../entity/manager/MetaColumn";
+import { User } from "../entity/manager/User";
 import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
-import { Api } from "../entity/Api";
+import { Api } from "../entity/manager/Api";
 import ApplicationError from "../ApplicationError";
 
 
@@ -190,7 +190,7 @@ class MetaController {
         if(colName) col.columnName = colName;
         if(type) col.type = type;
       });
-      
+
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await metaRepo.save(meta);
         await columnRepo.save(meta.columns);
@@ -308,8 +308,8 @@ class MetaController {
       }
 
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-        await getConnection().createQueryRunner().createTable(new Table(tableOption));
-        await getConnection().manager.query(insertQuery, [insertValues])
+        await getConnection('dataset').createQueryRunner().createTable(new Table(tableOption));
+        await getConnection('dataset').manager.query(insertQuery, [insertValues])
         await apiRepo.save(api);
         meta.isActive = true;
         await metaRepo.save(meta);

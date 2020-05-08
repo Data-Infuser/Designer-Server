@@ -1,14 +1,14 @@
-{
+[{
    "type": "mysql",
    "host": "localhost",
    "port": 3306,
-   "username": "username",
-   "password": "password",
-   "database": "database",
+   "username": "root",
+   "password": "",
+   "database": "",
    "synchronize": true,
    "logging": false,
    "entities": [
-      "src/entity/**/*.ts"
+      "src/entity/manager/*.ts"
    ],
    "migrations": [
       "src/migration/**/*.ts"
@@ -17,8 +17,22 @@
       "src/subscriber/**/*.ts"
    ],
    "cli": {
-      "entitiesDir": "src/entity",
+      "entitiesDir": "src/entity/manager",
       "migrationsDir": "src/migration",
       "subscribersDir": "src/subscriber"
    }
-}
+},
+{
+   "name": "dataset",
+   "type": "mysql",
+   "host": "localhost",
+   "port": 3306,
+   "username": "root",
+   "password": "",
+   "database": "",
+   "synchronize": false,
+   "logging": false,
+   "entities": [
+      "src/entity/dataset/*.ts"
+   ]
+}]

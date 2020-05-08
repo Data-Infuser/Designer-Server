@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { getRepository } from "typeorm";
-import { Meta } from "../entity/Meta";
+import { Meta } from "../entity/manager/Meta";
 import ApplicationError from "../ApplicationError";
 import {DatasetManager} from "../util/DatasetManager";
 

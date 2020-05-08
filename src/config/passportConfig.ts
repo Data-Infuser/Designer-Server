@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import { getRepository } from 'typeorm';
-import { User } from '../entity/User';
+import { User } from '../entity/manager/User';
 
 export default function setupPassport(server: express.Application) {
   const userRepo = getRepository(User)

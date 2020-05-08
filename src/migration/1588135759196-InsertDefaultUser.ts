@@ -1,5 +1,5 @@
 import {MigrationInterface, QueryRunner, getConnection} from "typeorm";
-import { User } from "../entity/User";
+import { User } from "../entity/manager/User";
 
 export class InsertDefaultUser1588135759196 implements MigrationInterface {
 
