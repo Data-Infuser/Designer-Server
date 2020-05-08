@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { getConnection, LessThanOrEqual, getRepository, getManager } from "typeorm";
+import { getRepository } from "typeorm";
 import { Meta } from "../entity/Meta";
 import ApplicationError from "../ApplicationError";
-
+import {DatasetManager} from "../util/DatasetManager";
 
 class ApiDatasetController {
 
@@ -13,12 +13,12 @@ class ApiDatasetController {
     try {
       console.log('api dataset show called');
 
-      let dataset = await ApiDatasetController.getDatasetByName(identifier)
+      let dataset = await DatasetManager.getDatasetByName(identifier)
       if (!dataset) {
         const meta = await metaRepo.findOne(identifier)
         if (!meta) console.log('no matching meta found')
 
-        dataset = await ApiDatasetController.getDatasetByName(meta.title)
+        dataset = await DatasetManager.getDatasetByName(meta.title)
       }
 
       res.end(dataset)
@@ -27,13 +27,6 @@ class ApiDatasetController {
       next(new ApplicationError(500, err.message));
       return;
     }
-  }
-
-  static getDatasetByName = async(name) => {
-    const dataset = await getManager()
-    .query(`SELECT * FROM ${name}`)
-
-    return JSON.stringify(dataset)
   }
 }
 
