@@ -20,7 +20,7 @@ block content
               tr.text-center
                 th(colspan="4") Meta 정보
               tr
-                th API명
+                th 데이터명
                 td(colspan="3") #{meta.title}
             tbody
               tr
@@ -38,7 +38,7 @@ block content
                 td(colspan="3") #{meta.rowCounts}
       
       .text-right.mb-3
-        a.btn.btn-outline-primary(href=`#`) 컬럼 정보 수정
+        a.btn.btn-outline-primary(href=`/metas/${meta.id}/edit`) 컬럼 정보 수정
         button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Meta data 삭제
               
 

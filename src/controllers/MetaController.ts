@@ -135,6 +135,27 @@ class MetaController {
     }
   }
 
+  static getEdit = async(req: Request, res: Response, next: NextFunction) => {
+    const metaRepo = getRepository(Meta);
+    const { id } = req.params
+    try {
+      const meta = await metaRepo.findOneOrFail({
+        relations: ["columns"],
+        where: {
+          id: id
+        }
+      })
+      res.render("metas/edit.pug", {
+        current_user: req.user,
+        meta: meta
+      })
+    } catch (err) {
+      console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
   static delete = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const { id } = req.params;
@@ -143,6 +164,42 @@ class MetaController {
       req.flash('danger', '메타 정보가 삭제되었습니다.');
       res.redirect('/metas')
     } catch (err) {
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
+  static put =  async(req: Request, res: Response, next: NextFunction) => {
+    const metaRepo = getRepository(Meta);
+    const columnRepo = getRepository(MetaColumn);
+    const { id } = req.params;
+    const { title } = req.body;
+    try {
+      const meta = await metaRepo.findOneOrFail({
+        relations: ["columns"],
+        where: {
+          id: id
+        }
+      })
+
+      meta.title = title;
+      meta.columns.forEach(col => {
+        const colName = req.body[`col-${col.id}`];
+        const type = req.body[`type-${col.id}`];
+
+        if(colName) col.columnName = colName;
+        if(type) col.type = type;
+      });
+      
+      await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+        await metaRepo.save(meta);
+        await columnRepo.save(meta.columns);
+      });
+    
+      req.flash('success', '수정되었습니다.')
+      res.redirect(`/metas/${meta.id}`)
+    } catch (err) {
+      console.error(err);
       next(new ApplicationError(500, err.message));
       return;
     }
