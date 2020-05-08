@@ -7,11 +7,12 @@ import { MetaColumn } from "../entity/MetaColumn";
 import { User } from "../entity/User";
 import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
 import { Api } from "../entity/Api";
+import ApplicationError from "../ApplicationError";
 
 
 class MetaController {
 
-  static uploadXlsxFile = async(req: Request, res: Response) => {
+  static uploadXlsxFile = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const metaColRepo = getRepository(MetaColumn);
     
@@ -35,6 +36,18 @@ class MetaController {
 
       let files = formData.files;
       let { title } = formData.fields;
+
+      if(files == undefined) {
+        req.flash('danger', '파일이 없습니다.');
+        res.redirect('/metas/new');
+        return;
+      }
+
+      if(title == undefined || title.length == 0) {
+        req.flash('danger', 'Meta명이 없습니다.');
+        res.redirect('/metas/new');
+        return;
+      }
 
       const filePath = files['upload'][0].path;
       const originalFileName:string = files['upload'][0].originalFilename;
@@ -73,6 +86,8 @@ class MetaController {
       res.redirect(`/metas/${meta.id}`);
     } catch (err) {
       console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
     }
   }
   
@@ -88,6 +103,8 @@ class MetaController {
       })
     } catch (err) {
       console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
     }
   }
 
@@ -113,17 +130,21 @@ class MetaController {
       })
     } catch (err) {
       console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
     }
   }
 
-  static delete = async(req: Request, res: Response, newxt: NextFunction) => {
+  static delete = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const { id } = req.params;
     try {
       await metaRepo.delete(id);
+      req.flash('danger', '메타 정보가 삭제되었습니다.');
       res.redirect('/metas')
     } catch (err) {
-      console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
     }
   }
 
@@ -143,6 +164,8 @@ class MetaController {
       })
     } catch (err) {
       console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
     }
   }
 
@@ -154,9 +177,9 @@ class MetaController {
     const { id } = req.params;
     const { tableName } = req.body;
 
-    if(tableName == undefined) {
-      console.error('no table name')
-      res.redirect(`/metas`);
+    if(tableName == undefined || tableName.length == 0) {
+      req.flash('danger', 'API 명을 입력해주세요.');
+      res.redirect(`/metas/${id}/new`);
       return;
     }
     try {
@@ -180,7 +203,9 @@ class MetaController {
       });
 
       if(meta.api || meta.isActive) {
-        console.error(`api already exists`);
+        req.flash('danger', '이미 배포된 api가 있습니다.');
+        res.redirect(`/metas/${meta.id}`);
+        return;
       }
 
       // column data 생성
@@ -206,11 +231,7 @@ class MetaController {
       //table data 생성
       //table Name convention 필요
 
-      let api = new Api();
-      api.user = <User>req.user;
-      api.meta = meta;
-      api.title = tableName;
-      api.tableName = `${api.user.id}_${tableName}`
+      let api = new Api(tableName, meta, <User>req.user);
       const tableOption: TableOptions = {
         name: api.tableName,
         columns: columns
@@ -230,19 +251,18 @@ class MetaController {
       }
 
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-        await getConnection().createQueryRunner().createTable(new Table(tableOption), true);
-        console.log("create done")
+        await getConnection().createQueryRunner().createTable(new Table(tableOption));
         await getConnection().manager.query(insertQuery, [insertValues])
-        console.log("insert done")
         await apiRepo.save(api);
         meta.isActive = true;
         await metaRepo.save(meta);
-        console.log("meta done")
       });
       
       res.redirect(`/metas/${meta.id}`)
     } catch (err) {
       console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
     }
   }
 }

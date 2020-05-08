@@ -18,7 +18,7 @@ block content
         .col-6
           form(action=`/metas/${meta.id}/api`, method="post")
             div.form-group
-              label(for="tableNameInput") api명을 입력해주세요.
+              label(for="tableNameInput") 배포할 API명을 입력해주세요.(실제 table명으로 사용)
               input.form-control(type="text", name="tableName", id="tableNameInput")
             
             input.btn.btn-outline-primary(type="submit", value="submit")

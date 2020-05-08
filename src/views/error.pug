@@ -1,0 +1,22 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport')
+    link(href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css")
+    link(href="/css/bootstrap.css" rel="stylesheet")
+    link(href="/style/main.scss" rel="stylesheet")
+    link(href="/css/sb-admin.css" rel="stylesheet")
+    script(src='/vendor/jquery/jquery.min.js')
+    script(src="/js/bootstrap.bundle.min.js")
+    script(src='/js/sb-admin/sb-admin.min.js')
+
+  body
+    ol.breadcrumb
+        li.breadcrumb-item.active #{statusCode} Error
+    // Page Content
+    h1.display-1 #{statusCode}
+    p.lead
+        | #{message} <br />
+        a(href='javascript:history.back()') go back 
+        |                 to the previous page

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { getConnection, LessThanOrEqual, getRepository, getManager } from "typeorm";
 import { Meta } from "../entity/Meta";
+import ApplicationError from "../ApplicationError";
 
 
 class ApiDatasetController {
@@ -23,6 +24,8 @@ class ApiDatasetController {
       res.end(dataset)
     } catch (err) {
       console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
     }
   }
 

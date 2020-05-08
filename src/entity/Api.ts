@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn, Table, Db} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { User } from "./User";
@@ -6,9 +6,16 @@ import { MetaColumn } from "./MetaColumn";
 import { Meta } from "./Meta";
 
 
-
+const API_TABLE_PREFIX = 'api'
 @Entity()
 export class Api {
+
+  constructor(title?:string, meta?:Meta, user?:User) {
+    if(title) this.title = title;
+    if(user) this.user = user;
+    if(meta) this.meta = meta;
+    if(title && user) this.tableName = `${API_TABLE_PREFIX}_${this.user.id}_${this.title}`
+  }
 
   @PrimaryGeneratedColumn()
   id: number;

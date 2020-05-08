@@ -9,6 +9,7 @@ import morgan from "morgan";
 import flash from "express-flash";
 import {createConnection} from "typeorm";
 import setupRoutes from "./routes/setupRoutes";
+import ApplicationError from "./ApplicationError";
 
 export class Application {
   app: express.Application;
@@ -29,13 +30,19 @@ export class Application {
       logToConsole: false
     }))
     this.app.use(express.static('./src/public'));
-    this.app.use(flash());
 
     this.app.use(session({
       resave: true,
       saveUninitialized: true,
       secret: 'long-long-long-secret-string-1313513tefgwdsvbjkvasd'
     }))
+
+    this.app.use(flash());
+    this.app.use(function(req, res, next) {
+      res.locals.flashMessages = req.flash();
+      next();
+    });
+    
     this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length]"));
     
   }
@@ -44,6 +51,24 @@ export class Application {
       const conn = await createConnection().catch(error => console.log(error));;
       setupPassport(this.app);
       setupRoutes(this.app);
+
+      this.app.use(function(req, res, next) {
+        let err = new ApplicationError(404, 'Not Found');
+        next(err)
+      });
+
+      this.app.use(function(err, req, res, next) {
+        if (res.headersSent) {
+          return;
+        }
+
+        //admin error의 경우에만 아래와 같이 처리.
+        res.render("error.pug", {
+            statusCode : err.statusCode,
+            message : err.message
+        })
+      });
+
       this.startServer()
   }
 
