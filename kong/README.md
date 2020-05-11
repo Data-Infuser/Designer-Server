@@ -1,11 +1,16 @@
-# KONG API Gateway Docker
+# KONG API Gateway using Docker
  
-## 실행 (하단의 Installation을 통해 1회 이상 실행한 경우)
+## Run (하단의 Installation을 통해 1회 이상 실행한 경우):
 ```
 docker run kong-database
 docker run kong
 docker run pantsel/konga
 ```
+
+## Test
+ * Kong 사용자 PORT: 8000
+ * Kong 관리자 PORT: 8001
+ * Konga Admin UI Port: 1337
 
 ## KONG Installation:
 
@@ -48,7 +53,7 @@ docker network ls
          kong kong migrations bootstrap
  ```
 
-### 3-2. Kong Container 시작
+### 3-2. Kong Container 시작:
  ```
  docker run -d --name kong \
      --network=kong-net \
@@ -67,22 +72,33 @@ docker network ls
      -p 8444:8444 \
      kong:latest
  ```
+
+## KONGA Installation
+
+### Reference
+ * https://hub.docker.com/r/pantsel/konga/
+ * https://github.com/pantsel/konga
+
 ### 4-1. KONGA DB initial migration:
+
  `**Data 백업된 postgresql이 아닐 경우에만 진행.`
  ```
  docker run --rm \
         --network=kong-net \
-        pantsel/konga -c prepare -a postgres -u postgresql://kong@kong-database:5432/konga_db
+        pantsel/konga \
+        -c prepare \
+        -a postgres \
+        -u postgresql://kong:kong@kong-database:5432/konga_db
  ```
 ### 4-2. KONGA Container 시작:
  ```
- docker run -p 1337:1337 \
+ docker run -d -p 1337:1337 \
          --network=kong-net \
          -e "DB_ADAPTER=postgres" \
          -e "DB_HOST=kong-database" \
          -e "DB_USER=kong" \
          -e "DB_PASSWORD=kong" \
-         -e "DB_DATABASE=kong" \
+         -e "DB_DATABASE=konga_db" \
          -e "KONGA_HOOK_TIMEOUT=120000" \
          -e "NODE_ENV=production" \
          --name konga \
