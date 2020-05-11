@@ -12,8 +12,14 @@ block content
 
     .card-body
       .row
-        .col-6
+        .col-12.mb-3
+          select#dataTypeSelect.form-control(name=``)
+            option(value=0) File
+            option(value=1) DBMS
+
+        #fileUploadForm.col-12
           form(action="/metas", method="post", enctype="multipart/form-data")
+            input.form-control.d-none(type="text", name="dataType", required=true, value="file")
             div.form-group
               label(for="tableNameInput") 메타데이터명을 입력해주세요.
               input.form-control(type="text", name="title", id="tableNameInput", required=true)
@@ -28,3 +34,53 @@ block content
               input.form-control(type="number", name="sheet", id="sheetInput",  step=1, value=0)
             
             input.btn.btn-outline-primary(type="submit", value="Upload")
+        
+        #dbmsConnectionForm.col-12.d-none
+          form(action="/metas", method="post", enctype="multipart/form-data")
+            input.form-control.d-none(type="text", name="dataType", required=true, value="dbms")
+            | DBMS 접근을 위한 계정은 보안을 위하여 API화 하기 위한 Table에만 접근이 가능한 계정을 생성하여 입력하기를 권장합니다.
+            div.form-group.mt-3
+              label(for="tableNameInput") 메타데이터명을 입력해주세요.
+              input.form-control(type="text", name="title", id="tableNameInput", required=true)
+            div.form-group
+              select#dataTypeSelect.form-control(name=`dbms`)
+                option(value=0) mysql 8.x
+            div.form-group
+              label(for="hostInput") host
+              input.form-control(type="text", name="host", id="hostInput", required=true)
+            div.form-group
+              label(for="dbInput") db
+              input.form-control(type="text", name="db", id="dbInput", required=true)
+            div.form-group
+              label(for="userInput") user
+              input.form-control(type="text", name="user", id="userInput", required=true)
+            div.form-group
+              label(for="pwdInput") pwd
+              input.form-control(type="text", name="pwd", id="pwdInput")
+            div.form-group
+              label(for="tableInput") table을 입력해주세요.
+              input.form-control(type="text", name="title", id="tableInput", required=true)
+
+            
+            input.btn.btn-outline-primary(type="submit", value="Upload")
+
+block script
+  script.
+    $(document).ready(function() {
+      const dataTypeSeclect = $('#dataTypeSelect');
+      const fileUploadForm = $('#fileUploadForm');
+      const dbmsConnectionForm = $('#dbmsConnectionForm');
+
+      const formList = [fileUploadForm, dbmsConnectionForm];
+
+      dataTypeSeclect.change(function() {
+        for(let i = 0; i < formList.length; i++) {
+          let form = formList[i];
+          if(this.value == i) {
+            form.removeClass('d-none');
+            continue;
+          }
+          form.addClass('d-none');
+        }
+      })
+    });

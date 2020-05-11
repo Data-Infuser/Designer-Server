@@ -1,6 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import * as multiparty from 'multiparty';
-import * as Excel from 'exceljs';
 import { getConnection, LessThanOrEqual, getRepository, getManager, TableColumn, Table, Column } from "typeorm";
 import { Meta } from "../entity/manager/Meta";
 import { MetaColumn } from "../entity/manager/MetaColumn";
@@ -10,6 +8,10 @@ import { Api } from "../entity/manager/Api";
 import ApplicationError from "../ApplicationError";
 import { ApiColumn } from "../entity/manager/ApiColumns";
 import { RowGenerator } from "../util/RowGenerator";
+import { MetaLoader } from "../util/MetaLoader";
+import { MetaInfo } from "../util/MetaInfo";
+import * as multiparty from 'multiparty';
+
 
 
 class MetaController {
@@ -33,61 +35,24 @@ class MetaController {
           });
       });
     });
+    const formData = await promisifyUpload(req);
+
+    const dataType = formData.fields.dataType[0]
     try {
-      const formData = await promisifyUpload(req);
-
-      let files = formData.files;
-      let { title, skip, sheet } = formData.fields;
-
-      if(files == undefined) {
-        req.flash('danger', '파일이 없습니다.');
-        res.redirect('/metas/new');
-        return;
-      }
-
-      if(title == undefined || title.length == 0) {
-        req.flash('danger', 'Meta명이 없습니다.');
-        res.redirect('/metas/new');
-        return;
-      }
-
-      const filePath = files['upload'][0].path;
-      const originalFileName:string = files['upload'][0].originalFilename;
-      const originalFileNameTokens = originalFileName.split(".");
-      const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
-      const loadedWorkbook = await new Excel.Workbook().xlsx.readFile(filePath);
-      const worksheet = loadedWorkbook.worksheets[sheet]
-      const totalRowCount = worksheet.rowCount
-
-      const header = worksheet.getRow(skip + 1).values;
-
-      const meta = new Meta();
-      meta.title = title;
-      meta.originalFileName = originalFileName;
-      meta.filePath = filePath;
-      meta.rowCounts = totalRowCount - 1;
-      meta.extension = ext;
-      meta.skip = skip;
-      meta.sheet = sheet;
-      meta.user = <User>req.user;
-      
-      let columns = []
-      for(let i = 1; i < header.length; i++) {
-        const col = header[i];
-        const metaCol = new MetaColumn();
-        metaCol.originalColumnName = col;
-        metaCol.columnName = col;
-        metaCol.meta = meta;
-        metaCol.order = i;
-        columns.push(metaCol);
-      }
-
-      
+      let result: MetaInfo;
+      switch(dataType) {
+        case 'file':
+          result = await MetaLoader.loadMetaFromFile(formData);
+          break;
+        default:
+          throw new Error(`available dataType ${dataType}`);
+      }      
+      result.meta.user = <User>req.user;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-        await metaRepo.save(meta);
-        await metaColRepo.save(columns);
+        await metaRepo.save(result.meta);
+        await metaColRepo.save(result.columns);
       })
-      res.redirect(`/metas/${meta.id}`);
+      res.redirect(`/metas/${result.meta.id}`);
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));
@@ -320,11 +285,18 @@ class MetaController {
       
       let insertQuery = `INSERT INTO ${tableOption.name}(${columnNames.join(",")}) VALUES ?`
 
+      /**
+       * TODO: getRows 와 같이 범용적인 함수를 만들고, 함수 내부에서 data type을 확인 후 RDBMS, CSV 등을 읽어오도록 구현
+       */
       let insertValues = await RowGenerator.getRowsFromXlsx(meta);
       
       tableForDelete = tableOption.name;
       api.columnLength = apiColumns.length;
       api.dataCounts = insertValues.length;
+
+      /**
+       * TODO: 2개의 DB에 작업을 하기 때문에 Transaction과 관련된 추가적인 예외 처리가 필요함
+       */
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await getConnection('dataset').createQueryRunner().createTable(new Table(tableOption));
         await getConnection('dataset').manager.query(insertQuery, [insertValues])
