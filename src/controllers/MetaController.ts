@@ -11,7 +11,8 @@ import { RowGenerator } from "../util/RowGenerator";
 import { MetaLoader } from "../util/MetaLoader";
 import { MetaInfo } from "../util/MetaInfo";
 import * as multiparty from 'multiparty';
-
+import { KongClient } from "../client/KongClient";
+import { KongService } from "../entity/kong/KongService";
 
 
 class MetaController {
@@ -313,6 +314,10 @@ class MetaController {
         await apiRepo.save(api);
         await apiColumnRepo.save(apiColumns);
       });
+
+      // kong service 생성 TEST 코드
+      let kongService: KongService = new KongService("testname", "localhost", 3000, "/apiPath");
+      KongClient.addService(kongService);
       
       res.redirect(`/metas/${meta.id}`)
     } catch (err) {

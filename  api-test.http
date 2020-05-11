@@ -1,2 +1,8 @@
+### Dataset API call 
 GET http://localhost:3000/api/dataset/api_1_canopy?page=3
+accept: application/json
+
+### KONG ADMIN ROOT URL
+
+GET http://localhost:8001
 accept: application/json

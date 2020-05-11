@@ -45,6 +45,7 @@
     "pug": "^2.0.4",
     "reflect-metadata": "^0.1.10",
     "ts-node-dev": "^1.0.0-pre.44",
+    "typed-rest-client": "^1.7.3",
     "typeorm": "^0.2.24",
     "typescript": "^3.8.3"
   },
