@@ -49,7 +49,7 @@ class MetaController {
           break;
         default:
           throw new Error(`available dataType ${dataType}`);
-      }      
+      }
       result.meta.user = <User>req.user;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await metaRepo.save(result.meta);
@@ -217,7 +217,8 @@ class MetaController {
     const apiColumnRepo = getRepository(ApiColumn);
 
     const { id } = req.params;
-    const { apiName, entityName } = req.body;
+    const { apiName, entityName, needId } = req.body;
+    
     //validate inputs
     let message: string;
     if(apiName == undefined || apiName.length == 0) message = 'API 명을 입력해주세요.'
@@ -260,14 +261,18 @@ class MetaController {
       let columns = []
       let columnNames = []
       let apiColumns: ApiColumn[] = []
-      // autoincrease 설정
-      columns.push({
-        name: "id",
-        type: "int",
-        isPrimary: true,
-        isGenerated: true,
-        generationStrategy: "increment"
-      })
+
+      if(needId) {
+        // autoincrease 설정
+        columns.push({
+          name: "id",
+          type: "int",
+          isPrimary: true,
+          isGenerated: true,
+          generationStrategy: "increment"
+        })
+      }
+      
 
       metaColumns.forEach(column => {
         columnNames.push(column.columnName)
@@ -291,7 +296,7 @@ class MetaController {
       /**
        * TODO: getRows 와 같이 범용적인 함수를 만들고, 함수 내부에서 data type을 확인 후 RDBMS, CSV 등을 읽어오도록 구현
        */
-      let insertValues = await RowGenerator.getRowsFromXlsx(meta);
+      let insertValues = await RowGenerator.generateRows(meta, columnNames);
       
       tableForDelete = tableOption.name;
       api.columnLength = apiColumns.length;

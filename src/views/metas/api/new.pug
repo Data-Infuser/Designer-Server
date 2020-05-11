@@ -23,6 +23,9 @@ block content
             .form-group
               label(for="entityNameInput") Entity 명을 입력해주세요. api 호출 url에 사용됩니다. ex- mask
               input.form-control(type="text", name="entityName", id="entityNameInput")
+            .form-group.form-check
+              input.form-check-input(type="checkbox", id="idAutoGenerate", name="needId")
+              label.form-check-label(for="idAutoGenerate") id 컬럼 생성
             
             input.btn.btn-outline-primary(type="submit", value="submit")
       

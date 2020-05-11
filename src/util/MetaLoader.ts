@@ -77,8 +77,7 @@ export class MetaLoader {
         const table = formData.fields.table[0]
         const dbms = formData.fields.dbms[0]
 
-        console.log(formData.fields);
-        const connections = await createConnections([{
+        await createConnections([{
           name: "connectionForMeta",
           type: "mysql",
           host: host,
@@ -98,6 +97,7 @@ export class MetaLoader {
 
         const meta = new Meta();
         meta.title = title;
+        meta.dataType = 'dbms';
         meta.rowCounts = count[0].count;
         meta.host = host;
         meta.port = port;
