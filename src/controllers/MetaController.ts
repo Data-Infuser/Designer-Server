@@ -9,6 +9,7 @@ import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
 import { Api } from "../entity/manager/Api";
 import ApplicationError from "../ApplicationError";
 import { ApiColumn } from "../entity/manager/ApiColumns";
+import { RowGenerator } from "../util/RowGenerator";
 
 
 class MetaController {
@@ -249,18 +250,16 @@ class MetaController {
 
     const { id } = req.params;
     const { apiName, entityName } = req.body;
+    //validate inputs
+    let message: string;
+    if(apiName == undefined || apiName.length == 0) message = 'API 명을 입력해주세요.'
+    if(entityName == undefined || entityName.length == 0) message = 'entity 명을 입력해주세요.'
+    if(message) {
+      req.flash('danger', message);
+      res.redirect(`/metas/${id}/new`);
+    }
 
     let tableForDelete;
-    if(entityName == undefined || entityName.length == 0) {
-      req.flash('danger', 'entity 명을 입력해주세요.');
-      res.redirect(`/metas/${id}/new`);
-      return;
-    }
-    if(apiName == undefined || apiName.length == 0) {
-      req.flash('danger', 'API 명을 입력해주세요.');
-      res.redirect(`/metas/${id}/new`);
-      return;
-    }
     try {
       // meta data load
       const meta = await metaRepo.findOneOrFail({
@@ -320,18 +319,9 @@ class MetaController {
       }
       
       let insertQuery = `INSERT INTO ${tableOption.name}(${columnNames.join(",")}) VALUES ?`
-      console.log(insertQuery);
-      let insertValues = []
-      //xlsx read
-      const loadedWorkbook = await new Excel.Workbook().xlsx.readFile(meta.filePath);
-      const worksheet = loadedWorkbook.worksheets[meta.sheet]
-      const totalRowCount = worksheet.rowCount
-      for(let i = meta.skip + 2; i <= totalRowCount; i++) {
-        let row = <string[]>worksheet.getRow(i).values
-        if(row.length == 0) continue;
-        insertValues.push(row.slice(1));
-      }
 
+      let insertValues = await RowGenerator.getRowsFromXlsx(meta);
+      
       tableForDelete = tableOption.name;
       api.columnLength = apiColumns.length;
       api.dataCounts = insertValues.length;
