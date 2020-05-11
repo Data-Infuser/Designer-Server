@@ -14,7 +14,6 @@ import * as multiparty from 'multiparty';
 import { KongClient } from "../client/KongClient";
 import { KongService } from "../entity/kong/KongService";
 
-
 class MetaController {
 
   static uploadXlsxFile = async(req: Request, res: Response, next: NextFunction) => {
@@ -316,8 +315,8 @@ class MetaController {
       });
 
       // kong service 생성 TEST 코드
-      let kongService: KongService = new KongService("testname", "localhost", 3000, "/apiPath");
-      KongClient.addService(kongService);
+      // let kongService: KongService = new KongService("testname", "localhost", 3000, "/apiPath");
+      // await KongClient.addService(kongService);
       
       res.redirect(`/metas/${meta.id}`)
     } catch (err) {
