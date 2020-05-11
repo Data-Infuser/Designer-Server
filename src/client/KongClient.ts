@@ -1,4 +1,4 @@
-import { rm } from "typed-rest-client/RestClient";
+import * as rm from "typed-rest-client/RestClient";
 import { KongService } from "../entity/kong/KongService";
 
 let KONG_ADMIN_BASE_URL = "http://localhost:8001";
