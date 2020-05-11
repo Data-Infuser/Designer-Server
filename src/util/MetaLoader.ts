@@ -1,4 +1,4 @@
-import { getManager } from "typeorm";
+import { getManager, createConnections, getConnection } from "typeorm";
 import { SelectOptions } from "./SelectOptions";
 import * as Excel from 'exceljs';
 import { Meta } from "../entity/manager/Meta";
@@ -53,8 +53,6 @@ export class MetaLoader {
           columns.push(metaCol);
         }
         
-        console.log(meta);
-        console.log(columns);
         resolve({
           meta: meta, 
           columns: columns
@@ -66,4 +64,71 @@ export class MetaLoader {
       }
     });
   }
+
+  static loadMetaFromDBMS = async (formData) => {
+    return new Promise<MetaInfo>(async(resolve, reject) => {
+      try {
+        const title = formData.fields.title[0]
+        const host = formData.fields.host[0]
+        const port = formData.fields.port[0]
+        const db = formData.fields.db[0]
+        const user = formData.fields.user[0]
+        const pwd = formData.fields.pwd[0] ? formData.fields.pwd[0] : ""
+        const table = formData.fields.table[0]
+        const dbms = formData.fields.dbms[0]
+
+        console.log(formData.fields);
+        const connections = await createConnections([{
+          name: "connectionForMeta",
+          type: "mysql",
+          host: host,
+          port: port,
+          username: user,
+          password: pwd,
+          database: db
+        }])
+
+        const manager = await getManager('connectionForMeta')
+        const count = await manager
+        .query(
+          `SELECT count(*) as count
+          FROM \`${table}\`;`
+          )
+        const tableInfo = await manager.query(`DESCRIBE \`${table}\`;`);
+
+        const meta = new Meta();
+        meta.title = title;
+        meta.rowCounts = count[0].count;
+        meta.host = host;
+        meta.port = port;
+        meta.db = db;
+        meta.dbUser = user;
+        meta.pwd = pwd;
+        meta.table = table;
+
+        let columns = []
+        for(let i = 0; i < tableInfo.length; i++) {
+          const info = tableInfo[i]
+          const metaCol = new MetaColumn();
+          metaCol.originalColumnName = info.Field;
+          metaCol.columnName = info.Field;
+          metaCol.type = info.Type;
+          metaCol.meta = meta;
+          metaCol.order = i;
+          columns.push(metaCol);
+        }
+
+        await getConnection('connectionForMeta').close();
+
+        resolve({
+          meta: meta, 
+          columns: columns
+        });
+        return;
+      } catch (err) {
+        reject(err);
+        return;
+      }
+    });
+  };
 }

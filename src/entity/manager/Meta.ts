@@ -16,17 +16,38 @@ export class Meta {
   @Length(1, 100)
   title: string;
 
-  @Column()
+  @Column({default: 'file'})
+  dataType: string;
+
+  @Column({nullable: true})
   @Length(1, 100)
   originalFileName: string;
 
-  @Column()
+  @Column({nullable: true})
   @Length(4, 100)
   filePath: string;
 
-  @Column()
+  @Column({nullable: true})
   @Length(1, 20)
   extension: string;
+
+  @Column({nullable: true})
+  host: string;
+
+  @Column({nullable: true})
+  port: string;
+
+  @Column({nullable: true})
+  db: string;
+
+  @Column({nullable: true})
+  dbUser: string;
+
+  @Column({nullable: true})
+  pwd: string;
+
+  @Column({nullable: true})
+  table: string;
 
   @Column()
   rowCounts: number;

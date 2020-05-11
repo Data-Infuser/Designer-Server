@@ -49,6 +49,9 @@ block content
               label(for="hostInput") host
               input.form-control(type="text", name="host", id="hostInput", required=true)
             div.form-group
+              label(for="portInput") port
+              input.form-control(type="text", name="port", id="portInput", required=true)
+            div.form-group
               label(for="dbInput") db
               input.form-control(type="text", name="db", id="dbInput", required=true)
             div.form-group
@@ -59,7 +62,7 @@ block content
               input.form-control(type="text", name="pwd", id="pwdInput")
             div.form-group
               label(for="tableInput") table을 입력해주세요.
-              input.form-control(type="text", name="title", id="tableInput", required=true)
+              input.form-control(type="text", name="table", id="tableInput", required=true)
 
             
             input.btn.btn-outline-primary(type="submit", value="Upload")

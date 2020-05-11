@@ -44,6 +44,9 @@ class MetaController {
         case 'file':
           result = await MetaLoader.loadMetaFromFile(formData);
           break;
+        case 'dbms':
+          result = await MetaLoader.loadMetaFromDBMS(formData);
+          break;
         default:
           throw new Error(`available dataType ${dataType}`);
       }      
