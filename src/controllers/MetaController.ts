@@ -199,7 +199,7 @@ class MetaController {
           id: id
         }
       })
-      res.render("metas/api/new.pug", {
+      res.render("metas/apis/new.pug", {
         current_user: req.user,
         meta: meta
       })

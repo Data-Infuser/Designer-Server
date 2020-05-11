@@ -16,7 +16,7 @@ block content
     .card-body
       .row
         .col-6
-          form(action=`/metas/${meta.id}/api`, method="post")
+          form(action=`/metas/${meta.id}/apis`, method="post")
             .form-group
               label(for="apiNameInput") 배포할 API명을 입력해주세요. ex- 공공마스크 재고 현황
               input.form-control(type="text", name="apiName", id="tableNameInput")
