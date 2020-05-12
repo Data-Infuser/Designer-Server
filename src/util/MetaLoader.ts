@@ -23,7 +23,10 @@ export class MetaLoader {
           reject(new Error('Meta명이 없습니다.'));
           return;
         }
-  
+        console.log('MetaLoader');
+        console.log(formData);
+        
+
         const filePath = files['upload'][0].path;
         const originalFileName:string = files['upload'][0].originalFilename;
         const originalFileNameTokens = originalFileName.split(".");

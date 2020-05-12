@@ -11,13 +11,10 @@ export class ApiSubscriber implements EntitySubscriberInterface<Api> {
   }
 
   async afterInsert(event: InsertEvent<Api>) {
+    console.log("API afterInsert called");
     const api = event.entity;
-    console.log("api inserted, need to connect kong service")
-    // kong service 생성 TEST 코드
-    // let kongService: KongService = new KongService("testname", "localhost", 3000, "/apiPath");
-    // await KongClient.addService(kongService);
+    
+    let kongService: KongService = new KongService(api.title, "localhost", 3000, api.url);
+    await KongClient.addService(kongService);
   }
-
-
-
 }
