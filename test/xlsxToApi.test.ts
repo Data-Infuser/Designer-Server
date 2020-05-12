@@ -7,7 +7,6 @@ var path = require('path');
 describe('Read xlsx', () => {
   it('Test file exist', async () => {
     const filePath = path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx')
-    console.log(filePath)
     const result = fs.existsSync(filePath)
     expect(result).to.equal(true);
   });

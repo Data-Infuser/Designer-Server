@@ -4,6 +4,7 @@ node_modules/
 build/
 tmp/
 temp/
+upload/*
 
 ormconfig.json
 package-lock.json

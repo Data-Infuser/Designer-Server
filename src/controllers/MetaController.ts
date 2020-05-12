@@ -23,7 +23,7 @@ class MetaController {
     const promisifyUpload = (req) => new Promise<any>((resolve, reject) => {
       const multipartyOption = {
         autoFiles: true,
-        uploadDir: "/Users/chunghyup/node_workspace/files"
+        uploadDir: __dirname + "/../../upload"
       }
       const form = new multiparty.Form(multipartyOption);
   
