@@ -1,0 +1,4 @@
+{
+  "host": "http://localhost:3000",
+  "kongUrl": "http://localhost:8001"
+}
