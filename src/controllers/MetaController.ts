@@ -314,11 +314,7 @@ class MetaController {
         await apiColumnRepo.save(apiColumns);
       });
 
-      // kong service 생성 TEST 코드
-      // let kongService: KongService = new KongService("testname", "localhost", 3000, "/apiPath");
-      // await KongClient.addService(kongService);
-      
-      res.redirect(`/metas/${meta.id}`)
+      res.redirect(`/apis/${api.id}`)
     } catch (err) {
       console.error(err);
       await getConnection('dataset').createQueryRunner().dropTable(tableForDelete, true);
