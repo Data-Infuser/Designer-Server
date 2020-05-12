@@ -1,0 +1,10 @@
+{
+    "numeric": {
+        "integer": ["integer", "int", "smallint", "tinyint", "mediumint", "bigint"],
+        "fixed-point": ["demical", "numeric"],
+        "floating-point": ["float", "double"],
+        "bit": ["bit"]
+    },
+    "Date": ["date", "time", "datetime", "timestamp", "year"],
+    "string": ["char", "varchar", "binary", "varbinary", "blob", "text", "enum", "set"]
+}

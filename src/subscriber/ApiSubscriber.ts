@@ -6,17 +6,10 @@ import { KongClient } from "../client/KongClient";
 @EventSubscriber()
 export class ApiSubscriber implements EntitySubscriberInterface<Api> {
 
-
-  /**
-   * Indicates that this subscriber only listen to Post events.
-   */
   listenTo() {
       return Api;
   }
 
-  /**
-   * Called before post insertion.
-   */
   async afterInsert(event: InsertEvent<Api>) {
     const api = event.entity;
     console.log("api inserted, need to connect kong service")
@@ -24,5 +17,7 @@ export class ApiSubscriber implements EntitySubscriberInterface<Api> {
     // let kongService: KongService = new KongService("testname", "localhost", 3000, "/apiPath");
     // await KongClient.addService(kongService);
   }
+
+
 
 }
