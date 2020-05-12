@@ -9,6 +9,10 @@ typeorm global 설치
 
 ## 1. 프로젝트 실행
 
+임시 파일 업로드를 위한 디렉토리를 생성해야 합니다.
+
+> mkdir upload
+
 > npm start
 
 ts-node-dev를 이용하여 실행하기 때문에 코드 수정 후 저장을 하는 경우 자동으로 재시작됩니다.
