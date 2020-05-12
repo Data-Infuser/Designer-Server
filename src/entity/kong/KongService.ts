@@ -1,11 +1,8 @@
-
 export class KongService {
 
-  constructor(name?: string, host?: string, port?: number, path?: string) {
-    if (name) this.name = name
-    if (host) this.host = host
-    if (port) this.port = port
-    if (path) this.path = path
+  constructor(name: string, url: string) {
+    this.name = name;
+    this.url = "";
   }
   
   id: string;
@@ -17,6 +14,7 @@ export class KongService {
   host: string;
   port: number;
   path: string;
+  url: string;
   connect_timeout: number;
   write_timeout: number;
   read_timeout: number;

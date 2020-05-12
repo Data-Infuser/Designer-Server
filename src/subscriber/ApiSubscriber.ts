@@ -2,6 +2,7 @@ import { EventSubscriber, EntitySubscriberInterface, InsertEvent } from "typeorm
 import { Api } from "../entity/manager/Api";
 import { KongService } from "../entity/kong/KongService";
 import { KongClient } from "../client/KongClient";
+import property from "../../property.json";
 
 @EventSubscriber()
 export class ApiSubscriber implements EntitySubscriberInterface<Api> {
@@ -14,7 +15,9 @@ export class ApiSubscriber implements EntitySubscriberInterface<Api> {
     console.log("API afterInsert called");
     const api = event.entity;
     
-    let kongService: KongService = new KongService(api.title, "localhost", 3000, api.url);
+    // 1. create kong service
+    const kongService: KongService = new KongService(api.id, api.title, `#{property.apiServerUrl}#{api.url}`);
     await KongClient.addService(kongService);
+    // 2. create kong route
   }
 }

@@ -10,7 +10,7 @@ export class KongClient {
     console.log('addService called');
     let rest: rm.RestClient = new rm.RestClient('rest-sample', property.kongUrl);
 
-    let restRes: rm.IRestResponse<KongService> = await rest.create<KongService>(KONG_SERVICE_URI, kongService);
+    let restRes: rm.IRestResponse<KongService> = await rest.update<KongService>(KONG_SERVICE_URI + kongService.id, kongService);
     console.log('response-----');
     console.log(restRes);
   }
