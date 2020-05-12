@@ -170,9 +170,11 @@ class MetaController {
       meta.columns.forEach(col => {
         const colName = req.body[`col-${col.id}`];
         const type = req.body[`type-${col.id}`];
+        const size = req.body[`size-${col.id}`];
 
         if(colName) col.columnName = colName;
         if(type) col.type = type;
+        if(size) col.size = size;
       });
 
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {

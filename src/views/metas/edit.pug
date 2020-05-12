@@ -46,6 +46,7 @@ block content
                 th OriginalColumnName
                 th ColumnName
                 th Type
+                th Size
             tbody
               each col in meta.columns
                 tr
@@ -65,6 +66,8 @@ block content
                       option(value='time', selected= col.type == 'time') time
                       option(value='text', selected= col.type == 'text') text
                       option(value='longtext', selected= col.type == 'longtext') longtext
+                  td.align-middle
+                    input.form-control(type="number", name=`size-${col.id}`, value= col.size ? col.size : "")
 
         .text-right.mb-3
           input.btn.btn-outline-primary(type="submit", value="수정")
