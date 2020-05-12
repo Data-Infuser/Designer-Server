@@ -91,7 +91,7 @@ class MetaController {
     const { id } = req.params
     try {
       const meta = await metaRepo.findOneOrFail({
-        relations: ["columns"],
+        relations: ["columns", "api"],
         where: {
           id: id
         }

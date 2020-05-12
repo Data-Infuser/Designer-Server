@@ -33,6 +33,10 @@ block content
               tr
                 th endpoint
                 td(colspan="3") /dataset/#{api.tableName}
+              tr
+                th Meta 정보
+                td(colspan="3") 
+                  a(href=`/metas/${api.meta.id}`) /metas/#{api.meta.id}
       
       .text-right.mb-3
         button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Api 삭제
