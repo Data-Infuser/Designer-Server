@@ -276,12 +276,16 @@ class MetaController {
 
       metaColumns.forEach(column => {
         columnNames.push(column.columnName)
+        let type = column.type.toString();
+        if(column.size) {
+          type = `${type}(${column.size})`
+        }
         columns.push({
           name: column.columnName,
           type: column.type,
           isNullable: true
         })
-        apiColumns.push(new ApiColumn(column.columnName, column.type, api));
+        apiColumns.push(new ApiColumn(column.columnName, type, api));
       });
 
       //table data 생성

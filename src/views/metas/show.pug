@@ -74,12 +74,13 @@ block content
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
             tr.text-center
-              th(colspan="4") 컬럼 정보
+              th(colspan="5") 컬럼 정보
             tr
               th id  
               th OriginalColumnName
               th ColumnName
               th Type
+              th Size
           tbody
             each col in meta.columns
               tr
@@ -87,6 +88,7 @@ block content
                 td #{col.originalColumnName}
                 td #{col.columnName}
                 td #{col.type}
+                td #{col.size}
 
   .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
     .modal-dialog(role='document')

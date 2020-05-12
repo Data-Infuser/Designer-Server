@@ -4,7 +4,7 @@
 ```
 docker run kong-database
 docker run kong
-docker run pantsel/konga
+docker run konga
 ```
 
 ## Test

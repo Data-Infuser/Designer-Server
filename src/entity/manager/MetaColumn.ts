@@ -2,8 +2,18 @@ import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColu
 import { Length, IsNotEmpty } from "class-validator";
 import { Meta } from "./Meta";
 
-
-
+export enum AcceptableType {
+  INTEGER = "int",
+  DOUBLE = "double",
+  BIT = "bit",
+  DATE = "date",
+  DATETIME = "datetime",
+  TIME = "time",
+  VARCHAR = "varchar",
+  TEXT = "text",
+  LONGTEXT = "longtext",
+  BOOLEAN = "boolean"
+}
 @Entity()
 export class MetaColumn {
   @PrimaryGeneratedColumn()
@@ -17,9 +27,15 @@ export class MetaColumn {
   @Length(4, 100)
   columnName: string;
 
-  @Column({ default: 'varchar' })
-  @Length(1, 30)
-  type: string;
+  @Column({
+    type: "enum",
+    enum: AcceptableType,
+    default: AcceptableType.VARCHAR
+  })
+  type: AcceptableType;
+
+  @Column({ nullable: true })
+  size: number;
 
   @Column({ nullable: true })
   // xlsx 파일에서 column과 순서를 맞추기 위해서 사용

@@ -3,8 +3,9 @@ import { SelectOptions } from "./SelectOptions";
 import * as Excel from 'exceljs';
 import { Meta } from "../entity/manager/Meta";
 import { User } from "../entity/manager/User";
-import { MetaColumn } from "../entity/manager/MetaColumn";
+import { MetaColumn, AcceptableType } from "../entity/manager/MetaColumn";
 import { MetaInfo } from "./MetaInfo";
+import mysqlTypes from "./dbsm_data_types/mysql.json";
 
 export class MetaLoader {
   static loadMetaFromFile = async (formData) => {
@@ -112,7 +113,9 @@ export class MetaLoader {
           const metaCol = new MetaColumn();
           metaCol.originalColumnName = info.Field;
           metaCol.columnName = info.Field;
-          metaCol.type = info.Type;
+          const convertedType = convertType(info.Type);
+          metaCol.type = convertedType.type;
+          if(convertedType.size) metaCol.size = convertedType.size;
           metaCol.meta = meta;
           metaCol.order = i;
           columns.push(metaCol);
@@ -131,4 +134,27 @@ export class MetaLoader {
       }
     });
   };
+}
+
+function convertType(originType: string){
+  const lowercaseType:string = originType.toLowerCase()
+  const tokens = lowercaseType.split("(");
+  let type = mysqlTypes[tokens[0]]
+  let size
+
+  if(tokens[1]) {
+    size = tokens[1].split(")")[0];
+  }
+  
+  if(!type) type = "varchar"
+
+  return {
+    type: type,
+    size: size
+  }
+}
+
+interface ConvertedType {
+  type: string,
+  size?: number
 }
