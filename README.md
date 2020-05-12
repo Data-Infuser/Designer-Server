@@ -13,8 +13,21 @@ typeorm global 설치
 
 ts-node-dev를 이용하여 실행하기 때문에 코드 수정 후 저장을 하는 경우 자동으로 재시작됩니다.
 
+## 2. test 실행
 
-## 2. Database migration
+> npm test
+
+test/ 디렉토리 밑에 테스트 코드 작성중입니다.
+
+테스트와 관련된 파일은 test/filesForTest 디렉토리에 저장
+
+테스트 코드는 mocha 와 chai를 이용하여 작성중에 있습니다.
+
+mocha : https://mochajs.org/
+
+chai : https://www.chaijs.com/
+
+## 3. Database migration
 
 첫 실행시 typeorm에서 테이블을 생성하기 위하여 서버를 한번 실행시켜야 합니다.
 
@@ -23,7 +36,7 @@ ts-node-dev를 이용하여 실행하기 때문에 코드 수정 후 저장을 �
 > npm run migration:run
 - InsertDefaultUser : admin/admin 계정 생성
 
-## 3. Generate migration
+## 4. Generate migration
 
 > typeorm migration:create -n PostRefactoring
 
