@@ -7,3 +7,4 @@ temp/
 
 ormconfig.json
 package-lock.json
+property.json

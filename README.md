@@ -1,6 +1,7 @@
 ## 프로젝트 세팅
 
-ormconfig-sample.json을 복사하여 ormconfig.json 설정
+ * ormconfig-sample.json을 복사하여 ormconfig.json 설정
+ * property-sample.json을 복사하여 property.json 설정
 
 typeorm global 설치
 
