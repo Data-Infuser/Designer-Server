@@ -30,7 +30,7 @@ constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
 
   @Column()
   @Length(1, 100)
-  entityName: string;
+  entityName: string; //TODO: 생성시 unique 처리 필요.
 
   @Column()
   @Length(1, 100)

@@ -12,6 +12,9 @@ import { MetaLoader } from "../util/MetaLoader";
 import { MetaInfo } from "../util/MetaInfo";
 import * as multiparty from 'multiparty';
 import { createCipher } from "crypto";
+import { KongService } from "../entity/kong/KongService";
+import { KongClient } from "../client/KongClient";
+import property from "../../property.json";
 
 class MetaController {
 
@@ -321,9 +324,9 @@ class MetaController {
         await defaultQueryRunner.manager.save(meta);
         await defaultQueryRunner.manager.save(api);
         await defaultQueryRunner.manager.save(apiColumns);
-        /**
-         * Kong Connection 관련 코드를 추가해주세요.
-         */
+        
+        const kongService: KongService = new KongService(api.entityName, `${property.apiServerUrl}${api.url}`);
+        await KongClient.addService(kongService);
 
         await defaultQueryRunner.commitTransaction();
         await datasetQueryRunner.commitTransaction();
