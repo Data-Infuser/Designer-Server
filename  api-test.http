@@ -6,13 +6,27 @@ accept: application/json
 GET http://localhost:8001
 accept: application/json
 
-### KONG add/update service
-PUT http://localhost:8001/services/8
+### KONG add service
+POST http://localhost:8001/services
 accept: application/json
 Content-Type: application/json
 
 {
-    "id": 8,
-    "name": "stores4",
-    "url": "http://localhost:3000/api/dataset/stores4"
+  "name": "stores4",
+  "url": "http://localhost:3000/api/dataset/stores4"
 }
+
+### KONG check plugin status
+GET http://localhost:8001/plugins
+
+### api call test through kong
+GET http://localhost:8000/api/v1/dataset/api_1_stores3
+accept: application/json
+Content-Type: application/json
+apikey: testkey
+
+### api call test through kong
+GET http://localhost:3000/api/dataset/api_1_stores4
+accept: application/json
+Content-Type: application/json
+apikey: testkey

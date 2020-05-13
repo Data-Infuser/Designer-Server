@@ -1,17 +1,64 @@
 import * as rm from "typed-rest-client/RestClient";
 import property from "../../property.json";
+import { Api } from "../entity/manager/Api";
 import { KongService } from "../entity/kong/KongService";
-
-let KONG_SERVICE_URI = "/services/";
+import { KongRoute } from "../entity/kong/KongRoute";
+import { KongPlugin } from "../entity/kong/KongPlugin";
 
 export class KongClient {
+  URI_KONG_SERVICE = "/services/";
+  URI_KONG_PLUGIN = "/plugins/";
+  URI_KONG_ROUTE = "/routes/";
 
-  static addService = async(kongService: KongService) => {
-    console.log('addService called');
-    let rest: rm.RestClient = new rm.RestClient('rest-sample', property.kongUrl);
+  constructor() {
+    this.kongUrl = property.kongUrl;
+    this.restClient = new rm.RestClient('rest-sample', property.kongUrl);
+  }
+
+  restClient: rm.RestClient;
+  kongUrl: string;
+  
+  /**
+   * service 및 route 일괄 생성
+   */
+  create = async(api: Api) => {
+    let kongService: KongService = new KongService(api.entityName, `${property.apiServerUrl}${Api.API_URL_PREFIX}`);
+    kongService = await this.addService(kongService);
+
+    // TODO: route 경로 설정시, api version 에 따른 route 처리 필요.
+    let kongRoute: KongRoute = new KongRoute(this.buildRouteName(kongService.name), 
+                                              ['/api/v1/dataset'], ['GET']);
+    kongRoute = await this.addRoute(kongService.name, kongRoute);
     
-    let restRes: rm.IRestResponse<KongService> = await rest.create<KongService>(KONG_SERVICE_URI, kongService);
-    console.log('response-----');
-    console.log(restRes);
+    const authPlugin = await this.addKeyAuthPlugin(kongRoute.id);
+
+  }
+
+  addService = async(kongService: KongService) => {
+    let response: rm.IRestResponse<KongService> = await this.restClient.create<KongService>(this.URI_KONG_SERVICE, kongService);
+    console.log('kong add service response-----');
+    console.log(response.result);
+    return response.result;
+  }
+
+  addRoute = async(serviceName: string, kongRoute: KongRoute) => {
+    const path = this.URI_KONG_SERVICE + serviceName + this.URI_KONG_ROUTE;
+    let response: rm.IRestResponse<KongRoute> = await this.restClient.create<KongRoute>(path, kongRoute);
+    console.log('kong add route response-----');
+    console.log(response.result);
+    return response.result;
+  }
+
+  addKeyAuthPlugin = async(routeId: string) => {
+    const path = this.URI_KONG_ROUTE + routeId + this.URI_KONG_PLUGIN;
+    const kongPlugin: KongPlugin = new KongPlugin(KongPlugin.PLUGIN_NAME_KEY_AUTH);
+    let response: rm.IRestResponse<KongRoute> = await this.restClient.create<KongRoute>(path, kongPlugin);
+    console.log('kong add keyAuthPlugin response-----');
+    console.log(response.result);
+  }
+
+  buildRouteName = (serviceName: string, version?: number) => {
+    if(!version) version = 1;
+    return `${KongRoute.KONG_ROUTE_NAME_PREFIX}-${serviceName}-v${version}`;
   }
 }

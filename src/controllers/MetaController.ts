@@ -12,9 +12,7 @@ import { MetaLoader } from "../util/MetaLoader";
 import { MetaInfo } from "../util/MetaInfo";
 import * as multiparty from 'multiparty';
 import { createCipher } from "crypto";
-import { KongService } from "../entity/kong/KongService";
 import { KongClient } from "../client/KongClient";
-import property from "../../property.json";
 
 class MetaController {
 
@@ -325,8 +323,8 @@ class MetaController {
         await defaultQueryRunner.manager.save(api);
         await defaultQueryRunner.manager.save(apiColumns);
         
-        const kongService: KongService = new KongService(api.entityName, `${property.apiServerUrl}${api.url}`);
-        await KongClient.addService(kongService);
+        
+        await new KongClient().create(api);
 
         await defaultQueryRunner.commitTransaction();
         await datasetQueryRunner.commitTransaction();

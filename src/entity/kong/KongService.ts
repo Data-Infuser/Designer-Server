@@ -1,5 +1,6 @@
 export class KongService {
-
+  static KONG_SERVICE_URI = "/services/";
+  
   constructor(name: string, url: string) {
     this.name = name;
     this.url = url;
