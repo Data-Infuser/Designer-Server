@@ -9,7 +9,6 @@ import { SelectOptions } from "../util/SelectOptions";
 const DEFAULT_PER_PAGE = 500;
 class ApiDatasetController {
   
-
   static getShow = async(req: Request, res: Response, next: NextFunction) => {
     const apiRepo = getRepository(Api);
     const identifier = req.params.identifier;

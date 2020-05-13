@@ -9,11 +9,11 @@ import { HttpClientResponse } from "typed-rest-client/HttpClient";
 
 
 const API_TABLE_PREFIX = 'api'
-const API_URL_PREFIX = '/dataset/'
 @Entity()
 export class Api {
+  static API_URL_PREFIX = '/dataset/'
 
-constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
+  constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
     if(entityName) this.entityName = entityName
     if(title) this.title = title;
     if(user) this.user = user;
@@ -61,6 +61,6 @@ constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
   updatedAt: Date;
 
   get url(): string {
-    return API_URL_PREFIX + this.entityName;
+    return Api.API_URL_PREFIX + this.tableName;
   }
 }
