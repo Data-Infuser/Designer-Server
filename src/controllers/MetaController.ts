@@ -11,8 +11,7 @@ import { RowGenerator } from "../util/RowGenerator";
 import { MetaLoader } from "../util/MetaLoader";
 import { MetaInfo } from "../util/MetaInfo";
 import * as multiparty from 'multiparty';
-import { KongClient } from "../client/KongClient";
-import { KongService } from "../entity/kong/KongService";
+import { createCipher } from "crypto";
 
 class MetaController {
 
@@ -26,7 +25,7 @@ class MetaController {
         uploadDir: __dirname + "/../../upload"
       }
       const form = new multiparty.Form(multipartyOption);
-  
+            
       form.parse(req, function(err, fields, files) {
           if (err) return reject(err);
           return resolve({
@@ -308,18 +307,37 @@ class MetaController {
       api.columnLength = apiColumns.length;
       api.dataCounts = insertValues.length;
 
-      /**
-       * TODO: 2개의 DB에 작업을 하기 때문에 Transaction과 관련된 추가적인 예외 처리가 필요함
-       */
-      await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-        await getConnection('dataset').createQueryRunner().createTable(new Table(tableOption));
-        await getConnection('dataset').manager.query(insertQuery, [insertValues])
-        meta.isActive = true;
-        await metaRepo.save(meta);
-        await apiRepo.save(api);
-        await apiColumnRepo.save(apiColumns);
-      });
+      const defaultQueryRunner = await getConnection().createQueryRunner();
+      const datasetQueryRunner = await getConnection('dataset').createQueryRunner();
 
+      await defaultQueryRunner.startTransaction();
+      await datasetQueryRunner.startTransaction();
+
+      try {
+        await datasetQueryRunner.createTable(new Table(tableOption));
+        await datasetQueryRunner.query(insertQuery, [insertValues]);
+        meta.isActive = true;
+        await defaultQueryRunner.manager.save(meta);
+        await defaultQueryRunner.manager.save(api);
+        await defaultQueryRunner.manager.save(apiColumns);
+        /**
+         * Kong Connection 관련 코드를 추가해주세요.
+         */
+
+        await defaultQueryRunner.commitTransaction();
+        await datasetQueryRunner.commitTransaction();
+      } catch(err) {
+        await defaultQueryRunner.rollbackTransaction();
+        await datasetQueryRunner.rollbackTransaction();
+        /**
+         * Kong disconnect 관련 코드를 추가해주세요.
+         */
+
+        next(new ApplicationError(500, err.message));
+      } finally {
+        await defaultQueryRunner.release();
+        await datasetQueryRunner.release();
+      }
       res.redirect(`/apis/${api.id}`)
     } catch (err) {
       console.error(err);
