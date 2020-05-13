@@ -5,13 +5,15 @@ import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
 import { Meta } from "./Meta";
 import { ApiColumn } from "./ApiColumns";
+import { HttpClientResponse } from "typed-rest-client/HttpClient";
 
 
 const API_TABLE_PREFIX = 'api'
+const API_URL_PREFIX = '/dataset/'
 @Entity()
 export class Api {
 
-  constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
+constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
     if(entityName) this.entityName = entityName
     if(title) this.title = title;
     if(user) this.user = user;
@@ -57,4 +59,8 @@ export class Api {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  get url(): string {
+    return API_URL_PREFIX + this.entityName;
+  }
 }

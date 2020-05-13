@@ -1,11 +1,17 @@
+# API Generator
+
+## 개발 환경
+ * nodeJS v12.16.3
+ * MySQL 8.0.x
+
 ## 프로젝트 세팅
 
  * ormconfig-sample.json을 복사하여 ormconfig.json 설정
  * property-sample.json을 복사하여 property.json 설정
-
-typeorm global 설치
-
-> npm install typeorm -g
+ * typeorm global 설치
+   > npm install typeorm -g
+ * package 설치
+   > npm install
 
 ## 1. 프로젝트 실행
 

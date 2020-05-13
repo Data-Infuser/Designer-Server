@@ -24,8 +24,7 @@ class MetaController {
         autoFiles: true,
         uploadDir: __dirname + "/../../upload"
       }
-      const form = new multiparty.Form(multipartyOption);
-            
+      const form = new multiparty.Form(multipartyOption);     
       form.parse(req, function(err, fields, files) {
           if (err) return reject(err);
           return resolve({
@@ -36,6 +35,8 @@ class MetaController {
     });
     const formData = await promisifyUpload(req);
 
+    console.log('after promisifyUpload');
+    console.log(formData);
     const dataType = formData.fields.dataType[0]
     try {
       let result: MetaInfo;
