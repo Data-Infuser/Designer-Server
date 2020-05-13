@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/databaseConnections") 연결 관리
+        | / DB 상세보기
+        
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 DB 상세보기
+
+    .card-body
+      .table-responsive
+        table.table.table-bordered(width='100%' cellspacing='0')
+          thead
+            tr.text-center
+              th table 목록
+          tbody
+            each table in tables
+              tr
+                td 
+                  a(href=`/databaseConnections/${dbc.id}/tables/${table}`) #{table}

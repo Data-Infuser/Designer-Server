@@ -1,11 +1,10 @@
 import { getManager, createConnections, getConnection } from "typeorm";
-import { SelectOptions } from "./SelectOptions";
 import * as Excel from 'exceljs';
 import { Meta } from "../entity/manager/Meta";
 import { User } from "../entity/manager/User";
 import { MetaColumn, AcceptableType } from "../entity/manager/MetaColumn";
-import { MetaInfo } from "./MetaInfo";
-import mysqlTypes from "./dbsm_data_types/mysql.json";
+import mysqlTypes from "./dbms_data_types/mysql.json";
+import { MetaInfo } from "../interfaces/MetaInfo";
 
 export class MetaLoader {
   static loadMetaFromFile = async (formData) => {
@@ -157,7 +156,3 @@ function convertType(originType: string){
   }
 }
 
-interface ConvertedType {
-  type: string,
-  size?: number
-}

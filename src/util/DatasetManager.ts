@@ -1,5 +1,5 @@
 import { getManager } from "typeorm";
-import { SelectOptions } from "./SelectOptions";
+import { SelectOptions } from "../interfaces/SelectOptions";
 
 export class DatasetManager {
   static getDatasetByName = async (tableName:string, selectOptions: SelectOptions) => {

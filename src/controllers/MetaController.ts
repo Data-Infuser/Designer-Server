@@ -9,12 +9,12 @@ import ApplicationError from "../ApplicationError";
 import { ApiColumn } from "../entity/manager/ApiColumns";
 import { RowGenerator } from "../util/RowGenerator";
 import { MetaLoader } from "../util/MetaLoader";
-import { MetaInfo } from "../util/MetaInfo";
 import * as multiparty from 'multiparty';
 import { createCipher } from "crypto";
 import { KongService } from "../entity/kong/KongService";
 import { KongClient } from "../client/KongClient";
 import property from "../../property.json";
+import { MetaInfo } from "../interfaces/MetaInfo";
 
 class MetaController {
 
