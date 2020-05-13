@@ -21,17 +21,33 @@ export class KongClient {
   /**
    * service 및 route 일괄 생성
    */
-  create = async(api: Api) => {
-    let kongService: KongService = new KongService(api.entityName, `${property.apiServerUrl}${Api.API_URL_PREFIX}`);
+  init = async() => {
+    const serviceName = "dataset-service";
+
+    if(await this.retrieveService(serviceName)) {
+      console.log('kong service already exists');
+      return;
+    }
+    
+    console.log('there is no kong service. initializing kong service');
+    let kongService: KongService = new KongService(serviceName, `${property.apiServerUrl}${Api.API_URL_PREFIX}`);
     kongService = await this.addService(kongService);
 
     // TODO: route 경로 설정시, api version 에 따른 route 처리 필요.
-    let kongRoute: KongRoute = new KongRoute(this.buildRouteName(kongService.name), 
+    let kongRoute: KongRoute = new KongRoute("dataset-route", 
                                               ['/api/v1/dataset'], ['GET']);
     kongRoute = await this.addRoute(kongService.name, kongRoute);
     
     const authPlugin = await this.addKeyAuthPlugin(kongRoute.id);
 
+  }
+
+  retrieveService = async(serviceName: string) => {
+    const path = this.URI_KONG_SERVICE + serviceName;
+    const response: rm.IRestResponse<KongService> = await this.restClient.get<KongService>(path);
+    console.log('kong retrieve service')
+    console.log(response);
+    return response.result;
   }
 
   addService = async(kongService: KongService) => {
@@ -55,10 +71,5 @@ export class KongClient {
     let response: rm.IRestResponse<KongRoute> = await this.restClient.create<KongRoute>(path, kongPlugin);
     console.log('kong add keyAuthPlugin response-----');
     console.log(response.result);
-  }
-
-  buildRouteName = (serviceName: string, version?: number) => {
-    if(!version) version = 1;
-    return `${KongRoute.KONG_ROUTE_NAME_PREFIX}-${serviceName}-v${version}`;
   }
 }

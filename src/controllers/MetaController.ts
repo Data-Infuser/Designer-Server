@@ -10,7 +10,6 @@ import { ApiColumn } from "../entity/manager/ApiColumns";
 import { RowGenerator } from "../util/RowGenerator";
 import { MetaLoader } from "../util/MetaLoader";
 import * as multiparty from 'multiparty';
-import { KongClient } from "../client/KongClient";
 import { MetaInfo } from "../interfaces/MetaInfo";
 
 class MetaController {
@@ -321,18 +320,12 @@ class MetaController {
         await defaultQueryRunner.manager.save(meta);
         await defaultQueryRunner.manager.save(api);
         await defaultQueryRunner.manager.save(apiColumns);
-        
-        
-        await new KongClient().create(api);
 
         await defaultQueryRunner.commitTransaction();
         await datasetQueryRunner.commitTransaction();
       } catch(err) {
         await defaultQueryRunner.rollbackTransaction();
         await datasetQueryRunner.rollbackTransaction();
-        /**
-         * Kong disconnect 관련 코드를 추가해주세요.
-         */
 
         next(new ApplicationError(500, err.message));
       } finally {
