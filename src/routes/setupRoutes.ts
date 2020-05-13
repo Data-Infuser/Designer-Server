@@ -3,6 +3,7 @@ import defaultRoutes from '../routes/defaultRoutes';
 import metaRoutes from '../routes/metaRoutes';
 import apiDatasetRoutes from '../routes/apiDatasetRoutes';
 import apiRoutes from '../routes/apiRoutes';
+import dbcRoutes from '../routes/databaseConnectionRoutes';
 
 
 export default function setupRoutes(server: express.Application) {
@@ -10,4 +11,5 @@ export default function setupRoutes(server: express.Application) {
   server.use("/metas", metaRoutes);
   server.use("/api/dataset", apiDatasetRoutes);
   server.use("/apis", apiRoutes)
+  server.use("/databaseConnections", dbcRoutes)
 }

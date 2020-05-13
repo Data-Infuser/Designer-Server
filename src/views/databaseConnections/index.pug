@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/databaseConnections") 연결 관리
+
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 연결 목록
+
+    .card-body
+      a.mb-3.btn.btn-primary(href="/databaseConnections/new") 새 연결 만들기
+      .table-responsive
+        table.table.table-bordered(width='100%' cellspacing='0')
+          thead
+            tr.text-center
+              th id
+              th 연결명
+              th user
+              th host
+              th port
+          tbody
+            each dbc in dbcs
+              tr
+                td #{dbc.id}
+                td 
+                  a(href=`/databaseConnections/${dbc.id}`) #{dbc.connectionName}
+                td #{dbc.username}
+                td #{dbc.hostname}
+                td #{dbc.port}

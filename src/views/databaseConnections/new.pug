@@ -1,0 +1,42 @@
+extends ../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/databaseConnections") 연결 관리
+        | / 새 연결 생성
+        
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 새 연결 생성
+
+    .card-body
+      .row
+        .col-12
+          form(action=`/databaseConnections`, method="post")
+            div.form-group.mt-3
+              label(for="tableNameInput") 메타데이터명을 입력해주세요.
+              input.form-control(type="text", name="title", id="tableNameInput", required=true)
+            div.form-group
+              select#dataTypeSelect.form-control(name=`dbms`)
+                option(value='mysql') mysql
+            div.form-group
+              label(for="hostInput") host
+              input.form-control(type="text", name="host", id="hostInput", required=true)
+            div.form-group
+              label(for="portInput") port
+              input.form-control(type="text", name="port", id="portInput", required=true)
+            div.form-group
+              label(for="dbInput") db
+              input.form-control(type="text", name="db", id="dbInput", required=true)
+            div.form-group
+              label(for="userInput") user
+              input.form-control(type="text", name="user", id="userInput", required=true)
+            div.form-group
+              label(for="pwdInput") pwd
+              input.form-control(type="text", name="pwd", id="pwdInput")
+            .text-right
+              // button.mr-3.btn.btn-outline-primary 연결 테스트
+              input.btn.btn-outline-primary(type="submit", value="저장")
+      
