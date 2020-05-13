@@ -16,7 +16,7 @@ export class ApiSubscriber implements EntitySubscriberInterface<Api> {
     const api = event.entity;
     
     // 1. create kong service
-    const kongService: KongService = new KongService(api.id, api.title, `#{property.apiServerUrl}#{api.url}`);
+    const kongService: KongService = new KongService(api.title, `#{property.apiServerUrl}#{api.url}`);
     await KongClient.addService(kongService);
     // 2. create kong route
   }

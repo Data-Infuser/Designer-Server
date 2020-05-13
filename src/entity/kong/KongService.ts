@@ -2,7 +2,7 @@ export class KongService {
 
   constructor(name: string, url: string) {
     this.name = name;
-    this.url = "";
+    this.url = url;
   }
   
   id: string;
