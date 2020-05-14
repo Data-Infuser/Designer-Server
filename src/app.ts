@@ -10,7 +10,6 @@ import flash from "express-flash";
 import {createConnection} from "typeorm";
 import setupRoutes from "./routes/setupRoutes";
 import ApplicationError from "./ApplicationError";
-import { KongClient } from "./client/KongClient";
 
 export class Application {
   app: express.Application;
@@ -72,8 +71,6 @@ export class Application {
       });
 
       this.startServer()
-
-      await new KongClient().init();
   }
 
   startServer(): Promise<boolean> {
