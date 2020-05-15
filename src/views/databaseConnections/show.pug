@@ -16,9 +16,67 @@ block content
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
             tr.text-center
-              th table 목록
+              th(colspan=4) DB connection 정보
           tbody
-            each table in tables
-              tr
-                td 
-                  a(href=`/databaseConnections/${dbc.id}/tables/${table}`) #{table}
+            tr
+              th id
+              td #{dbc.id}
+              th host
+              td #{dbc.hostname}:#{dbc.port}
+            tr
+              th user
+              td #{dbc.username}
+              th db
+              td #{dbc.database}
+            
+      .table-responsive
+        table.table.table-bordered(width='100%' cellspacing='0')
+          thead
+            tr.text-center
+              th table 명
+              th Rows
+              th
+          tbody
+            each ts in tableStatuses
+              tr.text-center
+                td.align-middle #{ts.Name}
+                td.align-middle #{ts.Rows}
+                td.align-middle
+                  button.btn-sm.btn-outline-primary(onclick=`location.href=\`/databaseConnections/${dbc.id}/tables/${ts.Name}\``) Meta 미리보기
+                  button.post-meta-btn.ml-2.btn-sm.btn-outline-success(data-table=`${ts.Name}`) Meta 생성하기
+
+  
+  .modal.fade(id="postMetaModal" tabindex='-1' role='dialog' aria-labelledby='postMetaModal' aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title Meta 생성하기
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        form#post-form(action=`/metas`, method="post", enctype="multipart/form-data")
+          .modal-body
+            | 선택한 테이블 정보의 Meta 데이터를 추출하여 저장합니다.
+            div.form-group
+              label(for="metaTitleNameInput") Meta 데이터를 식별하기 위한 데이터명을 입력해주세요
+              input.form-control(type="text", name="title", id="metaTitleNameInput", required=true)
+            .d-none
+              input.form-control.d-none(type="text", name="dataType", required=true, value="dbms")
+              input.form-control(type="text", name="dbms", id="dbmsInput", required=true, value=dbc.dbms)
+              input.form-control(type="text", name="host", id="hostInput", required=true, value=dbc.hostname)
+              input.form-control(type="text", name="port", id="portInput", required=true, value=dbc.port)
+              input.form-control(type="text", name="db", id="dbInput", required=true, value=dbc.database)
+              input.form-control(type="text", name="user", id="userInput", required=true, value=dbc.username)
+              input.form-control(type="text", name="pwd", id="pwdInput", value=dbc.password)
+              input.form-control(type="text", name="table", id="tableInput", required=true)
+          .modal-footer
+            button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기
+            input.btn.btn-primary(type="submit", value="저장")
+
+block script
+  script. 
+    $(function() {
+      $('.post-meta-btn').click(function() {
+        $('#tableInput').val(this.dataset.table);
+        $('#postMetaModal').modal('show');
+      })
+    })

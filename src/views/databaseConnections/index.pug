@@ -21,12 +21,39 @@ block content
               th user
               th host
               th port
+              th
           tbody
             each dbc in dbcs
               tr
-                td #{dbc.id}
-                td 
+                td.align-middle #{dbc.id}
+                td.align-middle 
                   a(href=`/databaseConnections/${dbc.id}`) #{dbc.connectionName}
-                td #{dbc.username}
-                td #{dbc.hostname}
-                td #{dbc.port}
+                td.align-middle #{dbc.username}
+                td.align-middle #{dbc.hostname}
+                td.align-middle #{dbc.port}
+                td.align-middle
+                  button.dbc-delete-btn.btn-sm.btn-outline-danger(data-id=dbc.id) 삭제
+
+  .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title 삭제하기
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        form#delete-form(action=``, method="post")
+          .modal-body
+            | DB Connection 정보가 삭제됩니다. <br>
+            | 정말 삭제하시겠습니까?
+          .modal-footer
+            button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기
+            input.btn.btn-danger(type="submit", value="삭제")
+
+block script
+  script. 
+    $(function() {
+      $('.dbc-delete-btn').click(function() {
+        $('#delete-form').attr('action', `/databaseConnections/${this.dataset.id}?_method=DELETE`);
+        $('#deleteModal').modal('show');
+      })
+    })

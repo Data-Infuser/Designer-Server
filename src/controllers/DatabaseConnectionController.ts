@@ -45,10 +45,12 @@ class ConnectionController {
         password: dbc.password,
         database: dbc.database
       }
-      const tables = await MysqlHelper.getTables(connectOption);
+      const tables = await MysqlHelper.showTables(connectOption);
+      const tableStatuses = await MysqlHelper.showTableStatus(connectOption);
       res.render("databaseConnections/show.pug", {
         current_user: req.user,
         tables: tables,
+        tableStatuses: tableStatuses,
         dbc: dbc
       })
     } catch(err) {
@@ -102,6 +104,19 @@ class ConnectionController {
       await dbcRepo.save(newConnection);
 
       res.redirect('/databaseConnections')
+    } catch(err) {
+      console.error(err);
+      next(new ApplicationError(500, err.message));
+    }
+  }
+
+  static delete = async(req: Request, res: Response, next: NextFunction) => {
+    const dbcRepo = getRepository(DatabaseConnection);
+    const { id } = req.params
+
+    try {
+      await dbcRepo.delete(id);
+      res.redirect('/databaseConnections');
     } catch(err) {
       console.error(err);
       next(new ApplicationError(500, err.message));

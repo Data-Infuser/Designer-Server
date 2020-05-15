@@ -5,7 +5,7 @@ import mysqlTypes from "../util/dbms_data_types/mysql.json";
 
 
 export class MysqlHelper {
-  static getTables = async(connectOption: ConnectionOptions) => {
+  static showTables = async(connectOption: ConnectionOptions) => {
     return new Promise(async(resolve, reject) => {
       const name = connectOption.name;
       let tables = []
@@ -19,13 +19,32 @@ export class MysqlHelper {
           tables.push(row[`Tables_in_${connectOption.database}`]);
         });
       } catch(err) {
-        getConnection(name).close();
+        await getConnection(name).close();
         reject(err);
         return;
       } finally {
-        getConnection(name).close();
+        await getConnection(name).close();
       }
       resolve(tables);
+    });
+  };
+
+  static showTableStatus = async(connectOption: ConnectionOptions):Promise<MysqlTableStatus[]> => {
+    return new Promise(async(resolve, reject) => {
+      const name = connectOption.name;
+      let tableStatuses:MysqlTableStatus[] = []
+      try {
+        await createConnections([connectOption])
+        const manager = await getManager(name)
+        tableStatuses = await manager.query("SHOW TABLE STATUS;");
+      } catch(err) {
+        await getConnection(name).close();
+        reject(err);
+        return;
+      } finally {
+        await getConnection(name).close();
+      }
+      resolve(tableStatuses);
     });
   };
 
@@ -48,11 +67,11 @@ export class MysqlHelper {
           columns.push(metaCol);
         })
       } catch(err) {
-        getConnection(name).close();
+        await getConnection(name).close();
         reject(err);
         return;
       } finally {
-        getConnection(name).close();
+        await getConnection(name).close();
       }
       resolve(columns);
     })

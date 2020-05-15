@@ -10,4 +10,6 @@ router.get("/new", needAuth, DatabaseConnectionController.getNew);
 router.get("/:id", needAuth, DatabaseConnectionController.getShow);
 router.get("/:id/tables/:table", needAuth, DatabaseConnectionController.getTableDetail);
 router.post("/", needAuth, DatabaseConnectionController.post);
+router.delete("/:id", needAuth, DatabaseConnectionController.delete);
+
 export default router;
