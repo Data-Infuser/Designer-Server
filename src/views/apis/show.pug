@@ -39,6 +39,7 @@ block content
                   a(href=`/metas/${api.meta.id}`) /metas/#{api.meta.id}
       
       .text-right.mb-3
+        a.ml-1.btn.btn-outline-primary(href=`/apis/${api.id}/edit`) Api 설정
         button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Api 삭제
 
       .table-responsive
@@ -58,6 +59,7 @@ block content
                 td #{col.columnName}
                 td #{col.type}
                 td #{col.hidden}
+                  
 
   .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
     .modal-dialog(role='document')

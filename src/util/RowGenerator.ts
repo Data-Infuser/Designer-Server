@@ -17,6 +17,7 @@ export class RowGenerator {
       throw err;
     }
   }
+  
   static getRowsFromXlsx = async (meta:Meta) => {
     return new Promise<any>(async(resolve, reject) => {
       try {

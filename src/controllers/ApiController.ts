@@ -3,6 +3,7 @@ import { Api } from "../entity/manager/Api";
 import { getRepository, getConnection, getManager } from "typeorm";
 import ApplicationError from "../ApplicationError";
 import { Meta } from "../entity/manager/Meta";
+import { ApiColumn } from "../entity/manager/ApiColumns";
 
 class ApiController {
   static getIndex = async(req: Request, res: Response, next: NextFunction) => {
@@ -38,6 +39,56 @@ class ApiController {
         api: api,
         current_user: req.user
       })
+    } catch (err) {
+      console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
+  static getEdit = async(req: Request, res: Response, next: NextFunction) => {
+    const apiRepo = getRepository(Api);
+    const { id } = req.params;
+
+    try {
+      const api = await apiRepo.findOneOrFail({
+        relations: ["columns", "meta"],
+        where: {
+          id: id
+        }
+      });
+      
+      res.render("apis/edit.pug", {
+        api: api,
+        current_user: req.user
+      });
+    } catch (err) {
+      console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
+  static put = async(req: Request, res: Response, next: NextFunction) => {
+    const apiRepo = getRepository(Api);
+    const apiColRepo = getRepository(ApiColumn);
+    const { id } = req.params;
+
+    try {
+      const api = await apiRepo.findOneOrFail({
+        relations: ["columns", "meta"],
+        where: {
+          id: id
+        }
+      });
+
+      api.columns.forEach(col => {
+        col.hidden = req.body[`hidden-${col.id}`] == 'true'
+      })
+
+      await apiColRepo.save(api.columns);
+
+      res.redirect(`/apis/${api.id}`)
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));
