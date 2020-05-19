@@ -142,10 +142,11 @@ function convertType(originType: string){
   const lowercaseType:string = originType.toLowerCase()
   const tokens = lowercaseType.split("(");
   let type = mysqlTypes[tokens[0]]
-  let size
+  let size:number;
 
   if(tokens[1]) {
-    size = tokens[1].split(")")[0];
+    let candidateSize = Number(tokens[1].split(")")[0]);
+    if(!isNaN(candidateSize)) size = candidateSize;
   }
   
   if(!type) type = "varchar"

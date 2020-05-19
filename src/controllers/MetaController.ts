@@ -261,6 +261,7 @@ class MetaController {
       // column data 생성
       let columns = []
       let columnNames = []
+      let originalColumnNames = []
       let apiColumns: ApiColumn[] = []
 
       if(needId) {
@@ -276,7 +277,8 @@ class MetaController {
       
 
       metaColumns.forEach(column => {
-        columnNames.push(column.columnName)
+        columnNames.push(`\`${column.columnName}\``)
+        originalColumnNames.push(`\`${column.originalColumnName}\``)
         let type = column.type.toString();
         if(column.size) {
           type = `${type}(${column.size})`
@@ -296,12 +298,12 @@ class MetaController {
         columns: columns
       }
       
-      let insertQuery = `INSERT INTO ${tableOption.name}(${columnNames.join(",")}) VALUES ?`
+      let insertQuery = `INSERT INTO ${tableOption.name}(${columnNames.join(",")}) VALUES ?`;
 
       /**
        * TODO: getRows 와 같이 범용적인 함수를 만들고, 함수 내부에서 data type을 확인 후 RDBMS, CSV 등을 읽어오도록 구현
        */
-      let insertValues = await RowGenerator.generateRows(meta, columnNames);
+      let insertValues = await RowGenerator.generateRows(meta, originalColumnNames);
       
       tableForDelete = tableOption.name;
       api.columnLength = apiColumns.length;
@@ -323,16 +325,17 @@ class MetaController {
 
         await defaultQueryRunner.commitTransaction();
         await datasetQueryRunner.commitTransaction();
+
+        res.redirect(`/apis/${api.id}`)
       } catch(err) {
         await defaultQueryRunner.rollbackTransaction();
         await datasetQueryRunner.rollbackTransaction();
-
         next(new ApplicationError(500, err.message));
       } finally {
         await defaultQueryRunner.release();
         await datasetQueryRunner.release();
       }
-      res.redirect(`/apis/${api.id}`)
+      return;
     } catch (err) {
       console.error(err);
       await getConnection('dataset').createQueryRunner().dropTable(tableForDelete, true);
