@@ -14,8 +14,7 @@ class ApiDatasetController {
     const identifier = req.params.identifier;
     let page: number = Number(req.query.page);
     let perPage: number = Number(req.query.perPage);
-
-    console.log(page);
+    
     try {
       const api = await apiRepo.findOneOrFail({
         relations: ["columns"],
@@ -32,8 +31,8 @@ class ApiDatasetController {
       const selectedColumns = columns.length == 0 ? '*' : columns.join(',')
 
       //page
-      if(!page) page = 1;
-      if(!perPage) perPage = DEFAULT_PER_PAGE;
+      if(!page || page < 1) page = 1;
+      if(!perPage || perPage < 1) perPage = DEFAULT_PER_PAGE;
 
       const selectOption:SelectOptions = {
         fields: selectedColumns,
