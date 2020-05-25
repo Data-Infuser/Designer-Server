@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "page": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "perPage": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "totalCount": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "currentCount": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "datas": {
+      "type": "array",
+      "items": {}
+    }
+  }
+}

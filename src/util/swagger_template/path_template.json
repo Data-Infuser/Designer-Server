@@ -1,0 +1,38 @@
+{
+    "get": {
+        "tags": [],
+        "summary": "",
+        "operationId": "",
+        "description": "",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [{
+            "name": "page",
+            "in": "query",
+            "description": "page index",
+            "type": "integer",
+            "format": "int64",
+            "minimun": 1,
+            "exclusiveMinimum": false,
+            "default": 1
+        }, {
+            "name": "perPage",
+            "in": "query",
+            "description": "page size",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "exclusiveMinimum": false,
+            "default": 500
+        }],
+        "responses": {
+            "200": {
+                "description": "success",
+                "schema": {}
+            },
+            "500": {
+                "description": "fail"
+            }
+        }
+    }
+}
