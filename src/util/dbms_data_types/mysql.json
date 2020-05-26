@@ -1,10 +1,10 @@
-{
+{   
     "integer": "int",
     "int": "int",
     "smallint": "int",
     "tinyint": "int",
     "mediumint": "int",
-    "bigint": "int",
+    "bigint": "bigint",
     "demical": "double",
     "numeric": "double",
     "float": "double",

@@ -3,6 +3,7 @@ import { Length, IsNotEmpty } from "class-validator";
 import { Meta } from "./Meta";
 
 export enum AcceptableType {
+  BIGINT="bigint",
   INTEGER = "int",
   DOUBLE = "double",
   BIT = "bit",

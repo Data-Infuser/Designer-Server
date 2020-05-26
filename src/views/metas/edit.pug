@@ -58,6 +58,7 @@ block content
                     select.form-control(name=`type-${col.id}`)
                       option(value='varchar', selected= col.type == 'varchar') varchar
                       option(value='int', selected= col.type == 'int') int
+                      option(value='bigint', selected= col.type == 'bigint') bigint
                       option(value='bit', selected= col.type == 'bit') bit
                       option(value='double', selected= col.type == 'double') double
                       option(value='boolean', selected= col.type == 'boolean') boolean

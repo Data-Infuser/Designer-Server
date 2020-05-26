@@ -298,7 +298,7 @@ class MetaController {
         columns: columns
       }
       
-      let insertQuery = `INSERT INTO ${tableOption.name}(${columnNames.join(",")}) VALUES ?`;
+      let insertQuery = `INSERT INTO \`${tableOption.name}\`(${columnNames.join(",")}) VALUES ?`;
 
       /**
        * TODO: getRows 와 같이 범용적인 함수를 만들고, 함수 내부에서 data type을 확인 후 RDBMS, CSV 등을 읽어오도록 구현
