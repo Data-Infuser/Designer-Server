@@ -37,6 +37,10 @@ block content
                 th Meta 정보
                 td(colspan="3") 
                   a(href=`/metas/${api.meta.id}`) /metas/#{api.meta.id}
+              tr
+                th Swagger
+                td(colspan="3") 
+                  a(href=`/apis/${api.id}/api-docs`) 미리보기
       
       .text-right.mb-3
         a.ml-1.btn.btn-outline-primary(href=`/apis/${api.id}/edit`) Api 설정

@@ -15,5 +15,5 @@ export default async function setupRoutes(server: express.Application) {
   server.use("/api/dataset", apiDatasetRoutes);
   server.use("/apis", apiRoutes);
   server.use("/databaseConnections", dbcRoutes);
-  server.use("/api-definition", swagger.serve, swagger.setup(await SwaggerBuilder.buildDoc()));
+  server.use("/api-definition", swagger.serve, swagger.setup());
 }

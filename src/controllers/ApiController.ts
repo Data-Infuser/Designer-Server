@@ -4,6 +4,9 @@ import { getRepository, getConnection, getManager } from "typeorm";
 import ApplicationError from "../ApplicationError";
 import { Meta } from "../entity/manager/Meta";
 import { ApiColumn } from "../entity/manager/ApiColumns";
+import { SwaggerBuilder } from "../util/SwaggerBuilder";
+import swagger from "swagger-ui-express";
+
 
 class ApiController {
   static getIndex = async(req: Request, res: Response, next: NextFunction) => {
@@ -116,6 +119,27 @@ class ApiController {
       
       req.flash('danger', 'api가 삭제되었습니다.');
       res.redirect('/apis')
+    } catch (err) {
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
+  static getSwagger = async(req: Request, res: Response, next: NextFunction) => {
+    const apiRepo = getRepository(Api);
+    const { id } = req.params;
+    try {
+      const api = await apiRepo.findOneOrFail({
+        relations: ['meta', 'columns'],
+        where: {
+          id: id
+        }
+      })
+
+      const apiDoc = await SwaggerBuilder.buildDoc([api]);
+      if(apiDoc) {
+        res.send(swagger.generateHTML(apiDoc));
+      }
     } catch (err) {
       next(new ApplicationError(500, err.message));
       return;

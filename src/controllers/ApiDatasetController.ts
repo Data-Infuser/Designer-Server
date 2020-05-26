@@ -4,7 +4,7 @@ import { Meta } from "../entity/manager/Meta";
 import ApplicationError from "../ApplicationError";
 import {DatasetManager} from "../util/DatasetManager";
 import { Api } from "../entity/manager/Api";
-import { SelectOptions } from "../util/SelectOptions";
+import { SelectOptions } from "../interfaces/SelectOptions";
 
 const DEFAULT_PER_PAGE = 500;
 class ApiDatasetController {

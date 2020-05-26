@@ -11,7 +11,7 @@ import PathTemplate from "./swagger_template/path_template.json";
 
 export class SwaggerBuilder {
 
-  static buildDoc = async () => {
+  static buildDoc = async (apis?:Api[]) => {
     return new Promise<any>(async(resolve, reject) => {
       const apiRepo = getRepository(Api);
       let doc = {
@@ -28,9 +28,11 @@ export class SwaggerBuilder {
       };
 
       try {
-        const apis = await apiRepo.find({
-          relations: ["meta", "columns"],
-        });
+        if(!apis) {
+          apis = await apiRepo.find({
+            relations: ["meta", "columns"],
+          });
+        }
 
         apis.forEach((api) => {
           let def = SwaggerBuilder.buildDef(api);
