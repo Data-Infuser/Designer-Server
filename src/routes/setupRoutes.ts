@@ -6,6 +6,7 @@ import metaRoutes from '../routes/metaRoutes';
 import apiDatasetRoutes from '../routes/apiDatasetRoutes';
 import apiRoutes from '../routes/apiRoutes';
 import dbcRoutes from '../routes/databaseConnectionRoutes';
+import applicationRoutes from '../routes/applicationRoutes';
 import { SwaggerBuilder } from "../util/SwaggerBuilder";
 
 
@@ -16,4 +17,5 @@ export default async function setupRoutes(server: express.Application) {
   server.use("/apis", apiRoutes);
   server.use("/databaseConnections", dbcRoutes);
   server.use("/api-definition", swagger.serve, swagger.setup());
+  server.use("/applications", applicationRoutes);
 }
