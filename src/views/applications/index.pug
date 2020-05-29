@@ -26,6 +26,7 @@ block content
               tr
                 td #{application.id}
                 td #{application.nameSpace}
-                td #{application.title}
+                td 
+                  a(href=`/applications/${application.id}`) #{application.title}
                 td #{application.description}
                 td -
