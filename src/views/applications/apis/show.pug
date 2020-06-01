@@ -1,0 +1,17 @@
+extends ../../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/applications") Application 관리
+        | /
+        a(href=`/applications/${application.id}`) Application 관리
+        | / API 설정
+        
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 API 설정
+
+    .card-body
+      | Api 설정

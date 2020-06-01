@@ -131,6 +131,30 @@ class ApiController {
       return;
     }
   }
+
+  static getApiShow = async(req: Request, res: Response, next: NextFunction) => {
+    const apiRepo = getRepository(Api);
+    const { id, apiId } = req.params;
+    
+    try {
+      const api = await apiRepo.findOneOrFail({
+        relations: ["application"],
+        where: {
+          id: apiId
+        }
+      });
+      const application = api.application;
+      res.render("applications/apis/show", {
+        current_user: req.user,
+        application: application,
+        api: api
+      })
+    } catch (err) {
+      console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
 }
 
 export default ApiController;

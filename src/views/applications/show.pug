@@ -42,20 +42,26 @@ block content
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
             tr.text-center
-              th(colspan="4") Api 정보
+              th(colspan="6") Api 정보
             tr.text-center
               th id
               th method
               th endpoint
+              th description
               th status
+              th
 
           tbody
             each api in application.apis
               tr.text-center
-                th #{api.id}
+                td #{api.id}
                 td #{api.method}
                 td #{api.endpoint}
+                td #{api.description}
                 td -
+                td.text-left
+                  a.btn.btn-sm.btn-outline-info(href=`/applications/${application.id}/apis/${api.id}`) api 설정
+                  button.ml-3.btn.btn-sm.btn-outline-danger api 삭제
 
   .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
     .modal-dialog(role='document')
