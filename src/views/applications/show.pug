@@ -4,7 +4,7 @@ block content
   ol.breadcrumb
     li.breadcrumb-item.active 
         a(href="/applications") Application 관리
-        | Application 상세보기
+        | /Application 상세보기
         
   .card.mb-3
     .card-header
@@ -29,10 +29,33 @@ block content
             tr
               th description
               td(colspan="3") #{application.description}
+            tr
+              th swagger
+              td(colspan="3")
+                a(href=`/applications/${application.id}/api-docs`) #{`/applications/${application.id}/api-docs`}
 
       .text-right.mb-3
-        a.ml-1.btn.btn-outline-primary(href=`#`) Api 설정
+        a.ml-1.btn.btn-outline-primary(href=`/applications/${application.id}/apis/new`) Api 추가
         button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Application 삭제
+
+      .table-responsive
+        table.table.table-bordered(width='100%' cellspacing='0')
+          thead
+            tr.text-center
+              th(colspan="4") Api 정보
+            tr.text-center
+              th id
+              th method
+              th endpoint
+              th status
+
+          tbody
+            each api in application.apis
+              tr.text-center
+                th #{api.id}
+                td #{api.method}
+                td #{api.endpoint}
+                td -
 
   .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
     .modal-dialog(role='document')

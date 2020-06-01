@@ -9,5 +9,7 @@ router.get("/", needAuth, ApplicationController.getIndex);
 router.get("/new", needAuth, ApplicationController.getNew);
 router.post("/", needAuth, ApplicationController.post);
 router.get("/:id", needAuth, ApplicationController.getShow);
+router.get("/:id/apis/new", needAuth, ApplicationController.getApiNew);
+router.post("/:id/apis", needAuth, ApplicationController.postApi);
 
 export default router;

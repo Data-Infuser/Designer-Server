@@ -1,0 +1,40 @@
+extends ../../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/applications") Application 관리
+        | /
+        a(href=`/applications/${application.id}`) Application 관리
+        | / API 추가
+        
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 API 추가
+
+    .card-body
+      .row
+        .col-6
+          form(action=`/applications/${application.id}/apis`, method="post")
+            div.form-group.mt-3
+              label(for="methodInput") Method
+              span.ml-3.d-inline-block.badge.badge-pill.badge-secondary(data-container="body" data-toggle="popover" data-placement="right" data-content="Http metod를 선택해주세요. 현재 GET 기능만 지원합니다.") i
+              select#methodInput.form-control(name=`method`)
+                option(value='get' select) GET
+            div.form-group.mt-3
+              label(for="endPointInput") End point
+              span.ml-3.d-inline-block.badge.badge-pill.badge-secondary(data-container="body" data-toggle="popover" data-placement="right" data-content=`end point를 입력해주세요. 복수형 영어단어를 사용하길 권장합니다. 다음과 같이 url이 생성됩니다. /api/${application.nameSpace}/end-point`) i
+              input.form-control(type="text", name="endPoint", id="endPointInput", required=true)
+            div.form-group.mt-3
+              label(for="descriptionInput") description
+              span.ml-3.d-inline-block.badge.badge-pill.badge-secondary(data-container="body" data-toggle="popover" data-placement="right" data-content="API에 대한 설명을 입력해주세요.") i
+              textarea.form-control(name="description", id="descriptionInput", required=true, rows="5")
+            .text-right
+              input.btn.btn-outline-primary(type="submit", value="저장")
+
+block script      
+  script.
+    $(document).ready(function() {
+      $('[data-toggle="popover"]').popover()
+    })

@@ -25,6 +25,9 @@ export class Application {
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
 
+  @OneToMany(type => Api, api => api.application)
+  apis: Api[];
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;

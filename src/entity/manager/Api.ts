@@ -6,9 +6,17 @@ import { MetaColumn } from "./MetaColumn";
 import { Meta } from "./Meta";
 import { ApiColumn } from "./ApiColumns";
 import { HttpClientResponse } from "typed-rest-client/HttpClient";
+import { Application } from "./Application";
 
 
 const API_TABLE_PREFIX = 'api'
+export enum HttpMethod {
+  GET = "get",
+  POST = "post",
+  PUT = "put",
+  PATCH = "patch",
+  DELETE = "delete"
+}
 @Entity()
 export class Api {
   static API_URL_PREFIX = '/dataset/'
@@ -24,32 +32,45 @@ export class Api {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({default: "타이틀이 입력되지 않았습니다."})
   @Length(1, 100)
   title: string;
+
+  @Column({
+    type: "enum",
+    enum: HttpMethod,
+    default: HttpMethod.GET
+  })
+  method: string;
+
+  @Column({type: "text"})
+  description: string;
 
   @Column()
   @Length(1, 100)
   entityName: string; //TODO: 생성시 unique 처리 필요.
 
-  @Column()
+  @Column({nullable: true})
   @Length(1, 100)
   tableName: string;
 
-  @Column()
+  @Column({nullable: true})
   columnLength: number;
 
-  @Column()
+  @Column({nullable: true})
   dataCounts: number;
 
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
 
-  @OneToOne(type => Meta)
+  @ManyToOne(type => Application, app => app.apis, { nullable: true, onDelete: 'CASCADE' })
+  application: Application;
+
+  @OneToOne(type => Meta, {nullable: true})
   @JoinColumn()
   meta: Meta;
 
-  @OneToMany(type => ApiColumn, ac => ac.api)
+  @OneToMany(type => ApiColumn, ac => ac.api, {nullable: true})
   columns: ApiColumn[];
 
   @Column()
@@ -62,5 +83,9 @@ export class Api {
 
   get url(): string {
     return Api.API_URL_PREFIX + this.tableName;
+  }
+
+  get endpoint(): string {
+    return `/${this.entityName}`;
   }
 }
