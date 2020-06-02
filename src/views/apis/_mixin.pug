@@ -1,0 +1,55 @@
+mixin fileInfo(meta)
+  tr
+    th id
+    td #{meta.id}
+    th oridinalFileName
+    td #{meta.originalFileName}
+    th rowCounts
+    td #{meta.rowCounts}
+  tr
+    th extension
+    td #{meta.extension}
+    th filePath
+    td(colspan="3") #{meta.filePath}
+  +metaColumnInfo(meta)
+    
+
+mixin dbmsInfo(meta)
+  tr
+    th id
+    td #{meta.id}
+    th host
+    td #{meta.host}:#{meta.port}
+  tr
+    th user
+    td #{meta.dbUser}
+    th db
+    td #{meta.db}
+  tr
+    th table
+    td #{meta.table}
+    th pwd
+    td ******
+  tr
+    th rowCounts
+    td(colspan="3") #{meta.rowCounts}
+  +metaColumnInfo(meta)
+
+mixin metaColumnInfo(meta)
+  tr.text-center
+    th(colspan="6") 컬럼 정보
+  tr
+    th id  
+    th OriginalColumnName
+    th ColumnName
+    th Type
+    th Size
+    th Search
+  each col in meta.columns
+    tr
+      td #{col.id}
+      td #{col.originalColumnName}
+      td #{col.columnName}
+      td #{col.type}
+      td #{col.size}
+      td -

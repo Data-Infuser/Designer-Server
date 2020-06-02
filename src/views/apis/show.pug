@@ -1,81 +1,84 @@
 extends ../layout
+include _mixin
 
 block content
   ol.breadcrumb
     li.breadcrumb-item.active 
-        a(href="/apis") API 관리
+        a(href="/applications") Application 관리
+        | /
+        a(href=`/applications/${application.id}`) Application 상세보기
+        | / API 설정
         
   .card.mb-3
     .card-header
       i.fas.fa-table
-        span.ml-3 API 상세보기
+        span.ml-3 API 설정
 
     .card-body
-      .table-responsive
-          table.table.table-bordered(width='100%' cellspacing='0')
-            thead
-              tr.text-center
-                th(colspan="4") API 정보
-              tr
-                th Api명
-                td(colspan="3") #{api.title}
-            tbody
-              tr
-                th id
-                td #{api.id}
-                th entityName
-                td #{api.entityName}
-              tr
-                th 컬럼수
-                td #{api.columnLength}
-                th 데이터수
-                td #{api.dataCounts} rows
-              tr
-                th endpoint
-                td(colspan="3") #{api.url}
-              tr
-                th Meta 정보
-                td(colspan="3") 
-                  a(href=`/metas/${api.meta.id}`) /metas/#{api.meta.id}
-              tr
-                th Swagger
-                td(colspan="3") 
-                  a(href=`/apis/${api.id}/api-docs`) 미리보기
-      
-      .text-right.mb-3
-        a.ml-1.btn.btn-outline-primary(href=`/apis/${api.id}/edit`) Api 설정
-        button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Api 삭제
-
       .table-responsive
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
             tr.text-center
-              th(colspan="4") 컬럼 정보
-            tr
-              th id  
-              th columnName
-              th type
-              th hidden
+              th(colspan="6") API 정보
           tbody
-            each col in api.columns
+            tr
+              th id
+              td #{api.id}
+              th method
+              td #{api.method}
+              th EntityName
+              td #{api.entityName}
+            tr
+              th url
+              td(colspan="5") #{api.fullUrl}
+            tr
+              th description
+              td(colspan="5") #{api.description}
+      
+      .text-right.mb-3
+        a.btn.btn-outline-primary(href=`/applications/${application.id}/apis/${api.id}/edit`) API 정보 수정
+      
+      .table-responsive
+        table.table.table-bordered(width='100%' cellspacing='0')
+          thead
+            tr.text-center
+              th(colspan="6") Meta 정보
+          tbody
+            if(!api.meta)
               tr
-                td #{col.id}
-                td #{col.columnName}
-                td #{col.type}
-                td #{col.hidden}
-                  
+                td.text-center(colspan="6") 
+                  div
+                    span 등록된 메타 정보가 없습니다.
+            else
+              if(api.meta.dataType == "file")
+                +fileInfo(api.meta)
+              else if(api.meta.dataTypr == "dbms")
+                +dbmsInfo(api.meta)
+              else
+                tr
+                  td.text-center(colspan="6") 
+                    div
+                      span 등록된 메타 정보가 없습니다.
+                      
+      .text-right.mb-3
+        if(api.meta)
+          a.btn.btn-outline-primary(href=`/metas/${api.meta.id}/edit`) 메타 정보 수정
+          button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteMetaModal") Meta data 삭제
+        else
+          a.btn.btn-outline-primary(href=`/applications/${application.id}/apis/${api.id}/meta/new`) 메타 정보 등록
 
-  .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
-    .modal-dialog(role='document')
-      .modal-content
-        .modal-header
-          h5#exampleModalLabel.modal-title 삭제하기
-          button.close(type='button' data-dismiss='modal' aria-label='Close')
-            span(aria-hidden='true') &times;
-        form(action=`/apis/${api.id}?_method=DELETE`, method="post")
-          .modal-body
-            | 배포된 API 정보가 삭제됩니다. <br>
-            | 정말 삭제하시겠습니까?
-          .modal-footer
-            button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기
-            input.btn.btn-danger(type="submit", value="삭제")
+  if(api.meta)
+    .modal.fade(id="deleteMetaModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
+      .modal-dialog(role='document')
+        .modal-content
+          .modal-header
+            h5#exampleModalLabel.modal-title 삭제하기
+            button.close(type='button' data-dismiss='modal' aria-label='Close')
+              span(aria-hidden='true') &times;
+          form(action=`/metas/${api.meta.id}?_method=DELETE`, method="post")
+            .modal-body
+              | 배포된 API 정보도 삭제됩니다. <br>
+              | 정말 삭제하시겠습니까?
+            .modal-footer
+              button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기
+              input.btn.btn-danger(type="submit", value="삭제")

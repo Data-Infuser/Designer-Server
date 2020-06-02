@@ -9,7 +9,7 @@ block content
   .card.mb-3
     .card-header
       i.fas.fa-table
-        span.ml-3 API 상세보기
+        span.ml-3 Application 상세보기
 
     .card-body
       .table-responsive
@@ -54,14 +54,14 @@ block content
           tbody
             each api in application.apis
               tr.text-center
-                td #{api.id}
-                td #{api.method}
-                td #{api.endpoint}
-                td #{api.description}
-                td -
+                td.align-middle #{api.id}
+                td.align-middle #{api.method}
+                td.align-middle #{api.endpoint}
+                td.align-middle #{api.description}
+                td.align-middle #{api.status}
                 td.text-left
-                  a.btn.btn-sm.btn-outline-info(href=`/applications/${application.id}/apis/${api.id}`) api 설정
-                  button.ml-3.btn.btn-sm.btn-outline-danger api 삭제
+                  a.btn.btn-sm.btn-outline-info(href=`/applications/${application.id}/apis/${api.id}`) 상세보기
+                  button.ml-3.btn.btn-sm.btn-outline-danger 삭제
 
   .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
     .modal-dialog(role='document')

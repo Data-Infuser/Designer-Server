@@ -97,7 +97,7 @@ class ApiController {
     try {
       const application = await applicationRepo.findOneOrFail(id);
 
-      res.render("applications/apis/new", {
+      res.render("apis/new", {
         current_user: req.user,
         application: application
       });
@@ -113,13 +113,13 @@ class ApiController {
     const applicationRepo = getRepository(Application);
     const apiRepo = getRepository(Api);
     const { id } = req.params;
-    const { method, endPoint, description } = req.body;
+    const { method, entityName, description } = req.body;
 
     try {
       const application = await applicationRepo.findOneOrFail(id);
       const newApi = new Api();
       newApi.method = method;
-      newApi.entityName = endPoint;
+      newApi.entityName = entityName;
       newApi.description = description;
       newApi.application = application;
       await apiRepo.save(newApi);
@@ -138,17 +138,65 @@ class ApiController {
     
     try {
       const api = await apiRepo.findOneOrFail({
+        relations: ["application", "meta", "meta.columns"],
+        where: {
+          id: apiId
+        }
+      });
+      const application = api.application;
+      res.render("apis/show", {
+        current_user: req.user,
+        application: application,
+        api: api
+      })
+    } catch (err) {
+      console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
+  static getApiEdit = async(req: Request, res: Response, next: NextFunction) => {
+    const apiRepo = getRepository(Api);
+    const { id, apiId } = req.params;
+    
+    try {
+      const api = await apiRepo.findOneOrFail({
         relations: ["application"],
         where: {
           id: apiId
         }
       });
       const application = api.application;
-      res.render("applications/apis/show", {
+      res.render("apis/edit", {
         current_user: req.user,
         application: application,
         api: api
       })
+    } catch (err) {
+      console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
+  static putApi = async(req: Request, res: Response, next: NextFunction) => {
+    const apiRepo = getRepository(Api);
+    const { apiId } = req.params;
+    const { method, entityName, description } = req.body;
+    try {
+      const api = await apiRepo.findOneOrFail({
+        relations: ["application"],
+        where: {
+          id: apiId
+        }
+      });
+      api.method = method;
+      api.entityName = entityName;
+      api.description = description;
+      await apiRepo.save(api);
+
+      res.redirect(`/applications/${api.application.id}/apis/${api.id}`)
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));

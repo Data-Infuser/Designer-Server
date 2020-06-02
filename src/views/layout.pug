@@ -35,20 +35,20 @@ html(lang='en')
       ul.sidebar.navbar-nav
         li.nav-item.dropdown
           a#pagesDropdown.nav-link.dropdown-toggle(href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
-            span 데이터베이스 관리
+            span 원천데이터 관리
           .dropdown-menu(aria-labelledby="pagesDropdown")
-            a.dropdown-item(href="/databaseConnections") 연결 관리
+            a.dropdown-item(href="/databaseConnections") 데이터베이스 관리
         li.nav-item.dropdown
           a#pagesDropdown.nav-link.dropdown-toggle(href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
             span Application 관리
           .dropdown-menu(aria-labelledby="pagesDropdown")
             a.dropdown-item(href="/applications") Application 관리
-        li.nav-item.dropdown
-          a#pagesDropdown.nav-link.dropdown-toggle(href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
-            span API 관리
-          .dropdown-menu(aria-labelledby="pagesDropdown")
-            a.dropdown-item(href="/metas") 메타 관리
-            a.dropdown-item(href="/apis") Api 관리
+        //- li.nav-item.dropdown
+        //-   a#pagesDropdown.nav-link.dropdown-toggle(href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+        //-     span API 관리
+        //-   .dropdown-menu(aria-labelledby="pagesDropdown")
+        //-     a.dropdown-item(href="/metas") 메타 관리
+        //-     a.dropdown-item(href="/apis") Api 관리
         li.nav-item
           a.nav-link(href="#")
             span 사용자 관리

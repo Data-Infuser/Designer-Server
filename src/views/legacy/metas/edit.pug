@@ -1,0 +1,74 @@
+extends ../layout
+
+block content
+  ol.breadcrumb
+    li.breadcrumb-item.active 
+        a(href="/metas") meta 관리
+        
+  .card.mb-3
+    .card-header
+      i.fas.fa-table
+        span.ml-3 메타정보 상세보기
+
+    .card-body
+      form(action=`/metas/${meta.id}?_method=PUT`, method="post")
+        .table-responsive
+            table.table.table-bordered(width='100%' cellspacing='0')
+              thead
+                tr.text-center
+                  th(colspan="4") Meta 정보
+                tr
+                  th 데이터명
+                  td(colspan="3") 
+                    input.form-control(type="text", name="title", id="tableNameInput", required=true, value=meta.title)
+              tbody
+                tr
+                  th id
+                  td #{meta.id}
+                  th oridinalFileName
+                  td #{meta.originalFileName}
+                tr
+                  th extension
+                  td #{meta.extension}
+                  th filePath
+                  td #{meta.filePath}
+                tr
+                  th rowCounts
+                  td(colspan="3") #{meta.rowCounts}              
+
+        .table-responsive
+          table.table.table-bordered(width='100%' cellspacing='0')
+            thead
+              tr.text-center
+                th(colspan="5") 컬럼 정보
+              tr
+                th id  
+                th OriginalColumnName
+                th ColumnName
+                th Type
+                th Size
+            tbody
+              each col in meta.columns
+                tr
+                  td.align-middle #{col.id}
+                  td.align-middle #{col.originalColumnName}
+                  td.align-middle
+                    input.form-control(type="text", name=`col-${col.id}`, id="tableNameInput", required=true, value=col.columnName)
+                  td.align-middle
+                    select.form-control(name=`type-${col.id}`)
+                      option(value='varchar', selected= col.type == 'varchar') varchar
+                      option(value='int', selected= col.type == 'int') int
+                      option(value='bigint', selected= col.type == 'bigint') bigint
+                      option(value='bit', selected= col.type == 'bit') bit
+                      option(value='double', selected= col.type == 'double') double
+                      option(value='boolean', selected= col.type == 'boolean') boolean
+                      option(value='date', selected= col.type == 'date') date
+                      option(value='datetime', selected= col.type == 'datetime') datetime
+                      option(value='time', selected= col.type == 'time') time
+                      option(value='text', selected= col.type == 'text') text
+                      option(value='longtext', selected= col.type == 'longtext') longtext
+                  td.align-middle
+                    input.form-control(type="number", name=`size-${col.id}`, value= col.size ? col.size : "")
+
+        .text-right.mb-3
+          input.btn.btn-outline-primary(type="submit", value="수정")

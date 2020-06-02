@@ -11,12 +11,15 @@ import { RowGenerator } from "../util/RowGenerator";
 import { MetaLoader } from "../util/MetaLoader";
 import * as multiparty from 'multiparty';
 import { MetaInfo } from "../interfaces/MetaInfo";
+import { Application } from "../entity/manager/Application";
 
 class MetaController {
 
   static uploadXlsxFile = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const metaColRepo = getRepository(MetaColumn);
+    const apiRepo = getRepository(Api);
+    const { id, apiId } = req.params;
     
     const promisifyUpload = (req) => new Promise<any>((resolve, reject) => {
       const multipartyOption = {
@@ -49,12 +52,16 @@ class MetaController {
         default:
           throw new Error(`available dataType ${dataType}`);
       }
-      result.meta.user = <User>req.user;
+      const api = await apiRepo.findOneOrFail(apiId);
+      result.meta.user = req.user;
+      result.meta.api = api;
+      api.meta = result.meta;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await metaRepo.save(result.meta);
         await metaColRepo.save(result.columns);
+        await apiRepo.save(api);
       })
-      res.redirect(`/metas/${result.meta.id}`);
+      res.redirect(`/applications/${id}/apis/${apiId}`);
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));
@@ -62,42 +69,35 @@ class MetaController {
     }
   }
   
-  static getIndex = async(req: Request, res: Response, next: NextFunction) => {
-    const metaRepo = getRepository(Meta);
+  // static getIndex = async(req: Request, res: Response, next: NextFunction) => {
+  //   const metaRepo = getRepository(Meta);
 
-    try {
-      const metas = await metaRepo.find();
+  //   try {
+  //     const metas = await metaRepo.find();
 
-      res.render("metas/index.pug", {
-        metas: metas,
-        current_user: req.user
-      })
-    } catch (err) {
-      console.error(err);
-      next(new ApplicationError(500, err.message));
-      return;
-    }
-  }
+  //     res.render("metas/index.pug", {
+  //       metas: metas,
+  //       current_user: req.user
+  //     })
+  //   } catch (err) {
+  //     console.error(err);
+  //     next(new ApplicationError(500, err.message));
+  //     return;
+  //   }
+  // }
 
   static getNew = async(req: Request, res: Response, next: NextFunction) => {
-    res.render("metas/new.pug", {
-      current_user: req.user
-    })
-  }
-
-  static getShow = async(req: Request, res: Response, next: NextFunction) => {
-    const metaRepo = getRepository(Meta);
-    const { id } = req.params
+    const applicationRepo = getRepository(Application);
+    const apiRepo = getRepository(Api);
+    const { id, apiId } = req.params;
     try {
-      const meta = await metaRepo.findOneOrFail({
-        relations: ["columns", "api"],
-        where: {
-          id: id
-        }
-      })
-      res.render("metas/show.pug", {
+      const application = await applicationRepo.findOneOrFail(id);
+      const api = await apiRepo.findOneOrFail(apiId);
+
+      res.render("metas/new.pug", {
         current_user: req.user,
-        meta: meta
+        api: api,
+        application: application
       })
     } catch (err) {
       console.error(err);
@@ -105,20 +105,43 @@ class MetaController {
       return;
     }
   }
+
+  // static getShow = async(req: Request, res: Response, next: NextFunction) => {
+  //   const metaRepo = getRepository(Meta);
+  //   const { id } = req.params
+  //   try {
+  //     const meta = await metaRepo.findOneOrFail({
+  //       relations: ["columns", "api"],
+  //       where: {
+  //         id: id
+  //       }
+  //     })
+  //     res.render("metas/show.pug", {
+  //       current_user: req.user,
+  //       meta: meta
+  //     })
+  //   } catch (err) {
+  //     console.error(err);
+  //     next(new ApplicationError(500, err.message));
+  //     return;
+  //   }
+  // }
 
   static getEdit = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const { id } = req.params
     try {
       const meta = await metaRepo.findOneOrFail({
-        relations: ["columns"],
+        relations: ["columns", "api", "api.application"],
         where: {
           id: id
         }
       })
       res.render("metas/edit.pug", {
         current_user: req.user,
-        meta: meta
+        meta: meta,
+        api: meta.api,
+        application: meta.api.application
       })
     } catch (err) {
       console.error(err);
@@ -133,19 +156,25 @@ class MetaController {
     const { id } = req.params;
     try {
       const meta = await metaRepo.findOneOrFail({
-        relations: ["api"],
+        relations: ["api", "api.application"],
         where: {
           id: id
         }
       });
+      const apiId = meta.api.id;
+      const applicationId = meta.api.application.id;
       console.log(meta.api);
-      if(meta.api) {
-        await getConnection('dataset').createQueryRunner().dropTable(meta.api.tableName, true);
-        await apiRepo.delete(meta.api.id);
-      }
-      await metaRepo.delete(id);
+      await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+        await metaRepo.delete(id);
+        if(meta.api && meta.api.tableName) {
+          meta.api.tableName = null;
+          await apiRepo.save(meta.api);
+          await getConnection('dataset').createQueryRunner().dropTable(meta.api.tableName, true);
+        }
+      });
+      
       req.flash('danger', '메타 정보가 삭제되었습니다.');
-      res.redirect('/metas')
+      res.redirect(`/applications/${applicationId}/apis/${apiId}`)
     } catch (err) {
       next(new ApplicationError(500, err.message));
       return;
@@ -159,7 +188,7 @@ class MetaController {
     const { title } = req.body;
     try {
       const meta = await metaRepo.findOneOrFail({
-        relations: ["columns"],
+        relations: ["columns", "api", "api.application"],
         where: {
           id: id
         }
@@ -182,7 +211,7 @@ class MetaController {
       });
     
       req.flash('success', '수정되었습니다.')
-      res.redirect(`/metas/${meta.id}`)
+      res.redirect(`/applications/${meta.api.application.id}/apis/${meta.api.id}`)
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));
@@ -190,159 +219,159 @@ class MetaController {
     }
   }
 
-  static getNewApi = async(req: Request, res: Response, next: NextFunction) => {
-    const metaRepo = getRepository(Meta);
-    const { id } = req.params
-    try {
-      const meta = await metaRepo.findOneOrFail({
-        relations: ["columns"],
-        where: {
-          id: id
-        }
-      })
-      res.render("metas/apis/new.pug", {
-        current_user: req.user,
-        meta: meta
-      })
-    } catch (err) {
-      console.error(err);
-      next(new ApplicationError(500, err.message));
-      return;
-    }
-  }
+  // static getNewApi = async(req: Request, res: Response, next: NextFunction) => {
+  //   const metaRepo = getRepository(Meta);
+  //   const { id } = req.params
+  //   try {
+  //     const meta = await metaRepo.findOneOrFail({
+  //       relations: ["columns"],
+  //       where: {
+  //         id: id
+  //       }
+  //     })
+  //     res.render("metas/apis/new.pug", {
+  //       current_user: req.user,
+  //       meta: meta
+  //     })
+  //   } catch (err) {
+  //     console.error(err);
+  //     next(new ApplicationError(500, err.message));
+  //     return;
+  //   }
+  // }
 
-  static postNewApi = async(req: Request, res: Response, next: NextFunction) => {
-    const metaRepo = getRepository(Meta);
-    const columnRepo = getRepository(MetaColumn);
-    const apiRepo = getRepository(Api);
-    const apiColumnRepo = getRepository(ApiColumn);
+  // static postNewApi = async(req: Request, res: Response, next: NextFunction) => {
+  //   const metaRepo = getRepository(Meta);
+  //   const columnRepo = getRepository(MetaColumn);
+  //   const apiRepo = getRepository(Api);
+  //   const apiColumnRepo = getRepository(ApiColumn);
 
-    const { id } = req.params;
-    const { apiName, entityName, needId } = req.body;
+  //   const { id } = req.params;
+  //   const { apiName, entityName, needId } = req.body;
     
-    //validate inputs
-    let message: string;
-    if(apiName == undefined || apiName.length == 0) message = 'API 명을 입력해주세요.'
-    if(entityName == undefined || entityName.length == 0) message = 'entity 명을 입력해주세요.'
-    if(message) {
-      req.flash('danger', message);
-      res.redirect(`/metas/${id}/new`);
-    }
+  //   //validate inputs
+  //   let message: string;
+  //   if(apiName == undefined || apiName.length == 0) message = 'API 명을 입력해주세요.'
+  //   if(entityName == undefined || entityName.length == 0) message = 'entity 명을 입력해주세요.'
+  //   if(message) {
+  //     req.flash('danger', message);
+  //     res.redirect(`/metas/${id}/new`);
+  //   }
 
-    let tableForDelete;
-    try {
-      // meta data load
-      const meta = await metaRepo.findOneOrFail({
-        relations: ["api"],
-        where: {
-          id: id
-        }
-      })
+  //   let tableForDelete;
+  //   try {
+  //     // meta data load
+  //     const meta = await metaRepo.findOneOrFail({
+  //       relations: ["api"],
+  //       where: {
+  //         id: id
+  //       }
+  //     })
 
-      const metaColumns = await columnRepo.find({
-        where: {
-          meta: {
-            id: id
-          }
-        },
-        order: {
-          order: 'ASC'
-        }
-      });
+  //     const metaColumns = await columnRepo.find({
+  //       where: {
+  //         meta: {
+  //           id: id
+  //         }
+  //       },
+  //       order: {
+  //         order: 'ASC'
+  //       }
+  //     });
 
-      if(meta.api || meta.isActive) {
-        req.flash('danger', '이미 배포된 api가 있습니다.');
-        res.redirect(`/metas/${meta.id}`);
-        return;
-      }
+  //     if(meta.api || meta.isActive) {
+  //       req.flash('danger', '이미 배포된 api가 있습니다.');
+  //       res.redirect(`/metas/${meta.id}`);
+  //       return;
+  //     }
 
-      let api = new Api(apiName, entityName, meta, <User>req.user);
+  //     let api = new Api(apiName, entityName, meta, <User>req.user);
 
-      // column data 생성
-      let columns = []
-      let columnNames = []
-      let originalColumnNames = []
-      let apiColumns: ApiColumn[] = []
+  //     // column data 생성
+  //     let columns = []
+  //     let columnNames = []
+  //     let originalColumnNames = []
+  //     let apiColumns: ApiColumn[] = []
 
-      if(needId) {
-        // autoincrease 설정
-        columns.push({
-          name: "id",
-          type: "int",
-          isPrimary: true,
-          isGenerated: true,
-          generationStrategy: "increment"
-        })
-      }
+  //     if(needId) {
+  //       // autoincrease 설정
+  //       columns.push({
+  //         name: "id",
+  //         type: "int",
+  //         isPrimary: true,
+  //         isGenerated: true,
+  //         generationStrategy: "increment"
+  //       })
+  //     }
       
 
-      metaColumns.forEach(column => {
-        columnNames.push(`\`${column.columnName}\``)
-        originalColumnNames.push(`\`${column.originalColumnName}\``)
-        let type = column.type.toString();
-        if(column.size) {
-          type = `${type}(${column.size})`
-        }
-        columns.push({
-          name: column.columnName,
-          type: column.type,
-          isNullable: true
-        })
-        apiColumns.push(new ApiColumn(column.columnName, type, api));
-      });
+  //     metaColumns.forEach(column => {
+  //       columnNames.push(`\`${column.columnName}\``)
+  //       originalColumnNames.push(`\`${column.originalColumnName}\``)
+  //       let type = column.type.toString();
+  //       if(column.size) {
+  //         type = `${type}(${column.size})`
+  //       }
+  //       columns.push({
+  //         name: column.columnName,
+  //         type: column.type,
+  //         isNullable: true
+  //       })
+  //       apiColumns.push(new ApiColumn(column.columnName, type, api));
+  //     });
 
-      //table data 생성
-      //table Name convention 필요
-      const tableOption: TableOptions = {
-        name: api.tableName,
-        columns: columns
-      }
+  //     //table data 생성
+  //     //table Name convention 필요
+  //     const tableOption: TableOptions = {
+  //       name: api.tableName,
+  //       columns: columns
+  //     }
       
-      let insertQuery = `INSERT INTO \`${tableOption.name}\`(${columnNames.join(",")}) VALUES ?`;
+  //     let insertQuery = `INSERT INTO \`${tableOption.name}\`(${columnNames.join(",")}) VALUES ?`;
 
-      /**
-       * TODO: getRows 와 같이 범용적인 함수를 만들고, 함수 내부에서 data type을 확인 후 RDBMS, CSV 등을 읽어오도록 구현
-       */
-      let insertValues = await RowGenerator.generateRows(meta, originalColumnNames);
+  //     /**
+  //      * TODO: getRows 와 같이 범용적인 함수를 만들고, 함수 내부에서 data type을 확인 후 RDBMS, CSV 등을 읽어오도록 구현
+  //      */
+  //     let insertValues = await RowGenerator.generateRows(meta, originalColumnNames);
       
-      tableForDelete = tableOption.name;
-      api.columnLength = apiColumns.length;
-      api.dataCounts = insertValues.length;
+  //     tableForDelete = tableOption.name;
+  //     api.columnLength = apiColumns.length;
+  //     api.dataCounts = insertValues.length;
 
-      const defaultQueryRunner = await getConnection().createQueryRunner();
-      const datasetQueryRunner = await getConnection('dataset').createQueryRunner();
+  //     const defaultQueryRunner = await getConnection().createQueryRunner();
+  //     const datasetQueryRunner = await getConnection('dataset').createQueryRunner();
 
-      await defaultQueryRunner.startTransaction();
-      await datasetQueryRunner.startTransaction();
+  //     await defaultQueryRunner.startTransaction();
+  //     await datasetQueryRunner.startTransaction();
 
-      try {
-        await datasetQueryRunner.createTable(new Table(tableOption));
-        await datasetQueryRunner.query(insertQuery, [insertValues]);
-        meta.isActive = true;
-        await defaultQueryRunner.manager.save(meta);
-        await defaultQueryRunner.manager.save(api);
-        await defaultQueryRunner.manager.save(apiColumns);
+  //     try {
+  //       await datasetQueryRunner.createTable(new Table(tableOption));
+  //       await datasetQueryRunner.query(insertQuery, [insertValues]);
+  //       meta.isActive = true;
+  //       await defaultQueryRunner.manager.save(meta);
+  //       await defaultQueryRunner.manager.save(api);
+  //       await defaultQueryRunner.manager.save(apiColumns);
 
-        await defaultQueryRunner.commitTransaction();
-        await datasetQueryRunner.commitTransaction();
+  //       await defaultQueryRunner.commitTransaction();
+  //       await datasetQueryRunner.commitTransaction();
 
-        res.redirect(`/apis/${api.id}`)
-      } catch(err) {
-        await defaultQueryRunner.rollbackTransaction();
-        await datasetQueryRunner.rollbackTransaction();
-        next(new ApplicationError(500, err.message));
-      } finally {
-        await defaultQueryRunner.release();
-        await datasetQueryRunner.release();
-      }
-      return;
-    } catch (err) {
-      console.error(err);
-      await getConnection('dataset').createQueryRunner().dropTable(tableForDelete, true);
-      next(new ApplicationError(500, err.message));
-      return;
-    }
-  }
+  //       res.redirect(`/apis/${api.id}`)
+  //     } catch(err) {
+  //       await defaultQueryRunner.rollbackTransaction();
+  //       await datasetQueryRunner.rollbackTransaction();
+  //       next(new ApplicationError(500, err.message));
+  //     } finally {
+  //       await defaultQueryRunner.release();
+  //       await datasetQueryRunner.release();
+  //     }
+  //     return;
+  //   } catch (err) {
+  //     console.error(err);
+  //     await getConnection('dataset').createQueryRunner().dropTable(tableForDelete, true);
+  //     next(new ApplicationError(500, err.message));
+  //     return;
+  //   }
+  // }
 }
 
 export default MetaController;

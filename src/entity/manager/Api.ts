@@ -66,7 +66,7 @@ export class Api {
   @ManyToOne(type => Application, app => app.apis, { nullable: true, onDelete: 'CASCADE' })
   application: Application;
 
-  @OneToOne(type => Meta, {nullable: true})
+  @OneToOne(type => Meta, {nullable: true, onDelete: "SET NULL"})
   @JoinColumn()
   meta: Meta;
 
@@ -87,5 +87,14 @@ export class Api {
 
   get endpoint(): string {
     return `/${this.entityName}`;
+  }
+
+  get fullUrl(): string {
+    return `/api/${this.application.nameSpace}/${this.entityName}`
+  }
+
+  get status(): string {
+    if(this.meta == undefined) return "메타 설정 필요"
+    return "-"
   }
 }
