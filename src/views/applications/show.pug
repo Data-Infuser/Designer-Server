@@ -40,6 +40,9 @@ block content
               th swagger
               td(colspan="3")
                 a(href=`/applications/${application.id}/api-docs`) #{`/applications/${application.id}/api-docs`}
+            tr
+              th status
+              td(colspan="3") #{application.status}
 
       .text-right.mb-3
         a.ml-1.btn.btn-outline-primary(href=`/applications/${application.id}/apis/new`) Api 추가

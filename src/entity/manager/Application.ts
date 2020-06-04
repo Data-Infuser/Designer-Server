@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, BaseEntity} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, BaseEntity, Unique} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
@@ -14,6 +14,7 @@ export enum ApplicationStatus {
 }
 
 @Entity()
+@Unique("application_namespace_unique", ["nameSpace"])
 export class Application {
   @PrimaryGeneratedColumn()
   id: number;

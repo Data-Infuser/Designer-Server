@@ -1,9 +1,10 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, Unique} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import { Meta } from "./Meta";
 import { Api } from "./Api";
 
 @Entity()
+@Unique("ApiColumn_columnName_unique", ["api", "columnName"])
 export class ApiColumn {
 
   constructor(colunmName?:string, type?:string, api?: Api) {

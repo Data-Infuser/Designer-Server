@@ -1,5 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn, Table, Db} from "typeorm";
-import { Length, IsNotEmpty } from "class-validator";
+import { Length, IsNotEmpty, NotContains } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
@@ -9,7 +9,6 @@ import { HttpClientResponse } from "typed-rest-client/HttpClient";
 import { Application } from "./Application";
 
 
-const API_TABLE_PREFIX = 'api'
 export enum HttpMethod {
   GET = "get",
   POST = "post",
@@ -28,7 +27,6 @@ export enum ServiceStatus {
 }
 @Entity()
 export class Api {
-  static API_URL_PREFIX = '/dataset/'
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -49,6 +47,7 @@ export class Api {
 
   @Column()
   @Length(1, 100)
+  @NotContains("-")
   entityName: string; //TODO: 생성시 unique 처리 필요.
 
   @Column({nullable: true})
@@ -88,10 +87,6 @@ export class Api {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
-
-  get url(): string {
-    return Api.API_URL_PREFIX + this.tableName;
-  }
 
   get endpoint(): string {
     return `/${this.entityName}`;
