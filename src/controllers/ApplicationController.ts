@@ -7,8 +7,8 @@ import { Api, ServiceStatus } from "../entity/manager/Api";
 import { ApiColumn } from "../entity/manager/ApiColumns";
 import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
 import { RowGenerator } from "../util/RowGenerator";
-
-
+import { SwaggerBuilder } from "../util/SwaggerBuilder";
+import swagger from "swagger-ui-express";
 
 class ApiController {
   static getIndex = async(req: Request, res: Response, next: NextFunction) => {
@@ -287,6 +287,27 @@ class ApiController {
       await defaultQueryRunner.release();
       await datasetQueryRunner.release();
       console.error(err);
+      next(new ApplicationError(500, err.message));
+      return;
+    }
+  }
+
+  static getApiDocs= async(req: Request, res: Response, next: NextFunction) => {
+    const applicationRepo = getRepository(Application);
+    const { id } = req.params;
+    try {
+      const application = await applicationRepo.findOneOrFail({
+        relations: ["apis"],
+        where: {
+          id: id
+        }
+      })
+
+      const apiDoc = await SwaggerBuilder.buildApplicationDoc(application);
+      if(apiDoc) {
+        res.send(swagger.generateHTML(apiDoc));
+      }
+    } catch (err) {
       next(new ApplicationError(500, err.message));
       return;
     }
