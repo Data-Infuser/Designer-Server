@@ -49,7 +49,7 @@ class ApiController {
     const { id } = req.params;
     try {
       const application = await applicationRepo.findOne({
-        relations: ["apis"],
+        relations: ["apis", "apis.meta"],
         where: {
           id: id,
           user: {
