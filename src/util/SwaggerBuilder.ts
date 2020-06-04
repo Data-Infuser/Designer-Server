@@ -37,7 +37,6 @@ export class SwaggerBuilder {
           doc.definitions[api.tableName+'_api'] = modelTemplate;
           doc.paths[`/api/dataset/${api.tableName}`] = SwaggerBuilder.buildPath(api);
         });
-        console.log(JSON.stringify(doc));
         resolve(doc);
       } catch(err) {
         console.log(err);
@@ -79,7 +78,6 @@ export class SwaggerBuilder {
 
           doc.paths[`/api/dataset/${api.tableName}`] = SwaggerBuilder.buildPath(api);
         });
-        console.log(doc);
         resolve(doc);
       } catch(err) {
         console.log(err);

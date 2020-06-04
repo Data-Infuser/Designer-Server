@@ -1,5 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, BaseEntity, Unique} from "typeorm";
-import { Length, IsNotEmpty } from "class-validator";
+import { Length, IsNotEmpty, NotContains } from "class-validator";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
 import { Api, ServiceStatus } from "./Api";
@@ -21,6 +21,7 @@ export class Application {
 
   @Column()
   @Length(1, 100)
+  @NotContains("-")
   nameSpace: string;
 
   @Column()
