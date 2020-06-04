@@ -17,17 +17,18 @@ export enum HttpMethod {
   PATCH = "patch",
   DELETE = "delete"
 }
+
+export enum ServiceStatus {
+  // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
+  IDLE = "idle",
+  METALOADED = "meta-loaded",
+  SCHEDULED = "scheduled",
+  LOADED = "loaded",
+  FAILED = "failed" 
+}
 @Entity()
 export class Api {
   static API_URL_PREFIX = '/dataset/'
-
-  constructor(title?: string, entityName?:string, meta?:Meta, user?:User) {
-    if(entityName) this.entityName = entityName
-    if(title) this.title = title;
-    if(user) this.user = user;
-    if(meta) this.meta = meta;
-    if(entityName && user) this.tableName = `${API_TABLE_PREFIX}_${this.user.id}_${this.entityName}`
-  }
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -59,6 +60,13 @@ export class Api {
 
   @Column({nullable: true})
   dataCounts: number;
+
+  @Column({
+    type: "enum",
+    enum: ServiceStatus,
+    default: ServiceStatus.IDLE
+  })
+  status: string;
 
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
@@ -93,8 +101,20 @@ export class Api {
     return `/api/${this.application.nameSpace}/${this.entityName}`
   }
 
-  get status(): string {
-    if(this.meta == undefined) return "메타 설정 필요"
-    return "-"
+  get statusString(): string {
+    switch(this.status) {
+      case ServiceStatus.IDLE:
+        return "메타 설정 필요"
+      case ServiceStatus.METALOADED:
+        return "메타 설정 완료"
+      case ServiceStatus.SCHEDULED:
+        return "스케쥴 등록 완료"
+      case ServiceStatus.LOADED:
+        return "데이터 적재 완료"
+      case ServiceStatus.FAILED:
+        return "데이터 적재 실패"
+      default:
+        return "-"
+    }
   }
 }

@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { Api } from "../entity/manager/Api";
-import { getRepository, getConnection, getManager } from "typeorm";
+import { getRepository, getConnection, getManager, Table } from "typeorm";
 import ApplicationError from "../ApplicationError";
 import { Meta } from "../entity/manager/Meta";
 import { ApiColumn } from "../entity/manager/ApiColumns";
 import { SwaggerBuilder } from "../util/SwaggerBuilder";
 import swagger from "swagger-ui-express";
+import { MetaColumn } from "../entity/manager/MetaColumn";
+import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
+import { RowGenerator } from "../util/RowGenerator";
+import { Application } from "../entity/manager/Application";
 
 
 class ApiController {

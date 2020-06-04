@@ -23,7 +23,7 @@ block content
             option(value=1) DBMS
 
         #fileUploadForm.col-12
-          form(action=`/applications/${application.id}/apis/${api.id}/meta/uploadFile`, method="post", enctype="multipart/form-data")
+          form(action=`/applications/${application.id}/apis/${api.id}/meta`, method="post", enctype="multipart/form-data")
             input.form-control.d-none(type="text", name="dataType", required=true, value="file")
             div.form-group
               label(for="tableNameInput") 메타데이터명을 입력해주세요.
@@ -41,7 +41,7 @@ block content
             input.btn.btn-outline-primary(type="submit", value="Upload")
         
         #dbmsConnectionForm.col-12.d-none
-          form(action="/metas", method="post", enctype="multipart/form-data")
+          form(action=`/applications/${application.id}/apis/${api.id}/meta`, method="post", enctype="multipart/form-data")
             input.form-control.d-none(type="text", name="dataType", required=true, value="dbms")
             | DBMS 접근을 위한 계정은 보안을 위하여 API화 하기 위한 Table에만 접근이 가능한 계정을 생성하여 입력하기를 권장합니다.
             div.form-group.mt-3

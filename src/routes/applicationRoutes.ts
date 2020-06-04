@@ -12,6 +12,7 @@ router.get("/", needAuth, ApplicationController.getIndex);
 router.get("/new", needAuth, ApplicationController.getNew);
 router.post("/", needAuth, ApplicationController.post);
 router.get("/:id", needAuth, ApplicationController.getShow);
+router.post("/:id/deploy", needAuth, ApplicationController.deployApplication);
 //Apis
 router.get("/:id/apis/new", needAuth, ApplicationController.getApiNew);
 router.post("/:id/apis", needAuth, ApplicationController.postApi);
@@ -20,6 +21,6 @@ router.put("/:id/apis/:apiId", needAuth, ApplicationController.putApi);
 router.get("/:id/apis/:apiId/edit", needAuth, ApplicationController.getApiEdit);
 //Metas
 router.get("/:id/apis/:apiId/meta/new", needAuth, MetaController.getNew);
-router.post("/:id/apis/:apiId/meta/uploadFile", needAuth, MetaController.uploadXlsxFile);
+router.post("/:id/apis/:apiId/meta", needAuth, MetaController.postMetaMultipart);
 
 export default router;

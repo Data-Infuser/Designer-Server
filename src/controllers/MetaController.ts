@@ -4,7 +4,7 @@ import { Meta } from "../entity/manager/Meta";
 import { MetaColumn } from "../entity/manager/MetaColumn";
 import { User } from "../entity/manager/User";
 import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
-import { Api } from "../entity/manager/Api";
+import { Api, ServiceStatus } from "../entity/manager/Api";
 import ApplicationError from "../ApplicationError";
 import { ApiColumn } from "../entity/manager/ApiColumns";
 import { RowGenerator } from "../util/RowGenerator";
@@ -15,7 +15,7 @@ import { Application } from "../entity/manager/Application";
 
 class MetaController {
 
-  static uploadXlsxFile = async(req: Request, res: Response, next: NextFunction) => {
+  static postMetaMultipart = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const metaColRepo = getRepository(MetaColumn);
     const apiRepo = getRepository(Api);
@@ -56,6 +56,7 @@ class MetaController {
       result.meta.user = req.user;
       result.meta.api = api;
       api.meta = result.meta;
+      api.status = ServiceStatus.METALOADED;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await metaRepo.save(result.meta);
         await metaColRepo.save(result.columns);
@@ -168,6 +169,7 @@ class MetaController {
         await metaRepo.delete(id);
         if(meta.api && meta.api.tableName) {
           meta.api.tableName = null;
+          meta.api.status = ServiceStatus.IDLE;
           await apiRepo.save(meta.api);
           await getConnection('dataset').createQueryRunner().dropTable(meta.api.tableName, true);
         }

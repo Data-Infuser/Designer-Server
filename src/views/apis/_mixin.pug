@@ -20,19 +20,18 @@ mixin dbmsInfo(meta)
     td #{meta.id}
     th host
     td #{meta.host}:#{meta.port}
-  tr
-    th user
-    td #{meta.dbUser}
     th db
     td #{meta.db}
   tr
+    th user
+    td #{meta.dbUser}
     th table
     td #{meta.table}
     th pwd
-    td ******
+    td ******   
   tr
     th rowCounts
-    td(colspan="3") #{meta.rowCounts}
+    td(colspan="5") #{meta.rowCounts}
   +metaColumnInfo(meta)
 
 mixin metaColumnInfo(meta)

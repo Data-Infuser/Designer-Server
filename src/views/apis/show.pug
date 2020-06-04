@@ -52,14 +52,14 @@ block content
             else
               if(api.meta.dataType == "file")
                 +fileInfo(api.meta)
-              else if(api.meta.dataTypr == "dbms")
+              else if(api.meta.dataType == "dbms")
                 +dbmsInfo(api.meta)
               else
                 tr
                   td.text-center(colspan="6") 
                     div
                       span 등록된 메타 정보가 없습니다.
-                      
+
       .text-right.mb-3
         if(api.meta)
           a.btn.btn-outline-primary(href=`/metas/${api.meta.id}/edit`) 메타 정보 수정

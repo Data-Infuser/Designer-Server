@@ -10,8 +10,15 @@ block content
     .card-header
       i.fas.fa-table
         span.ml-3 Application 상세보기
-
     .card-body
+      .text-right.mb-3
+        if(application.isDeployed)
+        else if(application.isDeployable)
+          form(action=`/applications/${application.id}/deploy`, method="post")
+            input.ml-1.btn.btn-outline-primary(type="submit", value="Application 배포") 
+        else
+          button.btn.btn-outline-primary.disabled API 설정이 필요합니다.
+
       .table-responsive
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
@@ -58,7 +65,7 @@ block content
                 td.align-middle #{api.method}
                 td.align-middle #{api.endpoint}
                 td.align-middle #{api.description}
-                td.align-middle #{api.status}
+                td.align-middle #{api.statusString}
                 td.text-left
                   a.btn.btn-sm.btn-outline-info(href=`/applications/${application.id}/apis/${api.id}`) 상세보기
                   button.ml-3.btn.btn-sm.btn-outline-danger 삭제
