@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import { getRepository, getConnection, getManager, Table } from "typeorm";
 import ApplicationError from "../ApplicationError";
 import { Application, ApplicationStatus } from "../entity/manager/Application";
@@ -9,9 +9,41 @@ import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
 import { RowGenerator } from "../util/RowGenerator";
 import { SwaggerBuilder } from "../util/SwaggerBuilder";
 import swagger from "swagger-ui-express";
+import { needAuth } from "../middlewares/checkAuth";
+import MetaController from "./MetaController";
 
 class ApplicationController {
-  static getIndex = async(req: Request, res: Response, next: NextFunction) => {
+
+  public path = '/applications';
+  public router = Router();
+
+  private metaController: MetaController;
+
+  constructor(metaController: MetaController) {
+    this.metaController = metaController;
+    this.initialRoutes();
+  }
+
+  public initialRoutes() {
+    this.router.get("/", needAuth, this.getIndex);
+    this.router.get("/new", needAuth, this.getNew);
+    this.router.post("/", needAuth, this.post);
+    this.router.get("/:id", needAuth, this.getShow);
+    this.router.post("/:id/deploy", needAuth, this.deployApplication);
+    this.router.use("/:id/api-docs", swagger.serve);
+    this.router.get("/:id/api-docs", swagger.serve, this.getApiDocs);
+    //Apis
+    this.router.get("/:id/services/new", needAuth, this.getApiNew);
+    this.router.post("/:id/services", needAuth, this.postApi);
+    this.router.get("/:id/services/:apiId", needAuth, this.getApiShow);
+    this.router.put("/:id/services/:apiId", needAuth, this.putApi);
+    this.router.get("/:id/services/:apiId/edit", needAuth, this.getApiEdit);
+    //metas
+    this.router.get("/:id/services/:apiId/meta/new", needAuth, this.metaController.getNew);
+    this.router.post("/:id/services/:apiId/meta", needAuth, this.metaController.postMetaMultipart);
+  }
+
+  getIndex = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     try {
       const applications = await applicationRepo.find({
@@ -32,7 +64,7 @@ class ApplicationController {
     }
   }
 
-  static getNew = async(req: Request, res: Response, next: NextFunction) => {
+  getNew = async(req: Request, res: Response, next: NextFunction) => {
     try {
       res.render("applications/new.pug", {
         current_user: req.user
@@ -44,7 +76,7 @@ class ApplicationController {
     }
   }
 
-  static getShow = async(req: Request, res: Response, next: NextFunction) => {
+  getShow = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     const { id } = req.params;
     try {
@@ -75,7 +107,7 @@ class ApplicationController {
     }
   }
 
-  static post = async(req: Request, res: Response, next: NextFunction) => {
+  post = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     const { nameSpace, title, description } = req.body;
     try {
@@ -94,7 +126,7 @@ class ApplicationController {
     }
   }
 
-  static getApiNew = async(req: Request, res: Response, next: NextFunction) => {
+  getApiNew = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     const { id } = req.params;
     try {
@@ -112,7 +144,7 @@ class ApplicationController {
     }
   }
 
-  static postApi = async(req:Request, res: Response, next: NextFunction) => {
+  postApi = async(req:Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     const serviceRepo = getRepository(Service);
     const { id } = req.params;
@@ -135,7 +167,7 @@ class ApplicationController {
     }
   }
 
-  static getApiShow = async(req: Request, res: Response, next: NextFunction) => {
+  getApiShow = async(req: Request, res: Response, next: NextFunction) => {
     const serviceRepo = getRepository(Service);
     const { id, apiId } = req.params;
     
@@ -159,7 +191,7 @@ class ApplicationController {
     }
   }
 
-  static getApiEdit = async(req: Request, res: Response, next: NextFunction) => {
+  getApiEdit = async(req: Request, res: Response, next: NextFunction) => {
     const serviceRepo = getRepository(Service);
     const { id, apiId } = req.params;
     
@@ -183,7 +215,7 @@ class ApplicationController {
     }
   }
 
-  static putApi = async(req: Request, res: Response, next: NextFunction) => {
+  putApi = async(req: Request, res: Response, next: NextFunction) => {
     const serviceRepo = getRepository(Service);
     const { apiId } = req.params;
     const { method, entityName, description } = req.body;
@@ -207,7 +239,7 @@ class ApplicationController {
     }
   }
 
-  static deployApplication = async(req: Request, res: Response, next: NextFunction) => {
+  deployApplication = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     const defaultQueryRunner = await getConnection().createQueryRunner();
     const datasetQueryRunner = await getConnection('dataset').createQueryRunner();
@@ -292,7 +324,7 @@ class ApplicationController {
     }
   }
 
-  static getApiDocs= async(req: Request, res: Response, next: NextFunction) => {
+  getApiDocs= async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     const { id } = req.params;
     try {

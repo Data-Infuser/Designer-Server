@@ -1,12 +1,31 @@
-import { Request, Response, NextFunction, response } from "express";
+import { Request, Response, NextFunction, response, Router } from "express";
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
 import ApplicationError from "../ApplicationError";
 import { DatabaseConnection } from "../entity/manager/DatabaseConnection";
 import { User } from "../entity/manager/User";
 import { MysqlHelper } from "../helpers/MysqlHelper";
+import { needAuth } from "../middlewares/checkAuth";
 
 class ConnectionController {
-  static getIndex = async(req: Request, res: Response, next: NextFunction) => {
+
+  public path = '/databaseConnections';
+  public router = Router();
+
+
+  constructor() {
+    this.initialRoutes();
+  }
+
+  public initialRoutes() {
+    this.router.get("/", needAuth, this.getIndex);
+    this.router.get("/new", needAuth, this.getNew);
+    this.router.get("/:id", needAuth, this.getShow);
+    this.router.get("/:id/tables/:table", needAuth, this.getTableDetail);
+    this.router.post("/", needAuth, this.post);
+    this.router.delete("/:id", needAuth, this.delete);
+  }
+
+  getIndex = async(req: Request, res: Response, next: NextFunction) => {
     const dbcRepo = getRepository(DatabaseConnection);
     try {
       const dbcs = await dbcRepo.find();
@@ -21,13 +40,13 @@ class ConnectionController {
     }
   }
 
-  static getNew = async(req: Request, res: Response, next: NextFunction) => {
+  getNew = async(req: Request, res: Response, next: NextFunction) => {
     res.render("databaseConnections/new.pug", {
       current_user: req.user
     })
   }
   
-  static getShow = async(req: Request, res: Response, next: NextFunction) => {
+  getShow = async(req: Request, res: Response, next: NextFunction) => {
     const dbcRepo = getRepository(DatabaseConnection);
     const { id } = req.params;
 
@@ -56,7 +75,7 @@ class ConnectionController {
     }
   }
 
-  static getTableDetail = async(req: Request, res: Response, next: NextFunction) => {
+  getTableDetail = async(req: Request, res: Response, next: NextFunction) => {
     const dbcRepo = getRepository(DatabaseConnection);
     const { id, table } = req.params;
 
@@ -84,7 +103,7 @@ class ConnectionController {
     }
   }
 
-  static post = async(req: Request, res: Response, next: NextFunction) => {
+  post = async(req: Request, res: Response, next: NextFunction) => {
     const dbcRepo = getRepository(DatabaseConnection);
     const { title, host, port, db, user, pwd, dbms } = req.body;
 
@@ -107,7 +126,7 @@ class ConnectionController {
     }
   }
 
-  static delete = async(req: Request, res: Response, next: NextFunction) => {
+  delete = async(req: Request, res: Response, next: NextFunction) => {
     const dbcRepo = getRepository(DatabaseConnection);
     const { id } = req.params
 

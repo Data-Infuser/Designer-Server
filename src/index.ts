@@ -1,4 +1,5 @@
 import { Application } from './app';
+import controllers from './controllers';
 
 
-new Application().setupDbAndServer();
+new Application(controllers).setupDbAndServer();

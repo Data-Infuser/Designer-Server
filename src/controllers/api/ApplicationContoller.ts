@@ -1,9 +1,21 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import { getRepository, getConnection, getManager } from "typeorm";
 import { Application } from "../../entity/manager/Application";
 
 export default class ApiApplicationController {
-  static getApplications = async(req: Request, res: Response, next: NextFunction) => {
+  public path = '/rest';
+  public router = Router();
+
+  constructor() {
+    this.initialRoutes();
+  }
+
+  public initialRoutes() {
+    this.router.get("/applications", this.getApplications);
+
+  }
+  
+  getApplications = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     
     try {

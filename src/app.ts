@@ -8,13 +8,14 @@ import session from "express-session";
 import morgan from "morgan";
 import flash from "express-flash";
 import {createConnection} from "typeorm";
-import setupRoutes from "./routes/setupRoutes";
 import ApplicationError from "./ApplicationError";
 
 export class Application {
   app: express.Application;
+  controllers: any[];
 
-  constructor() {
+  constructor(controllers: any[]) {
+    this.controllers = controllers;
     this.app = express();
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
@@ -52,7 +53,12 @@ export class Application {
       const datasetConn = await createConnection('dataset').catch(error => console.log(error));
 
       setupPassport(this.app);
-      await setupRoutes(this.app);
+      // await setupRoutes(this.app);
+      this.controllers.forEach(
+        (controller) => {
+          this.app.use(controller.path, controller.router);
+        }
+      )
 
       this.app.use(function(req, res, next) {
         let err = new ApplicationError(404, 'Not Found');

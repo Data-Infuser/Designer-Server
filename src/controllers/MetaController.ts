@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import { getConnection, LessThanOrEqual, getRepository, getManager, TableColumn, Table, Column } from "typeorm";
 import { Meta } from "../entity/manager/Meta";
 import { MetaColumn } from "../entity/manager/MetaColumn";
@@ -8,10 +8,25 @@ import { MetaLoader } from "../util/MetaLoader";
 import * as multiparty from 'multiparty';
 import { MetaInfo } from "../interfaces/MetaInfo";
 import { Application } from "../entity/manager/Application";
+import { needAuth } from "../middlewares/checkAuth";
 
 class MetaController {
 
-  static postMetaMultipart = async(req: Request, res: Response, next: NextFunction) => {
+  public path = '/metas';
+  public router = Router();
+
+
+  constructor() {
+    this.initialRoutes();
+  }
+
+  public initialRoutes() {
+    this.router.get("/:id/edit", needAuth, this.getEdit);
+    this.router.put("/:id", needAuth, this.put);
+    this.router.delete("/:id", needAuth, this.delete);
+  }
+
+  postMetaMultipart = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const metaColRepo = getRepository(MetaColumn);
     const serviceRepo = getRepository(Service);
@@ -66,7 +81,7 @@ class MetaController {
     }
   }
 
-  static getNew = async(req: Request, res: Response, next: NextFunction) => {
+  getNew = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     const serviceRepo = getRepository(Service);
     const { id, apiId } = req.params;
@@ -86,7 +101,7 @@ class MetaController {
     }
   }
 
-  static getEdit = async(req: Request, res: Response, next: NextFunction) => {
+  getEdit = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const { id } = req.params
     try {
@@ -109,7 +124,7 @@ class MetaController {
     }
   }
 
-  static delete = async(req: Request, res: Response, next: NextFunction) => {
+  delete = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const serviceRepo = getRepository(Service);
     const { id } = req.params;
@@ -140,7 +155,7 @@ class MetaController {
     }
   }
 
-  static put =  async(req: Request, res: Response, next: NextFunction) => {
+  put =  async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const columnRepo = getRepository(MetaColumn);
     const { id } = req.params;
