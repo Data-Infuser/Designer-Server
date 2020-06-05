@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { Api } from "../entity/manager/Api";
+import { Service } from "../entity/manager/Service";
 import { getRepository, getConnection, getManager, Table } from "typeorm";
 import ApplicationError from "../ApplicationError";
 import { Meta } from "../entity/manager/Meta";
-import { ApiColumn } from "../entity/manager/ApiColumns";
+import { ServiceColumn } from "../entity/manager/ServiceColumn";
 import { SwaggerBuilder } from "../util/SwaggerBuilder";
 import swagger from "swagger-ui-express";
 import { MetaColumn } from "../entity/manager/MetaColumn";
@@ -12,38 +12,21 @@ import { RowGenerator } from "../util/RowGenerator";
 import { Application } from "../entity/manager/Application";
 
 
-class ApiController {
-  static getIndex = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
-
-    try {
-      const apis = await apiRepo.find();
-
-      res.render("apis/index.pug", {
-        apis: apis,
-        current_user: req.user
-      })
-    } catch (err) {
-      console.error(err);
-      next(new ApplicationError(500, err.message));
-      return;
-    }
-  }
-
+class ServiceController {
   static getShow = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id } = req.params
 
     try {
-      const api = await apiRepo.findOneOrFail({
+      const service = await serviceRepo.findOneOrFail({
         relations: ["columns", "meta"],
         where: {
           id: id
         }
       });
 
-      res.render("apis/show.pug", {
-        api: api,
+      res.render("services/show.pug", {
+        service: service,
         current_user: req.user
       })
     } catch (err) {
@@ -54,19 +37,19 @@ class ApiController {
   }
 
   static getEdit = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id } = req.params;
 
     try {
-      const api = await apiRepo.findOneOrFail({
+      const service = await serviceRepo.findOneOrFail({
         relations: ["columns", "meta"],
         where: {
           id: id
         }
       });
       
-      res.render("apis/edit.pug", {
-        api: api,
+      res.render("services/edit.pug", {
+        service: service,
         current_user: req.user
       });
     } catch (err) {
@@ -77,25 +60,23 @@ class ApiController {
   }
 
   static put = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
-    const apiColRepo = getRepository(ApiColumn);
+    const serviceRepo = getRepository(Service);
+    const serviceColRepo = getRepository(ServiceColumn);
     const { id } = req.params;
 
     try {
-      const api = await apiRepo.findOneOrFail({
+      const service = await serviceRepo.findOneOrFail({
         relations: ["columns", "meta"],
         where: {
           id: id
         }
       });
 
-      api.columns.forEach(col => {
+      service.columns.forEach(col => {
         col.hidden = req.body[`hidden-${col.id}`] == 'true'
       })
-
-      await apiColRepo.save(api.columns);
-
-      res.redirect(`/apis/${api.id}`)
+      await serviceColRepo.save(service.columns);
+      res.redirect(`/services/${service.id}`)
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));
@@ -104,46 +85,26 @@ class ApiController {
   }
 
   static delete = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const metaRepo = getRepository(Meta);
     const { id } = req.params;
     try {
-      let api = await apiRepo.findOneOrFail({
+      let service = await serviceRepo.findOneOrFail({
         relations: ["meta"],
         where: {
           id: id
         }
       });
+      
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-        await apiRepo.delete(api.id);
-        api.meta.isActive = false;
-        await metaRepo.save(api.meta);
-        await getConnection('dataset').createQueryRunner().dropTable(api.tableName, true);
+        await serviceRepo.delete(service.id);
+        service.meta.isActive = false;
+        await metaRepo.save(service.meta);
+        await getConnection('dataset').createQueryRunner().dropTable(service.tableName, true);
       });
       
       req.flash('danger', 'api가 삭제되었습니다.');
-      res.redirect('/apis')
-    } catch (err) {
-      next(new ApplicationError(500, err.message));
-      return;
-    }
-  }
-
-  static getSwagger = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
-    const { id } = req.params;
-    try {
-      const api = await apiRepo.findOneOrFail({
-        relations: ['meta', 'columns'],
-        where: {
-          id: id
-        }
-      })
-
-      const apiDoc = await SwaggerBuilder.buildDoc([api]);
-      if(apiDoc) {
-        res.send(swagger.generateHTML(apiDoc));
-      }
+      res.redirect('/services')
     } catch (err) {
       next(new ApplicationError(500, err.message));
       return;

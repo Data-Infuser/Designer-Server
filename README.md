@@ -46,6 +46,18 @@ chai : https://www.chaijs.com/
 > npm run migration:run
 - InsertDefaultUser : admin/admin 계정 생성
 
+## 4. Schema drop
+
+DB 구조가 변경되어 기존 사용하던 DB Schema와 맞지 않아 오류가 생기는 경우가 있습니다.
+
+운영단계에서는 DB migration을 사용하는 것이 바람직하지만, 
+
+개발 단계에서는 TypeOrm의 Sync를 사용하고 있기 때문에 DB migration을 사용하지 않고 있습니다.
+
+> npm run schema:drop
+
+명령어를 통하여 전체 table을 drop할 수 있습니다. 이후 3. database migration 을 다시 실행하면 됩니다.
+
 ## 4. Generate migration
 
 > typeorm migration:create -n PostRefactoring

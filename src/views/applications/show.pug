@@ -45,14 +45,14 @@ block content
               td(colspan="3") #{application.status}
 
       .text-right.mb-3
-        a.ml-1.btn.btn-outline-primary(href=`/applications/${application.id}/apis/new`) Api 추가
+        a.ml-1.btn.btn-outline-primary(href=`/applications/${application.id}/services/new`) service 추가
         button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteModal") Application 삭제
 
       .table-responsive
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
             tr.text-center
-              th(colspan="6") Api 정보
+              th(colspan="6") service 정보
             tr.text-center
               th id
               th method
@@ -62,15 +62,15 @@ block content
               th
 
           tbody
-            each api in application.apis
+            each service in application.services
               tr.text-center
-                td.align-middle #{api.id}
-                td.align-middle #{api.method}
-                td.align-middle #{api.endpoint}
-                td.align-middle #{api.description}
-                td.align-middle #{api.statusString}
+                td.align-middle #{service.id}
+                td.align-middle #{service.method}
+                td.align-middle #{service.endpoint}
+                td.align-middle #{service.description}
+                td.align-middle #{service.statusString}
                 td.text-left
-                  a.btn.btn-sm.btn-outline-info(href=`/applications/${application.id}/apis/${api.id}`) 상세보기
+                  a.btn.btn-sm.btn-outline-info(href=`/applications/${application.id}/services/${service.id}`) 상세보기
                   button.ml-3.btn.btn-sm.btn-outline-danger 삭제
 
   .modal.fade(id="deleteModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')

@@ -7,36 +7,36 @@ block content
         a(href="/applications") Application 관리
         | /
         a(href=`/applications/${application.id}`) Application 상세보기
-        | / API 설정
+        | / service 설정
         
   .card.mb-3
     .card-header
       i.fas.fa-table
-        span.ml-3 API 설정
+        span.ml-3 service 설정
 
     .card-body
       .table-responsive
         table.table.table-bordered(width='100%' cellspacing='0')
           thead
             tr.text-center
-              th(colspan="6") API 정보
+              th(colspan="6") service 정보
           tbody
             tr
               th id
-              td #{api.id}
+              td #{service.id}
               th method
-              td #{api.method}
+              td #{service.method}
               th EntityName
-              td #{api.entityName}
+              td #{service.entityName}
             tr
               th url
-              td(colspan="5") #{api.fullUrl}
+              td(colspan="5") #{service.fullUrl}
             tr
               th description
-              td(colspan="5") #{api.description}
+              td(colspan="5") #{service.description}
       
       .text-right.mb-3
-        a.btn.btn-outline-primary(href=`/applications/${application.id}/apis/${api.id}/edit`) API 정보 수정
+        a.btn.btn-outline-primary(href=`/applications/${application.id}/services/${service.id}/edit`) service 정보 수정
       
       .table-responsive
         table.table.table-bordered(width='100%' cellspacing='0')
@@ -44,16 +44,16 @@ block content
             tr.text-center
               th(colspan="6") Meta 정보
           tbody
-            if(!api.meta)
+            if(!service.meta)
               tr
                 td.text-center(colspan="6") 
                   div
                     span 등록된 메타 정보가 없습니다.
             else
-              if(api.meta.dataType == "file")
-                +fileInfo(api.meta)
-              else if(api.meta.dataType == "dbms")
-                +dbmsInfo(api.meta)
+              if(service.meta.dataType == "file")
+                +fileInfo(service.meta)
+              else if(service.meta.dataType == "dbms")
+                +dbmsInfo(service.meta)
               else
                 tr
                   td.text-center(colspan="6") 
@@ -61,13 +61,13 @@ block content
                       span 등록된 메타 정보가 없습니다.
 
       .text-right.mb-3
-        if(api.meta)
-          a.btn.btn-outline-primary(href=`/metas/${api.meta.id}/edit`) 메타 정보 수정
+        if(service.meta)
+          a.btn.btn-outline-primary(href=`/metas/${service.meta.id}/edit`) 메타 정보 수정
           button.ml-1.btn.btn-outline-danger(type="button", data-Toggle="modal", data-target="#deleteMetaModal") Meta data 삭제
         else
-          a.btn.btn-outline-primary(href=`/applications/${application.id}/apis/${api.id}/meta/new`) 메타 정보 등록
+          a.btn.btn-outline-primary(href=`/applications/${application.id}/services/${service.id}/meta/new`) 메타 정보 등록
 
-  if(api.meta)
+  if(service.meta)
     .modal.fade(id="deleteMetaModal" tabindex='-1' role='dialog' aria-labelledby='deleteModal' aria-hidden='true')
       .modal-dialog(role='document')
         .modal-content
@@ -75,9 +75,9 @@ block content
             h5#exampleModalLabel.modal-title 삭제하기
             button.close(type='button' data-dismiss='modal' aria-label='Close')
               span(aria-hidden='true') &times;
-          form(action=`/metas/${api.meta.id}?_method=DELETE`, method="post")
+          form(action=`/metas/${service.meta.id}?_method=DELETE`, method="post")
             .modal-body
-              | 배포된 API 정보도 삭제됩니다. <br>
+              | 배포된 service 정보도 삭제됩니다. <br>
               | 정말 삭제하시겠습니까?
             .modal-footer
               button.btn.btn-secondary(type='button' data-dismiss='modal') 닫기

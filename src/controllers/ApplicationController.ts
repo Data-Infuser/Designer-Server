@@ -3,14 +3,14 @@ import { getRepository, getConnection, getManager, Table } from "typeorm";
 import ApplicationError from "../ApplicationError";
 import { Application, ApplicationStatus } from "../entity/manager/Application";
 import { User } from "../entity/manager/User";
-import { Api, ServiceStatus } from "../entity/manager/Api";
-import { ApiColumn } from "../entity/manager/ApiColumns";
+import { Service, ServiceStatus } from "../entity/manager/Service";
+import { ServiceColumn } from "../entity/manager/ServiceColumn";
 import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
 import { RowGenerator } from "../util/RowGenerator";
 import { SwaggerBuilder } from "../util/SwaggerBuilder";
 import swagger from "swagger-ui-express";
 
-class ApiController {
+class ApplicationController {
   static getIndex = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     try {
@@ -49,7 +49,7 @@ class ApiController {
     const { id } = req.params;
     try {
       const application = await applicationRepo.findOne({
-        relations: ["apis", "apis.meta"],
+        relations: ["services", "services.meta"],
         where: {
           id: id,
           user: {
@@ -100,7 +100,7 @@ class ApiController {
     try {
       const application = await applicationRepo.findOneOrFail(id);
 
-      res.render("apis/new", {
+      res.render("services/new", {
         current_user: req.user,
         application: application
       });
@@ -114,18 +114,18 @@ class ApiController {
 
   static postApi = async(req:Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id } = req.params;
     const { method, entityName, description } = req.body;
 
     try {
       const application = await applicationRepo.findOneOrFail(id);
-      const newApi = new Api();
-      newApi.method = method;
-      newApi.entityName = entityName;
-      newApi.description = description;
-      newApi.application = application;
-      await apiRepo.save(newApi);
+      const newService = new Service();
+      newService.method = method;
+      newService.entityName = entityName;
+      newService.description = description;
+      newService.application = application;
+      await serviceRepo.save(newService);
 
       res.redirect(`/applications/${application.id}`)
     } catch (err) {
@@ -136,21 +136,21 @@ class ApiController {
   }
 
   static getApiShow = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id, apiId } = req.params;
     
     try {
-      const api = await apiRepo.findOneOrFail({
+      const service = await serviceRepo.findOneOrFail({
         relations: ["application", "meta", "meta.columns"],
         where: {
           id: apiId
         }
       });
-      const application = api.application;
-      res.render("apis/show", {
+      const application = service.application;
+      res.render("services/show", {
         current_user: req.user,
         application: application,
-        api: api
+        service: service
       })
     } catch (err) {
       console.error(err);
@@ -160,21 +160,21 @@ class ApiController {
   }
 
   static getApiEdit = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id, apiId } = req.params;
     
     try {
-      const api = await apiRepo.findOneOrFail({
+      const service = await serviceRepo.findOneOrFail({
         relations: ["application"],
         where: {
           id: apiId
         }
       });
-      const application = api.application;
-      res.render("apis/edit", {
+      const application = service.application;
+      res.render("services/edit", {
         current_user: req.user,
         application: application,
-        api: api
+        service: service
       })
     } catch (err) {
       console.error(err);
@@ -184,22 +184,22 @@ class ApiController {
   }
 
   static putApi = async(req: Request, res: Response, next: NextFunction) => {
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { apiId } = req.params;
     const { method, entityName, description } = req.body;
     try {
-      const api = await apiRepo.findOneOrFail({
+      const service = await serviceRepo.findOneOrFail({
         relations: ["application"],
         where: {
           id: apiId
         }
       });
-      api.method = method;
-      api.entityName = entityName;
-      api.description = description;
-      await apiRepo.save(api);
+      service.method = method;
+      service.entityName = entityName;
+      service.description = description;
+      await serviceRepo.save(service);
 
-      res.redirect(`/applications/${api.application.id}/apis/${api.id}`)
+      res.redirect(`/applications/${service.application.id}/services/${service.id}`)
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));
@@ -215,22 +215,22 @@ class ApiController {
     let tablesForDelete:string[] = [];
     try {
       const application = await applicationRepo.findOneOrFail({
-        relations: ["apis", "apis.meta", "apis.meta.columns"],
+        relations: ["services", "services.meta", "services.meta.columns"],
         where: {
           id: id
         }
       })
       await defaultQueryRunner.startTransaction();
       await datasetQueryRunner.startTransaction();
-      for(let api of application.apis) {
-        const meta = api.meta;
+      for(let service of application.services) {
+        const meta = service.meta;
         const metaColumns = meta.columns;
-        api.tableName = application.nameSpace + "-" + api.entityName
+        service.tableName = application.nameSpace + "-" + service.entityName
         // column data 생성
         let columns = []
         let columnNames = []
         let originalColumnNames = []
-        let apiColumns: ApiColumn[] = []
+        let serviceColumns: ServiceColumn[] = []
 
         metaColumns.forEach(column => {
           columnNames.push(`\`${column.columnName}\``)
@@ -244,11 +244,11 @@ class ApiController {
             type: column.type,
             isNullable: true
           })
-          apiColumns.push(new ApiColumn(column.columnName, type, api));
+          serviceColumns.push(new ServiceColumn(column.columnName, type, service));
         });
 
         const tableOption: TableOptions = {
-          name: api.tableName,
+          name: service.tableName,
           columns: columns
         }
         
@@ -260,16 +260,16 @@ class ApiController {
         let insertValues = await RowGenerator.generateRows(meta, originalColumnNames);
         console.log(insertValues);
         tablesForDelete.push(tableOption.name);
-        api.columnLength = apiColumns.length;
-        api.dataCounts = insertValues.length;
+        service.columnLength = serviceColumns.length;
+        service.dataCounts = insertValues.length;
 
         await datasetQueryRunner.createTable(new Table(tableOption));
         await datasetQueryRunner.query(insertQuery, [insertValues]);
         meta.isActive = true;
-        api.status = ServiceStatus.LOADED;
+        service.status = ServiceStatus.LOADED;
         await defaultQueryRunner.manager.save(meta);
-        await defaultQueryRunner.manager.save(api);
-        await defaultQueryRunner.manager.save(apiColumns);
+        await defaultQueryRunner.manager.save(service);
+        await defaultQueryRunner.manager.save(serviceColumns);
       }
       application.status = ApplicationStatus.DEPLOYED;
       await defaultQueryRunner.manager.save(application);
@@ -297,7 +297,7 @@ class ApiController {
     const { id } = req.params;
     try {
       const application = await applicationRepo.findOneOrFail({
-        relations: ["apis"],
+        relations: ["services"],
         where: {
           id: id
         }
@@ -314,4 +314,4 @@ class ApiController {
   }
 }
 
-export default ApiController;
+export default ApplicationController;

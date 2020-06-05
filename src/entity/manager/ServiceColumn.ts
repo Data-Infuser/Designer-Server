@@ -1,16 +1,16 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, Unique} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import { Meta } from "./Meta";
-import { Api } from "./Api";
+import { Service } from "./Service";
 
 @Entity()
-@Unique("ApiColumn_columnName_unique", ["api", "columnName"])
-export class ApiColumn {
+@Unique("serviceColumn_columnName_unique", ["service", "columnName"])
+export class ServiceColumn {
 
-  constructor(colunmName?:string, type?:string, api?: Api) {
+  constructor(colunmName?:string, type?:string, service?: Service) {
     if(colunmName) this.columnName = colunmName
     if(type) this.type = type
-    if(api) this.api = api
+    if(service) this.service = service
   }
 
   @PrimaryGeneratedColumn()
@@ -27,8 +27,8 @@ export class ApiColumn {
   @Column({ default: false })
   hidden: boolean;
 
-  @ManyToOne(type => Api, api => api.columns, { nullable: true, onDelete: 'CASCADE' })
-  api: Api;
+  @ManyToOne(type => Service, service => service.columns, { nullable: true, onDelete: 'CASCADE' })
+  service: Service;
 
   @Column()
   @CreateDateColumn()

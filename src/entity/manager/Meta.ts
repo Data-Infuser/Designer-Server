@@ -3,7 +3,7 @@ import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
-import { Api } from "./Api";
+import { Service } from "./Service";
 
 
 
@@ -64,8 +64,8 @@ export class Meta {
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
 
-  @OneToOne(type => Api, api => api.meta) // specify inverse side as a second parameter
-  api: Api;
+  @OneToOne(type => Service, service => service.meta) // specify inverse side as a second parameter
+  service: Service;
 
   @OneToMany(type => MetaColumn, mc => mc.meta)
   columns: MetaColumn[];

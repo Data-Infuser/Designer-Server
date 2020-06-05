@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction, response } from "express";
-import { Api } from "../entity/manager/Api";
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
 import ApplicationError from "../ApplicationError";
-import { Meta } from "../entity/manager/Meta";
 import { DatabaseConnection } from "../entity/manager/DatabaseConnection";
-import { request } from "http";
 import { User } from "../entity/manager/User";
 import { MysqlHelper } from "../helpers/MysqlHelper";
 

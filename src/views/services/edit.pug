@@ -6,17 +6,17 @@ block content
         a(href="/applications") Application 관리
         | /
         a(href=`/applications/${application.id}`) Application 관리
-        | / API 수정
+        | / service 수정
         
   .card.mb-3
     .card-header
       i.fas.fa-table
-        span.ml-3 API 수정
+        span.ml-3 service 수정
 
     .card-body
       .row
         .col-6
-          form(action=`/applications/${application.id}/apis/${api.id}?_method=put`, method="post")
+          form(action=`/applications/${application.id}/services/${service.id}?_method=put`, method="post")
             include _form
 
 block script      

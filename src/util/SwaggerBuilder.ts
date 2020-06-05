@@ -1,8 +1,8 @@
 import { getRepository } from "typeorm";
 import _ from "lodash";
 
-import { Api } from "../entity/manager/Api";
-import { ApiColumn } from "../entity/manager/ApiColumns";
+import { Service } from "../entity/manager/Service";
+import { ServiceColumn } from "../entity/manager/ServiceColumn";
 
 import Config from "../../property.json"
 import ApiResponseTemplate from "./swagger_template/api_response.json";
@@ -29,7 +29,7 @@ export class SwaggerBuilder {
 
       try {
 
-        application.apis.forEach((api) => {
+        application.services.forEach((api) => {
           let def = SwaggerBuilder.buildDef(api);
           let modelTemplate = _.cloneDeep(ApiResponseTemplate);
           modelTemplate.properties.datas.items['$ref'] = `#/definitions/${api.tableName}_model`;
@@ -45,9 +45,9 @@ export class SwaggerBuilder {
     });
   }
 
-  static buildDoc = async (apis?:Api[]) => {
+  static buildDoc = async (services?:Service[]) => {
     return new Promise<any>(async(resolve, reject) => {
-      const apiRepo = getRepository(Api);
+      const serviceRepo = getRepository(Service);
       let doc = {
         "swagger": "2.0",
         "info": {
@@ -62,21 +62,21 @@ export class SwaggerBuilder {
       };
 
       try {
-        if(!apis) {
-          apis = await apiRepo.find({
+        if(!services) {
+          services = await serviceRepo.find({
             relations: ["meta", "columns"],
           });
         }
 
-        apis.forEach((api) => {
-          let def = SwaggerBuilder.buildDef(api);
+        services.forEach((service) => {
+          let def = SwaggerBuilder.buildDef(service);
           let modelTemplate = _.cloneDeep(ApiResponseTemplate);
-          modelTemplate.properties.datas.items['$ref'] = `#/definitions/${api.tableName}_model`;
+          modelTemplate.properties.datas.items['$ref'] = `#/definitions/${service.tableName}_model`;
 
-          doc.definitions[api.tableName+'_model'] = def;
-          doc.definitions[api.tableName+'_api'] = modelTemplate;
+          doc.definitions[service.tableName+'_model'] = def;
+          doc.definitions[service.tableName+'_api'] = modelTemplate;
 
-          doc.paths[`/api/dataset/${api.tableName}`] = SwaggerBuilder.buildPath(api);
+          doc.paths[`/api/dataset/${service.tableName}`] = SwaggerBuilder.buildPath(service);
         });
         resolve(doc);
       } catch(err) {
@@ -86,13 +86,13 @@ export class SwaggerBuilder {
     });
   }
 
-  private static buildDef = (api: Api) => {
+  private static buildDef = (service: Service) => {
     let def = {
       "type": "object",
       "properties": {}
     };
 
-    _.forEach(api.columns, (col: ApiColumn) => {
+    _.forEach(service.columns, (col: ServiceColumn) => {
       def.properties[col.columnName] = {
         "type": "string"
       }
@@ -101,12 +101,12 @@ export class SwaggerBuilder {
     return def;
   }
 
-  private static buildPath = (api: Api) => {
+  private static buildPath = (service: Service) => {
     let pathTemplate = _.cloneDeep(PathTemplate);
 
-    pathTemplate["get"].tags.push(api.entityName);
-    pathTemplate["get"].description = api.description;
-    pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${api.tableName}_api`;
+    pathTemplate["get"].tags.push(service.entityName);
+    pathTemplate["get"].description = service.description;
+    pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${service.tableName}_api`;
 
     return pathTemplate;
   }

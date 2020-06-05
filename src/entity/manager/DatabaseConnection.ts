@@ -2,8 +2,6 @@ import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColu
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { User } from "./User";
-import { MetaColumn } from "./MetaColumn";
-import { Api } from "./Api";
 
 export enum AcceptableDbms {
   MYSQL = "mysql"

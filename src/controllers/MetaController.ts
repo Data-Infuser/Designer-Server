@@ -2,12 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { getConnection, LessThanOrEqual, getRepository, getManager, TableColumn, Table, Column } from "typeorm";
 import { Meta } from "../entity/manager/Meta";
 import { MetaColumn } from "../entity/manager/MetaColumn";
-import { User } from "../entity/manager/User";
-import { TableOptions } from "typeorm/schema-builder/options/TableOptions";
-import { Api, ServiceStatus } from "../entity/manager/Api";
+import { Service, ServiceStatus } from "../entity/manager/Service";
 import ApplicationError from "../ApplicationError";
-import { ApiColumn } from "../entity/manager/ApiColumns";
-import { RowGenerator } from "../util/RowGenerator";
 import { MetaLoader } from "../util/MetaLoader";
 import * as multiparty from 'multiparty';
 import { MetaInfo } from "../interfaces/MetaInfo";
@@ -18,7 +14,7 @@ class MetaController {
   static postMetaMultipart = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
     const metaColRepo = getRepository(MetaColumn);
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id, apiId } = req.params;
     
     const promisifyUpload = (req) => new Promise<any>((resolve, reject) => {
@@ -52,17 +48,17 @@ class MetaController {
         default:
           throw new Error(`available dataType ${dataType}`);
       }
-      const api = await apiRepo.findOneOrFail(apiId);
+      const service = await serviceRepo.findOneOrFail(apiId);
       result.meta.user = req.user;
-      result.meta.api = api;
-      api.meta = result.meta;
-      api.status = ServiceStatus.METALOADED;
+      result.meta.service = service;
+      service.meta = result.meta;
+      service.status = ServiceStatus.METALOADED;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await metaRepo.save(result.meta);
         await metaColRepo.save(result.columns);
-        await apiRepo.save(api);
+        await serviceRepo.save(service);
       })
-      res.redirect(`/applications/${id}/apis/${apiId}`);
+      res.redirect(`/applications/${id}/services/${apiId}`);
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));
@@ -72,15 +68,15 @@ class MetaController {
 
   static getNew = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id, apiId } = req.params;
     try {
       const application = await applicationRepo.findOneOrFail(id);
-      const api = await apiRepo.findOneOrFail(apiId);
+      const service = await serviceRepo.findOneOrFail(apiId);
 
       res.render("metas/new.pug", {
         current_user: req.user,
-        api: api,
+        service: service,
         application: application
       })
     } catch (err) {
@@ -95,7 +91,7 @@ class MetaController {
     const { id } = req.params
     try {
       const meta = await metaRepo.findOneOrFail({
-        relations: ["columns", "api", "api.application"],
+        relations: ["columns", "service", "service.application"],
         where: {
           id: id
         }
@@ -103,8 +99,8 @@ class MetaController {
       res.render("metas/edit.pug", {
         current_user: req.user,
         meta: meta,
-        api: meta.api,
-        application: meta.api.application
+        service: meta.service,
+        application: meta.service.application
       })
     } catch (err) {
       console.error(err);
@@ -115,30 +111,29 @@ class MetaController {
 
   static delete = async(req: Request, res: Response, next: NextFunction) => {
     const metaRepo = getRepository(Meta);
-    const apiRepo = getRepository(Api);
+    const serviceRepo = getRepository(Service);
     const { id } = req.params;
     try {
       const meta = await metaRepo.findOneOrFail({
-        relations: ["api", "api.application"],
+        relations: ["service", "service.application"],
         where: {
           id: id
         }
       });
-      const apiId = meta.api.id;
-      const applicationId = meta.api.application.id;
-      console.log(meta.api);
+      const serviceId = meta.service.id;
+      const applicationId = meta.service.application.id;
       await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
         await metaRepo.delete(id);
-        if(meta.api && meta.api.tableName) {
-          meta.api.tableName = null;
-          meta.api.status = ServiceStatus.IDLE;
-          await apiRepo.save(meta.api);
-          await getConnection('dataset').createQueryRunner().dropTable(meta.api.tableName, true);
+        if(meta.service && meta.service.tableName) {
+          meta.service.tableName = null;
+          meta.service.status = ServiceStatus.IDLE;
+          await serviceRepo.save(meta.service);
+          await getConnection('dataset').createQueryRunner().dropTable(meta.service.tableName, true);
         }
       });
       
       req.flash('danger', '메타 정보가 삭제되었습니다.');
-      res.redirect(`/applications/${applicationId}/apis/${apiId}`)
+      res.redirect(`/applications/${applicationId}/services/${serviceId}`)
     } catch (err) {
       next(new ApplicationError(500, err.message));
       return;
@@ -152,7 +147,7 @@ class MetaController {
     const { title } = req.body;
     try {
       const meta = await metaRepo.findOneOrFail({
-        relations: ["columns", "api", "api.application"],
+        relations: ["columns", "service", "service.application"],
         where: {
           id: id
         }
@@ -175,7 +170,7 @@ class MetaController {
       });
     
       req.flash('success', '수정되었습니다.')
-      res.redirect(`/applications/${meta.api.application.id}/apis/${meta.api.id}`)
+      res.redirect(`/applications/${meta.service.application.id}/services/${meta.service.id}`)
     } catch (err) {
       console.error(err);
       next(new ApplicationError(500, err.message));

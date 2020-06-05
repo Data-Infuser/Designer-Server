@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { getRepository, getConnection, getManager } from "typeorm";
-import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
-import { User } from "../../entity/manager/User";
-import { Api } from "../../entity/manager/Api";
 
 export default class ApiApplicationController {
   static getApplications = async(req: Request, res: Response, next: NextFunction) => {

@@ -2,7 +2,7 @@ import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColu
 import { Length, IsNotEmpty, NotContains } from "class-validator";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
-import { Api, ServiceStatus } from "./Api";
+import { Service, ServiceStatus } from "./Service";
 
 export enum ApplicationStatus {
   // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
@@ -41,8 +41,8 @@ export class Application {
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
 
-  @OneToMany(type => Api, api => api.application)
-  apis: Api[];
+  @OneToMany(type => Service, service => service.application)
+  services: Service[];
 
   @Column()
   @CreateDateColumn()
@@ -53,9 +53,9 @@ export class Application {
   updatedAt: Date;
 
   get isDeployable(): boolean {
-    if(this.apis.length == 0) return false;
-    this.apis.forEach(api => {
-      if(api.status == ServiceStatus.METALOADED) return false
+    if(this.services.length == 0) return false;
+    this.services.forEach(service => {
+      if(service.status == ServiceStatus.METALOADED) return false
     });
     return true; 
   }

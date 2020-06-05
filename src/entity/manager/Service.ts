@@ -4,7 +4,7 @@ import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
 import { Meta } from "./Meta";
-import { ApiColumn } from "./ApiColumns";
+import { ServiceColumn } from "./ServiceColumn";
 import { HttpClientResponse } from "typed-rest-client/HttpClient";
 import { Application } from "./Application";
 
@@ -26,7 +26,7 @@ export enum ServiceStatus {
   FAILED = "failed" 
 }
 @Entity()
-export class Api {
+export class Service {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -70,15 +70,15 @@ export class Api {
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne(type => Application, app => app.apis, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(type => Application, app => app.services, { nullable: true, onDelete: 'CASCADE' })
   application: Application;
 
   @OneToOne(type => Meta, {nullable: true, onDelete: "SET NULL"})
   @JoinColumn()
   meta: Meta;
 
-  @OneToMany(type => ApiColumn, ac => ac.api, {nullable: true})
-  columns: ApiColumn[];
+  @OneToMany(type => ServiceColumn, sc => sc.service, {nullable: true})
+  columns: ServiceColumn[];
 
   @Column()
   @CreateDateColumn()

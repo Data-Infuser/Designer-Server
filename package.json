@@ -5,7 +5,8 @@
   "scripts": {
     "test": "mocha -r ts-node/register ./test/*.test.ts",
     "start": "set debug=* && ts-node-dev --ignore-watch node_modules --respawn --transpileOnly ./src/index.ts",
-    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run"
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
+    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop"
   },
   "author": "",
   "license": "ISC",
