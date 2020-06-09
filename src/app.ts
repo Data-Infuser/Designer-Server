@@ -13,7 +13,7 @@ import ApplicationError from "./ApplicationError";
 export class Application {
   app: express.Application;
   controllers: any[];
-
+  auth;
   constructor(controllers: any[]) {
     this.controllers = controllers;
     this.app = express();
@@ -45,7 +45,6 @@ export class Application {
     });
     
     this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length]"));
-    
   }
 
   setupDbAndServer = async () => {

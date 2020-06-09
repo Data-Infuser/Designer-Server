@@ -30,3 +30,23 @@ GET http://localhost:3000/api/dataset/api_1_stores4
 accept: application/json
 Content-Type: application/json
 apikey: testkey
+
+
+### simple login JWT
+POST http://localhost:3000/oauth/login
+accept: application/json
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+### simple refresh JWT
+POST http://localhost:3000/oauth/token
+accept: application/json
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTU5MTY5NDE2NiwiZXhwIjoxNTk0Mjg2MTY2fQ.q9Uk-GRdsCYnRzDTl1hWqHGfXqn90ftx8aGHdKsGeTY"
+}
