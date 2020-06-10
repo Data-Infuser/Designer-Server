@@ -4,6 +4,7 @@ import DefaultController from "./DefaultController";
 import MetaController from "./MetaController";
 import RestContoller from "./rest/RestContoller";
 import AuthController from './api/AuthController';
+import ApiUserController from './api/ApiUserController';
 
 export default [
     new DefaultController(),
@@ -11,5 +12,6 @@ export default [
     new DatabaseConnectionController(),
     new MetaController(),
     new RestContoller(),
-    new AuthController()
+    new AuthController(),
+    new ApiUserController()
 ]

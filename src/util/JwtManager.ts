@@ -1,5 +1,6 @@
 import { User } from '../entity/manager/User';
 import jwt from "jsonwebtoken";
+import { NextFunction } from 'express';
 
 const TOKEN_SECRET = "json-oauth-token"
 const REFRESH_TOKEN_SECRET = "json-oauth-refresth-token"
@@ -14,6 +15,10 @@ interface TokenInterface {
 interface PayloadUserInfo {
   id: string|number,
   username: string
+}
+
+export function getSecret() {
+  return TOKEN_SECRET;
 }
 
 export function generateTokens(user: PayloadUserInfo) {

@@ -50,3 +50,9 @@ Content-Type: application/json
 {
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTU5MTc0ODY2NSwiZXhwIjoxNTk0MzQwNjY1fQ.heCN9mdzilf-M4il2Fv-tapshiMG2oq_xXC5RqYqCk0"
 }
+
+### get my info by jwt
+GET http://localhost:3000/api/users/me
+accept: application/json
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTU5MTc1NzIzNSwiZXhwIjoxNTkxOTMwMDM1fQ.SbdOcqedVUd02--1Jl2ZtVncWP14hYF7DsZtbTEBgD4
