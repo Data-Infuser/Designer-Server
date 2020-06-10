@@ -33,7 +33,7 @@ apikey: testkey
 
 
 ### simple login JWT
-POST http://localhost:3000/oauth/login
+POST http://localhost:3000/api/oauth/login
 accept: application/json
 Content-Type: application/json
 
@@ -43,10 +43,10 @@ Content-Type: application/json
 }
 
 ### simple refresh JWT
-POST http://localhost:3000/oauth/token
+POST http://localhost:3000/api/oauth/token
 accept: application/json
 Content-Type: application/json
 
 {
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTU5MTY5NDE2NiwiZXhwIjoxNTk0Mjg2MTY2fQ.q9Uk-GRdsCYnRzDTl1hWqHGfXqn90ftx8aGHdKsGeTY"
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTU5MTc0ODY2NSwiZXhwIjoxNTk0MzQwNjY1fQ.heCN9mdzilf-M4il2Fv-tapshiMG2oq_xXC5RqYqCk0"
 }

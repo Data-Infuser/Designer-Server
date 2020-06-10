@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, Router } from "express";
 import { getRepository, getConnection, getManager } from "typeorm";
 import { Application } from "../../entity/manager/Application";
 
-export default class ApiApplicationController {
+export default class RestController {
   public path = '/rest';
   public router = Router();
 
