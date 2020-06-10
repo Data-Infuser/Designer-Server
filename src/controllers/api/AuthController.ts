@@ -27,8 +27,8 @@ class AuthController {
           message: "invalid user info"
         })
       }
-      const tokrens = generateTokens(currentUser);
-      res.status(200).json(tokrens)
+      const tokens = generateTokens(currentUser);
+      res.status(200).json(tokens)
     } catch (err) {
       console.error(err);
       res.status(501).json({
@@ -40,7 +40,6 @@ class AuthController {
 
   refreshToken = async(req: Request, res: Response) => {
     const { refreshToken } = req.body;
-    
     try {
       const tokens = refreshTokens(refreshToken)
       res.status(200).json(tokens)

@@ -9,6 +9,7 @@ import morgan from "morgan";
 import flash from "express-flash";
 import {createConnection} from "typeorm";
 import ApplicationError from "./ApplicationError";
+import cors from "cors";
 
 export class Application {
   app: express.Application;
@@ -17,6 +18,7 @@ export class Application {
   constructor(controllers: any[]) {
     this.controllers = controllers;
     this.app = express();
+    this.app.use(cors());
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
     this.app.use(methodOverride('_method'));
