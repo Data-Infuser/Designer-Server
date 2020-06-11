@@ -1,7 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, BaseEntity, Unique} from "typeorm";
 import { Length, IsNotEmpty, NotContains } from "class-validator";
 import { User } from "./User";
-import { MetaColumn } from "./MetaColumn";
 import { Service, ServiceStatus } from "./Service";
 
 export enum ApplicationStatus {

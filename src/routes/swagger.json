@@ -1,0 +1,479 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"User": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"token": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"metas": {
+						"items": {
+							"$ref": "#/components/schemas/Meta"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"createdAt",
+					"updatedAt",
+					"token",
+					"refreshToken",
+					"password",
+					"metas"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Service": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"method": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"entityName": {
+						"type": "string"
+					},
+					"tableName": {
+						"type": "string"
+					},
+					"columnLength": {
+						"type": "number",
+						"format": "double"
+					},
+					"dataCounts": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"application": {
+						"$ref": "#/components/schemas/Application"
+					},
+					"meta": {
+						"$ref": "#/components/schemas/Meta"
+					},
+					"columns": {
+						"items": {
+							"$ref": "#/components/schemas/ServiceColumn"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"method",
+					"description",
+					"entityName",
+					"tableName",
+					"columnLength",
+					"dataCounts",
+					"status",
+					"user",
+					"application",
+					"meta",
+					"columns",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Application": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nameSpace": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"services": {
+						"items": {
+							"$ref": "#/components/schemas/Service"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"nameSpace",
+					"title",
+					"description",
+					"status",
+					"user",
+					"services",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Meta": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"dataType": {
+						"type": "string"
+					},
+					"originalFileName": {
+						"type": "string"
+					},
+					"filePath": {
+						"type": "string"
+					},
+					"extension": {
+						"type": "string"
+					},
+					"host": {
+						"type": "string"
+					},
+					"port": {
+						"type": "string"
+					},
+					"db": {
+						"type": "string"
+					},
+					"dbUser": {
+						"type": "string"
+					},
+					"pwd": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					},
+					"rowCounts": {
+						"type": "number",
+						"format": "double"
+					},
+					"skip": {
+						"type": "number",
+						"format": "double"
+					},
+					"sheet": {
+						"type": "number",
+						"format": "double"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"service": {
+						"$ref": "#/components/schemas/Service"
+					},
+					"columns": {
+						"items": {
+							"$ref": "#/components/schemas/MetaColumn"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"dataType",
+					"originalFileName",
+					"filePath",
+					"extension",
+					"host",
+					"port",
+					"db",
+					"dbUser",
+					"pwd",
+					"table",
+					"rowCounts",
+					"skip",
+					"sheet",
+					"isActive",
+					"user",
+					"service",
+					"columns",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ServiceColumn": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"columnName": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"service": {
+						"$ref": "#/components/schemas/Service"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"columnName",
+					"type",
+					"hidden",
+					"service",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AcceptableType": {
+				"enum": [
+					"bigint",
+					"int",
+					"double",
+					"bit",
+					"date",
+					"datetime",
+					"time",
+					"varchar",
+					"text",
+					"longtext",
+					"boolean"
+				],
+				"type": "string"
+			},
+			"MetaColumn": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"originalColumnName": {
+						"type": "string"
+					},
+					"columnName": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/AcceptableType"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"meta": {
+						"$ref": "#/components/schemas/Meta"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"originalColumnName",
+					"columnName",
+					"type",
+					"size",
+					"order",
+					"meta",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginParams": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "api-gen",
+		"version": "0.0.1",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/api/oauth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/oauth/token": {
+			"post": {
+				"operationId": "Refresh",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

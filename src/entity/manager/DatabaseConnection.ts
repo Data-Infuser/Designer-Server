@@ -1,11 +1,11 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
-import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 
 export enum AcceptableDbms {
   MYSQL = "mysql"
 }
+
 
 @Entity()
 export class DatabaseConnection {

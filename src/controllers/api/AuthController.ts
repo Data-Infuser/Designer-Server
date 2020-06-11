@@ -1,54 +1,50 @@
-import { Request, Response, NextFunction, Router } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../../entity/manager/User";
 import { generateTokens, refreshTokens } from '../../util/JwtManager';
+import { Route, Post, Body } from "tsoa";
 
-class AuthController {
-
-  public path = '/api/oauth';
-  public router = Router();
-
-  constructor() {
-    this.initialRoutes();
-  }
-
-  public initialRoutes() {
-    this.router.post("/login", this.loginByPassword)
-    this.router.post("/token", this.refreshToken)
-  }
+interface LoginParams {
+  username: string,
+  password: string
+}
+@Route("/api/oauth")
+export class AuthController {
   
-  loginByPassword = async(req: Request, res: Response) => {
-    const { username, password } = req.body;
-    const userRepo = getRepository(User);
-    try {
-      const currentUser = await userRepo.findOne({username: username})
-      if (!currentUser || !currentUser.checkIfUnencryptedPasswordIsValid(password)) {
-        res.status(501).json({
-          message: "invalid user info"
-        })
+  @Post("/login")
+  public async login(
+    @Body() loginPrams: LoginParams
+  ): Promise<User>{
+    return new Promise(async function(resolve, reject) {
+      const { username, password } = loginPrams;
+      const userRepo = getRepository(User);
+      try {
+        let currentUser = await userRepo.findOne({username: username})
+        if (!currentUser || !currentUser.checkIfUnencryptedPasswordIsValid(password)) {
+          reject({
+            message: "invalid user info"
+          })
+        }
+        currentUser = generateTokens(currentUser);
+        resolve(currentUser)
+      } catch (err) {
+        console.error(err);
+        reject(err);
       }
-      const tokens = generateTokens(currentUser);
-      res.status(200).json(tokens)
-    } catch (err) {
-      console.error(err);
-      res.status(501).json({
-        message: "invalid user info"
-      })
-    }
-    
+    });
   }
 
-  refreshToken = async(req: Request, res: Response) => {
-    const { refreshToken } = req.body;
-    try {
-      const tokens = refreshTokens(refreshToken)
-      res.status(200).json(tokens)
-    } catch (err) {
-      console.error(err);
-      res.status(501).json({
-        message: "invalid user info"
-      })
-    }
+  @Post("/token")
+  public async refresh(
+    @Body() refreshToken: string
+  ): Promise<User> {
+    return new Promise(async function(resolve, reject) {
+      try {
+        const user = refreshTokens(refreshToken)
+        resolve(user);
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }
 

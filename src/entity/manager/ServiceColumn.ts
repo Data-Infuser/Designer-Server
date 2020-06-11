@@ -1,6 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, Unique} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
-import { Meta } from "./Meta";
 import { Service } from "./Service";
 
 @Entity()

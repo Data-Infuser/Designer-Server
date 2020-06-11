@@ -10,6 +10,8 @@
  * property-sample.json을 복사하여 property.json 설정
  * typeorm global 설치
    > npm install typeorm -g
+ * tsoa global 설치
+   > npm install tsoa -g
  * package 설치
    > npm install
 

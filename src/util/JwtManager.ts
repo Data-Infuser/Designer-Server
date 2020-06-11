@@ -1,6 +1,7 @@
 import { User } from '../entity/manager/User';
 import jwt from "jsonwebtoken";
 import { NextFunction } from 'express';
+import { stringify } from 'querystring';
 
 const TOKEN_SECRET = "json-oauth-token"
 const REFRESH_TOKEN_SECRET = "json-oauth-refresth-token"
@@ -21,26 +22,18 @@ export function getSecret() {
   return TOKEN_SECRET;
 }
 
-export function generateTokens(user: PayloadUserInfo) {
-  const payloadUserInfo = {
-    id: user.id,
-    username: user.username
-  }
-  const token = jwt.sign(payloadUserInfo, TOKEN_SECRET, { expiresIn: "2d" })
-  const refreshToken =  jwt.sign(payloadUserInfo, REFRESH_TOKEN_SECRET, { expiresIn: "30d" })
-
-  return {
-    token: token,
-    refreshToken: refreshToken
-  }
+export function generateTokens(user: User): User {
+  const token = jwt.sign({user}, TOKEN_SECRET, { expiresIn: "2d" })
+  const refreshToken =  jwt.sign({user}, REFRESH_TOKEN_SECRET, { expiresIn: "30d" })
+  user.token = token;
+  user.refreshToken = refreshToken;
+  return user
 }
+
 
 export function refreshTokens(refreshToken: string) {
   const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-  const id = (<TokenInterface>decoded).id;
-  const username = (<TokenInterface>decoded).username;
-
-  const tokens = generateTokens({id: id, username: username})
-
+  const user = (<User>decoded)
+  const tokens = generateTokens(user)
   return tokens
 }

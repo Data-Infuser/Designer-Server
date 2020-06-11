@@ -10,6 +10,7 @@ import flash from "express-flash";
 import {createConnection} from "typeorm";
 import ApplicationError from "./ApplicationError";
 import cors from "cors";
+import { RegisterRoutes } from './routes/routes';
 
 export class Application {
   app: express.Application;
@@ -55,11 +56,7 @@ export class Application {
 
       setupPassport(this.app);
       // await setupRoutes(this.app);
-      this.controllers.forEach(
-        (controller) => {
-          this.app.use(controller.path, controller.router);
-        }
-      )
+      RegisterRoutes(<express.Express>this.app);
 
       this.app.use(function(req, res, next) {
         let err = new ApplicationError(404, 'Not Found');

@@ -2,11 +2,22 @@ import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColu
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { Meta } from "./Meta";
+import { refreshTokens } from '../../util/JwtManager';
 
 
-
+export interface UserInterface {
+  id: number,
+  username: string,
+  createdAt: Date,
+  updatedAt: Date,
+  token: string,
+  refreshToken: string
+}
+/**
+ * @tsoaModel
+ */
 @Entity()
-export class User {
+export class User implements UserInterface {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -29,6 +40,9 @@ export class User {
 
   @OneToMany(type => Meta, meta => meta.user)
   metas: Meta[];
+
+  token: string;
+  refreshToken: string;
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);
