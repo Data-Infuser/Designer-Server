@@ -7,9 +7,17 @@ interface LoginParams {
   username: string,
   password: string
 }
+
+interface TokenParams {
+  refreshToken: string
+}
 @Route("/api/oauth")
 export class AuthController {
   
+  /**
+   * username과 password를 사용하여 JWT 를 발급합니다.
+   * @param loginPrams usename: 사용자 이름, password: 비밀번호
+   */
   @Post("/login")
   public async login(
     @Body() loginPrams: LoginParams
@@ -33,15 +41,21 @@ export class AuthController {
     });
   }
 
+  /**
+   * refreshToken을 사용하여 token을 재발급 합니다.
+   * @param refreshToken 
+   */
   @Post("/token")
   public async refresh(
-    @Body() refreshToken: string
+    @Body() refreshTokenParams: TokenParams
   ): Promise<User> {
     return new Promise(async function(resolve, reject) {
+      const { refreshToken } = refreshTokenParams;
       try {
         const user = refreshTokens(refreshToken)
         resolve(user);
       } catch (err) {
+        console.log(err);
         reject(err);
       }
     });

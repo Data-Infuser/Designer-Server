@@ -134,6 +134,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TokenParams": {
+        "dataType": "refObject",
+        "properties": {
+            "refreshToken": { "dataType": "string", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -169,7 +177,7 @@ export function RegisterRoutes(app: express.Express) {
     app.post('/api/oauth/token',
         function(request: any, response: any, next: any) {
             const args = {
-                refreshToken: { "in": "body", "name": "refreshToken", "required": true, "dataType": "string" },
+                refreshTokenParams: { "in": "body", "name": "refreshTokenParams", "required": true, "ref": "TokenParams" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
