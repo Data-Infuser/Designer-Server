@@ -3,7 +3,10 @@ import { Length, IsNotEmpty } from "class-validator";
 import { User } from "./User";
 
 export enum AcceptableDbms {
-  MYSQL = "mysql"
+  MYSQL = "mysql",
+  ORACLE = "oracle",
+  MARIADB = "mariadb",
+  POSTGRES = "postgres"
 }
 
 

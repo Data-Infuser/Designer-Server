@@ -4,6 +4,7 @@ import * as bcrypt from "bcryptjs";
 import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
 import { Service } from "./Service";
+import { AcceptableDbms } from "./DatabaseConnection";
 
 
 
@@ -48,6 +49,13 @@ export class Meta {
 
   @Column({nullable: true})
   table: string;
+
+  @Column({
+    type: "enum",
+    enum: AcceptableDbms,
+    default: AcceptableDbms.MYSQL
+  })
+  dbms: AcceptableDbms;
 
   @Column()
   rowCounts: number;
