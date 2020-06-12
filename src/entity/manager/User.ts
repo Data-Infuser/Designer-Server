@@ -8,8 +8,6 @@ import { refreshTokens } from '../../util/JwtManager';
 export interface UserInterface {
   id: number,
   username: string,
-  createdAt: Date,
-  updatedAt: Date,
   token: string,
   refreshToken: string
 }
@@ -52,4 +50,11 @@ export class User implements UserInterface {
     return bcrypt.compareSync(unencryptedPassword, this.password);
   }
   
+  toJSON(): UserInterface {
+    const user = Object.assign({}, this);
+    delete user.password;
+    delete user.createdAt;
+    delete user.updatedAt;
+    return user;
+  }
 }

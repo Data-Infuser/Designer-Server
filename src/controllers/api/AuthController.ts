@@ -1,5 +1,5 @@
 import { getRepository } from "typeorm";
-import { User } from "../../entity/manager/User";
+import { User, UserInterface } from "../../entity/manager/User";
 import { generateTokens, refreshTokens } from '../../util/JwtManager';
 import { Route, Post, Body } from "tsoa";
 
@@ -21,7 +21,7 @@ export class AuthController {
   @Post("/login")
   public async login(
     @Body() loginPrams: LoginParams
-  ): Promise<User>{
+  ): Promise<UserInterface>{
     return new Promise(async function(resolve, reject) {
       const { username, password } = loginPrams;
       const userRepo = getRepository(User);
