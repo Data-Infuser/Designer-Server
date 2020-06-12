@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 import { User, UserInterface } from "../../entity/manager/User";
 import { generateTokens, refreshTokens } from '../../util/JwtManager';
-import { Route, Post, Body } from "tsoa";
+import { Route, Post, Body, Tags } from "tsoa";
 
 interface LoginParams {
   username: string,
@@ -12,6 +12,7 @@ interface TokenParams {
   refreshToken: string
 }
 @Route("/api/oauth")
+@Tags("Auth")
 export class AuthController {
   
   /**

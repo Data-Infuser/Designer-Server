@@ -37,3 +37,9 @@ export function refreshTokens(refreshToken: string) {
   const tokens = generateTokens(user)
   return tokens
 }
+
+export function getUserFromToken(token: string):User {
+  const decoded = jwt.verify(token, TOKEN_SECRET);
+  const user = (<User>decoded)
+  return user;
+}

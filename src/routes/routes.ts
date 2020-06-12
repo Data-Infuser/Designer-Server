@@ -3,124 +3,22 @@
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { Controller, ValidationService, FieldErrors, ValidateError, TsoaRoute, HttpStatusCodeLiteral, TsoaResponse } from 'tsoa';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ApiDatabaseConnectionController } from './../controllers/api/ApiDatabaseConnectionController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/api/AuthController';
+import { expressAuthentication } from './../middlewares/authentication';
 import * as express from 'express';
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "User": {
+    "UserInterface": {
         "dataType": "refObject",
         "properties": {
             "id": { "dataType": "double", "required": true },
             "username": { "dataType": "string", "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
             "token": { "dataType": "string", "required": true },
             "refreshToken": { "dataType": "string", "required": true },
-            "password": { "dataType": "string", "required": true },
-            "metas": { "dataType": "array", "array": { "ref": "Meta" }, "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Service": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "title": { "dataType": "string", "required": true },
-            "method": { "dataType": "string", "required": true },
-            "description": { "dataType": "string", "required": true },
-            "entityName": { "dataType": "string", "required": true },
-            "tableName": { "dataType": "string", "required": true },
-            "columnLength": { "dataType": "double", "required": true },
-            "dataCounts": { "dataType": "double", "required": true },
-            "status": { "dataType": "string", "required": true },
-            "user": { "ref": "User", "required": true },
-            "application": { "ref": "Application", "required": true },
-            "meta": { "ref": "Meta", "required": true },
-            "columns": { "dataType": "array", "array": { "ref": "ServiceColumn" }, "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Application": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "nameSpace": { "dataType": "string", "required": true },
-            "title": { "dataType": "string", "required": true },
-            "description": { "dataType": "string", "required": true },
-            "status": { "dataType": "string", "required": true },
-            "user": { "ref": "User", "required": true },
-            "services": { "dataType": "array", "array": { "ref": "Service" }, "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Meta": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "title": { "dataType": "string", "required": true },
-            "dataType": { "dataType": "string", "required": true },
-            "originalFileName": { "dataType": "string", "required": true },
-            "filePath": { "dataType": "string", "required": true },
-            "extension": { "dataType": "string", "required": true },
-            "host": { "dataType": "string", "required": true },
-            "port": { "dataType": "string", "required": true },
-            "db": { "dataType": "string", "required": true },
-            "dbUser": { "dataType": "string", "required": true },
-            "pwd": { "dataType": "string", "required": true },
-            "table": { "dataType": "string", "required": true },
-            "rowCounts": { "dataType": "double", "required": true },
-            "skip": { "dataType": "double", "required": true },
-            "sheet": { "dataType": "double", "required": true },
-            "isActive": { "dataType": "boolean", "required": true },
-            "user": { "ref": "User", "required": true },
-            "service": { "ref": "Service", "required": true },
-            "columns": { "dataType": "array", "array": { "ref": "MetaColumn" }, "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ServiceColumn": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "columnName": { "dataType": "string", "required": true },
-            "type": { "dataType": "string", "required": true },
-            "hidden": { "dataType": "boolean", "required": true },
-            "service": { "ref": "Service", "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AcceptableType": {
-        "dataType": "refEnum",
-        "enums": ["bigint", "int", "double", "bit", "date", "datetime", "time", "varchar", "text", "longtext", "boolean"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MetaColumn": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "originalColumnName": { "dataType": "string", "required": true },
-            "columnName": { "dataType": "string", "required": true },
-            "type": { "ref": "AcceptableType", "required": true },
-            "size": { "dataType": "double", "required": true },
-            "order": { "dataType": "double", "required": true },
-            "meta": { "ref": "Meta", "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
         },
         "additionalProperties": false,
     },
@@ -132,6 +30,11 @@ const models: TsoaRoute.Models = {
             "password": { "dataType": "string", "required": true },
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "User": {
+        "dataType": "refAlias",
+        "type": { "ref": "UserInterface", "validators": {} },
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TokenParams": {
@@ -152,6 +55,28 @@ export function RegisterRoutes(app: express.Express) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+    app.get('/api/database-connections',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiDatabaseConnectionController();
+
+
+            const promise = controller.get.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.post('/api/oauth/login',
         function(request: any, response: any, next: any) {
             const args = {
@@ -199,6 +124,53 @@ export function RegisterRoutes(app: express.Express) {
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+    function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
+        return (request: any, _response: any, next: any) => {
+            let responded = 0;
+            let success = false;
+
+            const succeed = function(user: any) {
+                if (!success) {
+                    success = true;
+                    responded++;
+                    request['user'] = user;
+                    next();
+                }
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            const fail = function(error: any) {
+                responded++;
+                if (responded == security.length && !success) {
+                    error.status = error.status || 401;
+                    next(error)
+                }
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            for (const secMethod of security) {
+                if (Object.keys(secMethod).length > 1) {
+                    let promises: Promise<any>[] = [];
+
+                    for (const name in secMethod) {
+                        promises.push(expressAuthentication(request, name, secMethod[name]));
+                    }
+
+                    Promise.all(promises)
+                        .then((users) => { succeed(users[0]); })
+                        .catch(fail);
+                } else {
+                    for (const name in secMethod) {
+                        expressAuthentication(request, name, secMethod[name])
+                            .then(succeed)
+                            .catch(fail);
+                    }
+                }
+            }
+        }
+    }
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
