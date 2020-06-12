@@ -64,6 +64,11 @@ export class Application {
           swaggerUi.generateHTML(await import("./routes/swagger.json"))
         );
       });
+      this.controllers.forEach(
+        (controller) => {
+          this.app.use(controller.path, controller.router);
+        }
+      )
 
       this.app.use(function(req, res, next) {
         let err = new ApplicationError(404, 'Not Found');

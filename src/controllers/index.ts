@@ -11,7 +11,5 @@ export default [
     new ApplicationController(new MetaController()),
     new DatabaseConnectionController(),
     new MetaController(),
-    new RestContoller(),
-    new AuthController(),
-    new ApiUserController()
+    new RestContoller()
 ]
