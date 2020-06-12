@@ -6,6 +6,15 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"AcceptableDbms": {
+				"enum": [
+					"mysql",
+					"oracle",
+					"mariadb",
+					"postgres"
+				],
+				"type": "string"
+			},
 			"UserInterface": {
 				"properties": {
 					"id": {
@@ -31,6 +40,100 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"User": {
+				"$ref": "#/components/schemas/UserInterface"
+			},
+			"DatabaseConnection": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"connectionName": {
+						"type": "string"
+					},
+					"hostname": {
+						"type": "string"
+					},
+					"port": {
+						"type": "string"
+					},
+					"database": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"dbms": {
+						"$ref": "#/components/schemas/AcceptableDbms"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"connectionName",
+					"hostname",
+					"port",
+					"database",
+					"username",
+					"password",
+					"dbms",
+					"user",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DatabaseConnectionCreateParams": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"host": {
+						"type": "string"
+					},
+					"port": {
+						"type": "string"
+					},
+					"db": {
+						"type": "string"
+					},
+					"user": {
+						"type": "string"
+					},
+					"pwd": {
+						"type": "string"
+					},
+					"dbms": {
+						"$ref": "#/components/schemas/AcceptableDbms"
+					}
+				},
+				"required": [
+					"title",
+					"host",
+					"port",
+					"db",
+					"user",
+					"pwd",
+					"dbms"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"LoginParams": {
 				"properties": {
 					"username": {
@@ -46,9 +149,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"User": {
-				"$ref": "#/components/schemas/UserInterface"
 			},
 			"TokenParams": {
 				"properties": {
@@ -105,6 +205,155 @@
 					}
 				],
 				"parameters": []
+			},
+			"post": {
+				"operationId": "Post",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DatabaseConnection"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Database Connection"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DatabaseConnectionCreateParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/database-connections/{connectionId}": {
+			"get": {
+				"operationId": "GetConnection",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Database Connection의 상세 정보를 보여줍니다.",
+				"tags": [
+					"Database Connection"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Database Connection의 id",
+						"in": "path",
+						"name": "connectionId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/database-connections/{connectionId}/tables": {
+			"get": {
+				"operationId": "GetTablesInConnection",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "DB에 접속하여 Table 목록을 불러옵니다.",
+				"tags": [
+					"Database Connection"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "connectionId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/database-connections/{connectionId}/tables/{tableName}": {
+			"get": {
+				"operationId": "GetTable",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "DB에 접속하여 Table의 컬럼 목록과 정보를 가져옵니다.",
+				"tags": [
+					"Database Connection"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "connectionId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "정보를 가져오려는 테이블 명",
+						"in": "path",
+						"name": "tableName",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/oauth/login": {

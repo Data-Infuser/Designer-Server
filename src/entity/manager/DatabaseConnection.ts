@@ -51,4 +51,14 @@ export class DatabaseConnection {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // toJSON() {
+  //   const json = Object.assign({}, this);
+  //   delete json.id;
+  //   delete json.connectionName;
+  //   delete json.createdAt;
+  //   delete json.updatedAt;
+  //   delete json.user;
+  //   return json;
+  // }
 }
