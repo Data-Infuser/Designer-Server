@@ -11,6 +11,8 @@ import {createConnection} from "typeorm";
 import ApplicationError from "./ApplicationError";
 import cors from "cors";
 import { RegisterRoutes } from './routes/routes';
+import swaggerUi from "swagger-ui-express";
+
 
 export class Application {
   app: express.Application;
@@ -57,6 +59,11 @@ export class Application {
       setupPassport(this.app);
       // await setupRoutes(this.app);
       RegisterRoutes(<express.Express>this.app);
+      this.app.use("/api-docs", swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
+        return res.send(
+          swaggerUi.generateHTML(await import("./routes/swagger.json"))
+        );
+      });
 
       this.app.use(function(req, res, next) {
         let err = new ApplicationError(404, 'Not Found');
