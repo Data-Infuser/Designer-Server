@@ -39,7 +39,13 @@ export function refreshTokens(refreshToken: string) {
 }
 
 export function getUserFromToken(token: string):User {
-  const decoded = jwt.verify(token, TOKEN_SECRET);
-  const user = (<User>decoded)
-  return user;
+  try {
+    const decoded = jwt.verify(token, TOKEN_SECRET);
+    const user = (<User>decoded)
+    return user;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+  
 }

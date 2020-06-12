@@ -70,17 +70,13 @@ export class Application {
         next(err);
       });
 
-      // this.app.use(function(err, req, res, next) {
-      //   if (res.headersSent) {
-      //     return;
-      //   }
+      this.app.use(function(err, req, res, next) {
+        if (res.headersSent) {
+          return;
+        }
 
-      //   //admin error의 경우에만 아래와 같이 처리.
-      //   res.render("error.pug", {
-      //       statusCode : err.statusCode,
-      //       message : err.message
-      //   });
-      // });
+        res.status(err.status).json(err);
+      });
 
       this.startServer();
   }

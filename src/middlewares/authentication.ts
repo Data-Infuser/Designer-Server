@@ -17,20 +17,24 @@ export function expressAuthentication(
       request.headers.authorization;
     const userRepo = getRepository(User);
     return new Promise(async (resolve, reject) => {
-      if (!bearerToken) {
-        reject(new Error("No token provided"));
-        return;
+      try {
+        if (!bearerToken) {
+          reject(new Error("No token provided"));
+          return;
+        }
+  
+        const tokens = bearerToken.split(" ");
+        if(tokens.length != 2 || tokens[0] != "Bearer") {
+          reject(new Error("Wrong Token Format"));
+          return;
+        }
+        const token = tokens[1]
+        const userJson = getUserFromToken(token);
+        const user = await userRepo.findOne(userJson.id);
+        resolve(user);
+      } catch (err) {
+        reject(err);
       }
-
-      const tokens = bearerToken.split(" ");
-      if(tokens.length != 2 || tokens[0] != "Bearer") {
-        reject(new Error("Wrong Token Format"));
-        return;
-      }
-      const token = tokens[1]
-      const userJson = getUserFromToken(token);
-      const user = await userRepo.findOne(userJson.id);
-      resolve(user);
     });
   }
 }
