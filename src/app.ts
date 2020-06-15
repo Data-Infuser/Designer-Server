@@ -79,8 +79,8 @@ export class Application {
         if (res.headersSent) {
           return;
         }
-
-        res.status(err.status).json(err);
+        console.error(err);
+        res.status(err.status||err.statusCode).json(err);
       });
 
       this.startServer();

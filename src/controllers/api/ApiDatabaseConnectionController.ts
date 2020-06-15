@@ -142,7 +142,6 @@ export class ApiDatabaseConnectionController {
         newConnection.dbms = dbms;
         newConnection.user = request.user;
         await dbcRepo.save(newConnection);
-
         resolve(newConnection);
       } catch(err) {
         reject(err);
