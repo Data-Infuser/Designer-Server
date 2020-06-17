@@ -3,6 +3,7 @@ import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/Databas
 import { Route, Get, Tags, Security, Path, Request, Post, Body } from "tsoa";
 import { Request as exRequest } from "express";
 import { Application } from "../../entity/manager/Application";
+import ApplicationError from "../../ApplicationError";
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -26,7 +27,32 @@ export class ApiApplicationController {
       resolve(apps);
     } catch (err) {
       console.error(err);
-      reject(err);
+      reject(new ApplicationError(500, err.message));
+    }
+    });
+  }
+
+  @Get("/{applicationId}")
+  @Security("jwt")
+  public async getDetail(
+    @Path() applicationId: number,
+    @Request() request: exRequest
+  ){
+    return new Promise(async function(resolve, reject) {
+      const appRepo = getRepository(Application);
+    try {
+      const app = await appRepo.findOneOrFail({
+        where: {
+          id: applicationId,
+          user: {
+            id: request.user.id
+          }
+        }
+      });
+      resolve(app);
+    } catch (err) {
+      console.error(err);
+      reject(new ApplicationError(500, err.message));
     }
     });
   }
@@ -51,8 +77,7 @@ export class ApiApplicationController {
         resolve(newApplication);
       } catch (err) {
         console.error(err);
-        reject(err);
-        return;
+        reject(new ApplicationError(500, err.message));
       }
     });
   }

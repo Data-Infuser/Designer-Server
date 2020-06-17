@@ -2,6 +2,7 @@ import { getRepository } from "typeorm";
 import { User, UserInterface } from "../../entity/manager/User";
 import { generateTokens, refreshTokens } from '../../util/JwtManager';
 import { Route, Post, Body, Tags } from "tsoa";
+import ApplicationError from "../../ApplicationError";
 
 interface LoginParams {
   username: string,
@@ -29,15 +30,13 @@ export class AuthController {
       try {
         let currentUser = await userRepo.findOne({username: username})
         if (!currentUser || !currentUser.checkIfUnencryptedPasswordIsValid(password)) {
-          reject({
-            message: "invalid user info"
-          })
+          reject(new ApplicationError(401, "Unauthurized User"));
         }
         currentUser = generateTokens(currentUser);
         resolve(currentUser)
       } catch (err) {
         console.error(err);
-        reject(err);
+        reject(new ApplicationError(500, err.message));
       }
     });
   }
@@ -57,7 +56,7 @@ export class AuthController {
         resolve(user);
       } catch (err) {
         console.log(err);
-        reject(err);
+        reject(new ApplicationError(500, err.message));
       }
     });
   }

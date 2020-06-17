@@ -7,6 +7,8 @@ import { ApiApplicationController } from './../controllers/api/ApiApplicationCon
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ApiDatabaseConnectionController } from './../controllers/api/ApiDatabaseConnectionController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ApiServiceController } from './../controllers/api/ApiServiceController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/api/AuthController';
 import { expressAuthentication } from './../middlewares/authentication';
 import * as express from 'express';
@@ -179,6 +181,17 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ServiceParams": {
+        "dataType": "refObject",
+        "properties": {
+            "method": { "dataType": "string", "required": true },
+            "entityName": { "dataType": "string", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "applicationId": { "dataType": "double", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "LoginParams": {
         "dataType": "refObject",
         "properties": {
@@ -226,6 +239,30 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.get.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/api/applications/:applicationId',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                applicationId: { "in": "path", "name": "applicationId", "required": true, "dataType": "double" },
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiApplicationController();
+
+
+            const promise = controller.getDetail.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -370,6 +407,30 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.post.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/api/oauth',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                serviceParams: { "in": "body", "name": "serviceParams", "required": true, "ref": "ServiceParams" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiServiceController();
+
+
+            const promise = controller.put.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -30,7 +30,8 @@ export class ApiDatabaseConnectionController {
       });
       resolve(dbcs);
     } catch (err) {
-      reject(err);
+      console.error(err);
+      reject(new ApplicationError(500, err.message));
     }
     });
   }
@@ -58,7 +59,8 @@ export class ApiDatabaseConnectionController {
         });
         resolve(dbc);
       } catch(err) {
-        reject(err);
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
       }
     })
   }
@@ -86,7 +88,8 @@ export class ApiDatabaseConnectionController {
         });
         resolve(dbc);
       } catch(err) {
-        reject(err);
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
       }
     })
   }
@@ -116,7 +119,8 @@ export class ApiDatabaseConnectionController {
         });
         resolve(dbc);
       } catch(err) {
-        reject(err);
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
       }
     })
   }
@@ -144,7 +148,8 @@ export class ApiDatabaseConnectionController {
         await dbcRepo.save(newConnection);
         resolve(newConnection);
       } catch(err) {
-        reject(err);
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
       }
     })
   }
