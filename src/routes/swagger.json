@@ -828,7 +828,7 @@
 				]
 			}
 		},
-		"/api/oauth": {
+		"/api/services": {
 			"post": {
 				"operationId": "Put",
 				"responses": {
