@@ -20,7 +20,7 @@ export default class RestController {
     
     try {
       const applications = await applicationRepo.find({
-        relations: ["apis", "apis.columns"]
+        relations: ["services", "services.columns"]
       })
       res.json(new ApiResponse("", applications));
     } catch (err) {

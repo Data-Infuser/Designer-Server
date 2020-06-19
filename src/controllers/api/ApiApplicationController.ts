@@ -42,6 +42,7 @@ export class ApiApplicationController {
       const appRepo = getRepository(Application);
     try {
       const app = await appRepo.findOneOrFail({
+        relations: ["services"],
         where: {
           id: applicationId,
           user: {
@@ -49,6 +50,7 @@ export class ApiApplicationController {
           }
         }
       });
+      console.log(app);
       resolve(app);
     } catch (err) {
       console.error(err);
