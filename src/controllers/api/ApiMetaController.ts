@@ -60,6 +60,7 @@ export class ApiMetaController {
         meta.pwd = password;
         meta.table = table;
         meta.service = service;
+        meta.user = request.user;
 
         let columns = []
         for(let i = 0; i < columnsResponse.length; i++) {
@@ -82,7 +83,12 @@ export class ApiMetaController {
           service.status = ServiceStatus.METALOADED;
           await serviceRepo.save(service);
         });
-        updatedMeta = await metaRepo.find(updatedMeta.id);
+        updatedMeta = await metaRepo.findOneOrFail({
+          relations: ["service", "columns"],
+          where: {
+            id: updatedMeta.id
+          }
+        });
         resolve(updatedMeta);
       } catch (err) {
         console.error(err);
