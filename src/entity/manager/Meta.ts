@@ -57,7 +57,7 @@ export class Meta {
   })
   dbms: AcceptableDbms;
 
-  @Column()
+  @Column({ default: 0 })
   rowCounts: number;
 
   @Column({ default: 0 })

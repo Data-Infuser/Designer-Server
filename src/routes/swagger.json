@@ -489,6 +489,51 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"postDbmsParams": {
+				"properties": {
+					"serviceId": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"dbms": {
+						"type": "string"
+					},
+					"host": {
+						"type": "string"
+					},
+					"port": {
+						"type": "string"
+					},
+					"database": {
+						"type": "string"
+					},
+					"user": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"serviceId",
+					"title",
+					"dbms",
+					"host",
+					"port",
+					"database",
+					"user",
+					"password",
+					"table"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ServiceParams": {
 				"properties": {
 					"method": {
@@ -828,6 +873,42 @@
 				]
 			}
 		},
+		"/api/metas/dbms": {
+			"post": {
+				"operationId": "PostDbms",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Meta"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/postDbmsParams"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/services": {
 			"post": {
 				"operationId": "Put",
@@ -862,6 +943,40 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/services/{serviceId}": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Service"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "serviceId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/api/oauth/login": {

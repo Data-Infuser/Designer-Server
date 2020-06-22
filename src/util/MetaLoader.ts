@@ -138,7 +138,7 @@ export class MetaLoader {
   };
 }
 
-function convertType(originType: string){
+export function convertType(originType: string){
   const lowercaseType:string = originType.toLowerCase()
   const tokens = lowercaseType.split("(");
   let type = mysqlTypes[tokens[0]]

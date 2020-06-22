@@ -2,7 +2,7 @@ import { Request as exRequest, Response, NextFunction, response, Router } from "
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
 import passport from "passport";
 import { User } from "../../entity/manager/User";
-import { Tags, Route, Post, Security, Request, Body } from "tsoa";
+import { Tags, Route, Post, Security, Request, Body, Delete, Path } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
@@ -18,7 +18,6 @@ export class ApiServiceController {
     @Body() serviceParams: ServiceParams
   ): Promise<Service> {
     return new Promise(async function(resolve, reject) {
-      console.log(request.body);
       const serviceRepo = getRepository(Service);
       const applicationRepo = getRepository(Application);
       const { method, entityName, description, applicationId } = serviceParams;
@@ -34,6 +33,39 @@ export class ApiServiceController {
         newService.user = request.user;
         await serviceRepo.save(newService);
         resolve(newService);
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+        return;
+      }
+    });
+  }
+
+  @Delete("/{serviceId}")
+  @Security("jwt")
+  public async delete(
+    @Request() request: exRequest,
+    @Path() serviceId: number
+  ): Promise<any> {
+    return new Promise(async function(resolve, reject) {
+      const serviceRepo = getRepository(Service);
+      try {
+        const service = await serviceRepo.findOneOrFail({
+          relations: ["application"],
+          where: {
+            id: serviceId,
+            user: {
+              id: request.user.id
+            }
+          }
+        })
+        const applicationId = service.application.id;
+        await serviceRepo.delete(serviceId);
+        resolve({
+          message: "delete success",
+          serviceId: serviceId,
+          applicationId: applicationId
+        })
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));
