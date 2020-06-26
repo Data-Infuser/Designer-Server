@@ -1,10 +1,15 @@
-# API Generator
+# API Designer Client
+> ``APIGen`` / API Designer Client 프로젝트 입니다.
 
-## 개발 환경
+APIGen 프로젝트에서 REST API를 통해 파일 데이터, Database 정보를 통해 데이터를 API로 자동 변환을 해주는 기능을 맡는 모듈입니다.
+
+모든 기능은 REST API 형태로 제공되어, 간단하게 사용 할 수 있습니다.
+
+## Environment
  * nodeJS v12.16.3
  * MySQL 8.0.x
 
-## 프로젝트 세팅
+## Installation
 
  * ormconfig-sample.json을 복사하여 ormconfig.json 설정
  * property-sample.json을 복사하여 property.json 설정
@@ -15,7 +20,7 @@
  * package 설치
    > npm install
 
-## 1. 프로젝트 실행
+## Usage
 
 임시 파일 업로드를 위한 디렉토리를 생성해야 합니다.
 
@@ -25,7 +30,7 @@
 
 ts-node-dev를 이용하여 실행하기 때문에 코드 수정 후 저장을 하는 경우 자동으로 재시작됩니다.
 
-## 2. test 실행
+## How to run TEST
 
 > npm test
 
@@ -39,7 +44,7 @@ mocha : https://mochajs.org/
 
 chai : https://www.chaijs.com/
 
-## 3. Database migration
+## Database migration
 
 첫 실행시 typeorm에서 테이블을 생성하기 위하여 서버를 한번 실행시켜야 합니다.
 
@@ -48,7 +53,7 @@ chai : https://www.chaijs.com/
 > npm run migration:run
 - InsertDefaultUser : admin/admin 계정 생성
 
-## 4. Schema drop
+## Drip Schema
 
 DB 구조가 변경되어 기존 사용하던 DB Schema와 맞지 않아 오류가 생기는 경우가 있습니다.
 
@@ -60,14 +65,22 @@ DB 구조가 변경되어 기존 사용하던 DB Schema와 맞지 않아 오류�
 
 명령어를 통하여 전체 table을 drop할 수 있습니다. 이후 3. database migration 을 다시 실행하면 됩니다.
 
-## 4. Generate migration
+## Generate migration
 
 > typeorm migration:create -n PostRefactoring
 
 위 명령어를 통해 파일 생성 후 코드 입력
 
-## 5. API Swagger 문서
+## API Documentation
+
+OAS 3.0 기준 문서를 아래 결로에서 확인 가능합니다.
 
 /api-docs
 
-에서 확인 가능합니다.
+## Meta
+
+Promptechnology - [@Homepage](http://www.promptech.co.kr/) - [promptech@promptech.co.kr](promptech@promptech.co.kr)
+
+프로젝트는 아파치 2.0 라이센스로 배포되었습니다. 자세한 사항은 ``LICENSE`` 파일을 확인해주세요.
+
+Distributed under the Apache 2.0 license. See ``LICENSE`` for more information.

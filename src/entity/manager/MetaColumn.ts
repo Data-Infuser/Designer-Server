@@ -42,6 +42,9 @@ export class MetaColumn {
   // xlsx 파일에서 column과 순서를 맞추기 위해서 사용
   order: number;
 
+  @Column({ default: false })
+  hidden: boolean;
+
   @ManyToOne(type => Meta, meta => meta.columns, { nullable: true, onDelete: 'CASCADE' })
   meta: Meta;
 
