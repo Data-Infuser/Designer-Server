@@ -120,6 +120,7 @@ const models: TsoaRoute.Models = {
             "type": { "ref": "AcceptableType", "required": true },
             "size": { "dataType": "double", "required": true },
             "order": { "dataType": "double", "required": true },
+            "hidden": { "dataType": "boolean", "required": true },
             "meta": { "ref": "Meta", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },

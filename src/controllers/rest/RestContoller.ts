@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, Router } from "express";
-import { getRepository, getConnection, getManager } from "typeorm";
+import { getRepository, getConnection, getManager, FindManyOptions } from "typeorm";
 import { Application } from "../../entity/manager/Application";
 
 export default class RestController {
@@ -17,11 +17,21 @@ export default class RestController {
   
   getApplications = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
-    
+    let page = Number(req.query.page);
+    let perpage = Number(req.query.perpage);
+    if(!page) page = 1;
+    if(!perpage) perpage = 10;
+
     try {
-      const applications = await applicationRepo.find({
-        relations: ["services", "services.columns"]
-      })
+      const findOption:FindManyOptions = {
+        relations: ["services", "services.columns"],
+        skip: perpage*(page - 1),
+        take: perpage,
+        order: {
+          id: 'ASC'
+        }
+      }
+      const applications = await applicationRepo.find(findOption)
       res.json(new ApiResponse("", applications));
     } catch (err) {
       console.error(err);

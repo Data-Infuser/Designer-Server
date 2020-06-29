@@ -313,6 +313,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"hidden": {
+						"type": "boolean"
+					},
 					"meta": {
 						"$ref": "#/components/schemas/Meta"
 					},
@@ -332,6 +335,7 @@
 					"type",
 					"size",
 					"order",
+					"hidden",
 					"meta",
 					"createdAt",
 					"updatedAt"
