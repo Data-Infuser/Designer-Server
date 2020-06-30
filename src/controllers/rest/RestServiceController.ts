@@ -8,9 +8,9 @@ import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
 import RestResponse from './RestResponse';
 
-@Route("/rest/applications")
-@Tags("#Applications")
-export class RestApplicationController {
+@Route("/rest/services")
+@Tags("#Services")
+export class RestServiceController {
   @Get("/")
   public async get(
     @Query() page?: number,
@@ -20,9 +20,9 @@ export class RestApplicationController {
     if(!perPage) perPage = 10;
 
     return new Promise(async function(resolve, reject) {
-      const appRepo = getRepository(Application);
+      const serviceRepo = getRepository(Service);
       const findOption:FindManyOptions = {
-        relations: ["services", "services.columns"],
+        relations: ["application", "columns"],
         skip: perPage*(page - 1),
         take: perPage,
         order: {
@@ -30,12 +30,12 @@ export class RestApplicationController {
         }
       }
       try {
-        const applications = await appRepo.findAndCount(findOption);
+        const services = await serviceRepo.findAndCount(findOption);
         resolve(new RestResponse("", {
-          totalCount: applications[1],
+          totalCount: services[1],
           page: page,
           perPage: perPage,
-          applications: applications[0]
+          services: services[0]
         }));
       } catch (err) {
         console.error(err);
@@ -49,17 +49,17 @@ export class RestApplicationController {
     @Path("id") id: number
   ) {
     return new Promise(async function(resolve, reject) {
-      const appRepo = getRepository(Application);
+      const serviceRepo = getRepository(Service);
       const findOption:FindOneOptions = {
-        relations: ["services", "services.columns"],
+        relations: ["application", "columns"],
         where: {
           id: id
         }
       }
       try {
-        const application = await appRepo.findOneOrFail(findOption);
+        const service = await serviceRepo.findOneOrFail(findOption);
         resolve(new RestResponse("", {
-          application: application
+          service: service
         }));
       } catch (err) {
         console.error(err);
