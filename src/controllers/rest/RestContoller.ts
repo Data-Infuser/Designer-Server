@@ -18,21 +18,26 @@ export default class RestController {
   getApplications = async(req: Request, res: Response, next: NextFunction) => {
     const applicationRepo = getRepository(Application);
     let page = Number(req.query.page);
-    let perpage = Number(req.query.perpage);
+    let perPage = Number(req.query.perPage);
     if(!page) page = 1;
-    if(!perpage) perpage = 10;
+    if(!perPage) perPage = 10;
 
     try {
       const findOption:FindManyOptions = {
         relations: ["services", "services.columns"],
-        skip: perpage*(page - 1),
-        take: perpage,
+        skip: perPage*(page - 1),
+        take: perPage,
         order: {
           id: 'ASC'
         }
       }
-      const applications = await applicationRepo.find(findOption)
-      res.json(new ApiResponse("", applications));
+      const applications = await applicationRepo.findAndCount(findOption)
+      res.json(new ApiResponse("", {
+        totalCount: applications[1],
+        page: page,
+        perPage: perPage,
+        applications: applications[0]
+      }));
     } catch (err) {
       console.error(err);
       res.status(503).json(new ApiResponse("", undefined, err));
