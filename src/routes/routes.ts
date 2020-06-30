@@ -12,6 +12,8 @@ import { ApiMetaController } from './../controllers/api/ApiMetaController';
 import { ApiServiceController } from './../controllers/api/ApiServiceController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/api/AuthController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { RestApplicationController } from './../controllers/rest/RestApplicationController';
 import { expressAuthentication } from './../middlewares/authentication';
 import * as express from 'express';
 
@@ -542,6 +544,29 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.refresh.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/rest/applications',
+        function(request: any, response: any, next: any) {
+            const args = {
+                page: { "in": "query", "name": "page", "dataType": "double" },
+                perPage: { "in": "query", "name": "perPage", "dataType": "double" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new RestApplicationController();
+
+
+            const promise = controller.get.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
