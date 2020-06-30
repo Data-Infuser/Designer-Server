@@ -4,10 +4,11 @@ import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/Databas
 import { User } from "../../entity/manager/User";
 import { MysqlHelper } from "../../helpers/MysqlHelper";
 import { needAuth } from "../../middlewares/checkAuth";
-import { Route, Get, Tags, Security, Path, Request, Post, Body } from "tsoa";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete } from "tsoa";
 import { reject } from "lodash";
 import { resolve } from "url";
 import { Request as exRequest } from "express";
+import { connect } from "http2";
 
 @Route("/api/database-connections")
 @Tags("Database Connection")
@@ -152,6 +153,39 @@ export class ApiDatabaseConnectionController {
         reject(new ApplicationError(500, err.message));
       }
     })
+  }
+
+  @Delete("/{connectionId}")
+  @Security("jwt")
+  public async delete(
+    @Request() request: exRequest,
+    @Path() connectionId: number
+  ): Promise<any> {
+    return new Promise(async function(resolve, reject) {
+      const dbcRepo = getRepository(DatabaseConnection);
+      try {
+        
+        await dbcRepo.delete(connectionId);
+        
+        const dbcs = await dbcRepo.find({
+          where: {
+            user: {
+              id: request.user.id
+            }
+          }
+        })
+        
+        resolve({
+          message: "delete success",
+          connectionId : connectionId,
+          dbcs: dbcs
+        })
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+        return;
+      }
+    });
   }
 }
 
