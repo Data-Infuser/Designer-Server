@@ -4,10 +4,11 @@ import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/Databas
 import { User } from "../../entity/manager/User";
 import { MysqlHelper } from "../../helpers/MysqlHelper";
 import { needAuth } from "../../middlewares/checkAuth";
-import { Route, Get, Tags, Security, Path, Request, Post, Body } from "tsoa";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete } from "tsoa";
 import { reject } from "lodash";
 import { resolve } from "url";
 import { Request as exRequest } from "express";
+import { connect } from "http2";
 
 @Route("/api/database-connections")
 @Tags("Database Connection")
@@ -37,39 +38,10 @@ export class ApiDatabaseConnectionController {
   }
   
   /**
-   * Database Connection의 상세 정보를 보여줍니다.
-   * @param connectionId Database Connection의 id
-   */
-  @Get("/{connectionId}")
-  @Security("jwt")
-  public async getConnection(
-    @Request() request: exRequest,
-    @Path() connectionId: number
-  ){
-    return new Promise(async function(resolve, reject) {
-      const dbcRepo = getRepository(DatabaseConnection);
-      try {
-        const dbc = await dbcRepo.findOneOrFail({
-          where: {
-            id: connectionId,
-            user: {
-              id: request.user.id
-            }
-          }
-        });
-        resolve(dbc);
-      } catch(err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    })
-  }
-
-  /**
    * DB에 접속하여 Table 목록을 불러옵니다.
    * @param connectionId 
    */
-  @Get("/{connectionId}/tables")
+  @Get("/{connectionId}")
   @Security("jwt")
   public async getTablesInConnection(
     @Request() request: exRequest,
@@ -93,6 +65,44 @@ export class ApiDatabaseConnectionController {
       }
     })
   }
+
+  /**
+   * Database Connection의 상세 정보를 보여줍니다.
+   * @param connectionId Database Connection의 id
+   */
+  @Get("/{connectionId}/tables")
+  @Security("jwt")
+  public async getConnection(
+    @Request() request: exRequest,
+    @Path() connectionId: number
+  ){
+    return new Promise(async function(resolve, reject) {
+      const dbcRepo = getRepository(DatabaseConnection);
+      try {
+        const dbc = await dbcRepo.findOneOrFail(connectionId);
+        const connectOption:ConnectionOptions = {
+          name: "mysqlTempConnection",
+          type: "mysql",
+          host: dbc.hostname,
+          port: Number(dbc.port),
+          username: dbc.username,
+          password: dbc.password,
+          database: dbc.database
+        }
+        const tables = await MysqlHelper.showTables(connectOption);
+        const tableStatuses = await MysqlHelper.showTableStatus(connectOption);
+        resolve({
+          tables: tables,
+          tableStatuses: tableStatuses
+        })
+      } catch(err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
+  }
+
+
 
   /**
    * DB에 접속하여 Table의 컬럼 목록과 정보를 가져옵니다.
@@ -152,6 +162,39 @@ export class ApiDatabaseConnectionController {
         reject(new ApplicationError(500, err.message));
       }
     })
+  }
+
+  @Delete("/{connectionId}")
+  @Security("jwt")
+  public async delete(
+    @Request() request: exRequest,
+    @Path() connectionId: number
+  ): Promise<any> {
+    return new Promise(async function(resolve, reject) {
+      const dbcRepo = getRepository(DatabaseConnection);
+      try {
+        
+        await dbcRepo.delete(connectionId);
+
+        const dbcs = await dbcRepo.find({
+          where: {
+            user: {
+              id: request.user.id
+            }
+          }
+        })
+        
+        resolve({
+          message: "delete success",
+          connectionId : connectionId,
+          dbcs: dbcs
+        })
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+        return;
+      }
+    });
   }
 }
 
