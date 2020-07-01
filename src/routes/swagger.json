@@ -1064,7 +1064,7 @@
 					}
 				},
 				"tags": [
-					"#Rest Applications"
+					"#Applications"
 				],
 				"security": [],
 				"parameters": [
@@ -1103,7 +1103,7 @@
 					}
 				},
 				"tags": [
-					"#Rest Applications"
+					"#Applications"
 				],
 				"security": [],
 				"parameters": [
@@ -1133,7 +1133,7 @@
 					}
 				},
 				"tags": [
-					"#Rest Services"
+					"#Services"
 				],
 				"security": [],
 				"parameters": [
@@ -1172,7 +1172,7 @@
 					}
 				},
 				"tags": [
-					"#Rest Services"
+					"#Services"
 				],
 				"security": [],
 				"parameters": [
