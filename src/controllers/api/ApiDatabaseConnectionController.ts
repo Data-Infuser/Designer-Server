@@ -119,15 +119,20 @@ export class ApiDatabaseConnectionController {
     return new Promise(async function(resolve, reject) {
       const dbcRepo = getRepository(DatabaseConnection);
       try {
-        const dbc = await dbcRepo.findOneOrFail({
-          where: {
-            id: connectionId,
-            user: {
-              id: request.user.id
-            }
-          }
-        });
-        resolve(dbc);
+        const dbc = await dbcRepo.findOneOrFail(connectionId);
+        const connectOption:ConnectionOptions = {
+          name: "mysqlTempConnection",
+          type: "mysql",
+          host: dbc.hostname,
+          port: Number(dbc.port),
+          username: dbc.username,
+          password: dbc.password,
+          database: dbc.database
+        }
+        const columns = await MysqlHelper.getColumns(connectOption, tableName);
+        resolve(
+          columns
+        );
       } catch(err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));
