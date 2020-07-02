@@ -1,11 +1,7 @@
-import { Request as exRequest, Response, NextFunction, response, Router } from "express";
-import { getRepository, getConnection, getManager, ConnectionOptions, FindManyOptions, FindOneOptions } from "typeorm";
-import passport from "passport";
-import { User } from "../../entity/manager/User";
-import { Tags, Route, Post, Security, Request, Body, Delete, Path, Get, Query } from "tsoa";
+import { getRepository, FindManyOptions, FindOneOptions } from "typeorm";
+import { Tags, Route, Path, Get, Query } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
-import { Application } from "../../entity/manager/Application";
 import RestResponse from './RestResponse';
 
 @Route("/rest/services")

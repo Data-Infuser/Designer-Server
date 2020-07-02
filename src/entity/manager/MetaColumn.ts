@@ -1,6 +1,7 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import { Meta } from "./Meta";
+import { MetaParam } from './MetaParam';
 
 export enum AcceptableType {
   BIGINT="bigint",
@@ -47,6 +48,9 @@ export class MetaColumn {
 
   @ManyToOne(type => Meta, meta => meta.columns, { nullable: true, onDelete: 'CASCADE' })
   meta: Meta;
+
+  @OneToMany(type => MetaParam, mp => mp.metaColumn)
+  params: MetaParam[];
 
   @Column()
   @CreateDateColumn()

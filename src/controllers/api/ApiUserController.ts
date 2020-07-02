@@ -1,7 +1,5 @@
-import { Request, Response, NextFunction, response, Router } from "express";
-import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
+import { Request, Response, NextFunction, Router } from "express";
 import passport from "passport";
-import { User } from "../../entity/manager/User";
 
 class ApiUserController {
 
