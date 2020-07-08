@@ -313,11 +313,20 @@
 						"type": "number",
 						"format": "double"
 					},
-					"hidden": {
+					"isHidden": {
+						"type": "boolean"
+					},
+					"isSearchable": {
 						"type": "boolean"
 					},
 					"meta": {
 						"$ref": "#/components/schemas/Meta"
+					},
+					"params": {
+						"items": {
+							"$ref": "#/components/schemas/MetaParam"
+						},
+						"type": "array"
 					},
 					"createdAt": {
 						"type": "string",
@@ -335,8 +344,61 @@
 					"type",
 					"size",
 					"order",
-					"hidden",
+					"isHidden",
+					"isSearchable",
 					"meta",
+					"params",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ParamOperatorType": {
+				"enum": [
+					"lt",
+					"lte",
+					"gt",
+					"gte",
+					"like",
+					"eq",
+					"neq"
+				],
+				"type": "string"
+			},
+			"MetaParam": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"metaColumn": {
+						"$ref": "#/components/schemas/MetaColumn"
+					},
+					"operator": {
+						"$ref": "#/components/schemas/ParamOperatorType"
+					},
+					"desctiption": {
+						"type": "string"
+					},
+					"isRequired": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"metaColumn",
+					"operator",
+					"desctiption",
+					"isRequired",
 					"createdAt",
 					"updatedAt"
 				],
@@ -704,6 +766,50 @@
 				]
 			}
 		},
+		"/api/applications/{id}/save": {
+			"post": {
+				"operationId": "Save",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Application"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			}
+		},
 		"/api/database-connections": {
 			"get": {
 				"operationId": "Get",
@@ -764,7 +870,7 @@
 		},
 		"/api/database-connections/{connectionId}": {
 			"get": {
-				"operationId": "GetConnection",
+				"operationId": "GetTablesInConnection",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -775,7 +881,7 @@
 						}
 					}
 				},
-				"description": "Database Connection의 상세 정보를 보여줍니다.",
+				"description": "DB에 접속하여 Table 목록을 불러옵니다.",
 				"tags": [
 					"Database Connection"
 				],
@@ -786,7 +892,6 @@
 				],
 				"parameters": [
 					{
-						"description": "Database Connection의 id",
 						"in": "path",
 						"name": "connectionId",
 						"required": true,
@@ -832,7 +937,7 @@
 		},
 		"/api/database-connections/{connectionId}/tables": {
 			"get": {
-				"operationId": "GetTablesInConnection",
+				"operationId": "GetConnection",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -843,7 +948,7 @@
 						}
 					}
 				},
-				"description": "DB에 접속하여 Table 목록을 불러옵니다.",
+				"description": "Database Connection의 상세 정보를 보여줍니다.",
 				"tags": [
 					"Database Connection"
 				],
@@ -854,6 +959,7 @@
 				],
 				"parameters": [
 					{
+						"description": "Database Connection의 id",
 						"in": "path",
 						"name": "connectionId",
 						"required": true,

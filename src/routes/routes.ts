@@ -124,8 +124,29 @@ const models: TsoaRoute.Models = {
             "type": { "ref": "AcceptableType", "required": true },
             "size": { "dataType": "double", "required": true },
             "order": { "dataType": "double", "required": true },
-            "hidden": { "dataType": "boolean", "required": true },
+            "isHidden": { "dataType": "boolean", "required": true },
+            "isSearchable": { "dataType": "boolean", "required": true },
             "meta": { "ref": "Meta", "required": true },
+            "params": { "dataType": "array", "array": { "ref": "MetaParam" }, "required": true },
+            "createdAt": { "dataType": "datetime", "required": true },
+            "updatedAt": { "dataType": "datetime", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ParamOperatorType": {
+        "dataType": "refEnum",
+        "enums": ["lt", "lte", "gt", "gte", "like", "eq", "neq"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaParam": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "metaColumn": { "ref": "MetaColumn", "required": true },
+            "operator": { "ref": "ParamOperatorType", "required": true },
+            "desctiption": { "dataType": "string", "required": true },
+            "isRequired": { "dataType": "boolean", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },
@@ -310,6 +331,30 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.put.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/api/applications/:id/save',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
+                applicationSavePrams: { "in": "body", "name": "applicationSavePrams", "required": true, "dataType": "any" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiApplicationController();
+
+
+            const promise = controller.save.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

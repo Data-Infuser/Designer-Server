@@ -1,6 +1,6 @@
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
 import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
-import { Route, Get, Tags, Security, Path, Request, Post, Body } from "tsoa";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Put } from "tsoa";
 import { Request as exRequest } from "express";
 import { Application } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
@@ -82,6 +82,24 @@ export class ApiApplicationController {
         reject(new ApplicationError(500, err.message));
       }
     });
+  }
+
+  @Post("/{id}/save")
+  @Security("jwt")
+  public async save(
+    @Path("id") id: number,
+    @Body() applicationSavePrams: any
+  ): Promise<Application> {
+    return new Promise(async (resolve, reject) => {
+      const applicationRepo = getRepository(Application);
+      console.log(applicationSavePrams);
+      try {
+        const application = await applicationRepo.findOneOrFail(id)
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
   }
 }
 

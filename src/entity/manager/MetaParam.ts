@@ -2,7 +2,7 @@ import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColu
 import { MetaColumn } from "./MetaColumn";
 
 
-export enum ParamType {
+export enum ParamOperatorType {
   LESS_THAN="lt",
   LESS_THAN_OR_EQUAL="lte",
   GREATER_THAN="gt",
@@ -22,9 +22,15 @@ export class MetaParam {
 
   @Column({
     type: "enum",
-    enum: ParamType
+    enum: ParamOperatorType
   })
-  type: ParamType;
+  operator: ParamOperatorType;
+
+  @Column({ default: ""})
+  desctiption: string;
+
+  @Column({ default: false })
+  isRequired: boolean;
 
   @Column()
   @CreateDateColumn()

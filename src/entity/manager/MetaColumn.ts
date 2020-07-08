@@ -44,7 +44,10 @@ export class MetaColumn {
   order: number;
 
   @Column({ default: false })
-  hidden: boolean;
+  isHidden: boolean;
+
+  @Column({ default: false })
+  isSearchable: boolean;
 
   @ManyToOne(type => Meta, meta => meta.columns, { nullable: true, onDelete: 'CASCADE' })
   meta: Meta;
