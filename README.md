@@ -1,5 +1,5 @@
-# Designer-Client
-> ``Data Infuser`` / Designer-Client 프로젝트 입니다.
+# Designer-Server
+> ``Data Infuser`` / Designer-Server 프로젝트 입니다.
 
 Data Infuser 프로젝트에서 REST API를 통해 파일 데이터, Database 정보를 통해 데이터를 API로 자동 변환을 해주는 기능을 맡는 모듈입니다.
 
@@ -53,7 +53,7 @@ chai : https://www.chaijs.com/
 > npm run migration:run
 - InsertDefaultUser : admin/admin 계정 생성
 
-## Drip Schema
+## Drop Schema
 
 DB 구조가 변경되어 기존 사용하던 DB Schema와 맞지 않아 오류가 생기는 경우가 있습니다.
 
