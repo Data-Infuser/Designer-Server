@@ -238,6 +238,8 @@ const models: TsoaRoute.Models = {
             "createdAt": { "dataType": "any" },
             "updatedAt": { "dataType": "any" },
             "meta": { "dataType": "union", "subSchemas": [{ "ref": "MetaSaveParams" }, { "dataType": "enum", "enums": [null] }] },
+            "user": { "dataType": "any" },
+            "application": { "dataType": "any" },
         },
         "additionalProperties": false,
     },

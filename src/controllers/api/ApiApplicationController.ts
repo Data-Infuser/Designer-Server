@@ -191,6 +191,8 @@ interface ServiceSaveParams {
   createdAt?: any,
   updatedAt?: any,
   meta?: MetaSaveParams|null
+  user?: any,
+  application?: any
 }
 
 interface MetaSaveParams {

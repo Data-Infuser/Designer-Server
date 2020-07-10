@@ -608,7 +608,9 @@
 								"nullable": true
 							}
 						]
-					}
+					},
+					"user": {},
+					"application": {}
 				},
 				"required": [
 					"id",
