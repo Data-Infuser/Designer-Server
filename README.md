@@ -1,7 +1,7 @@
-# API Designer Client
-> ``APIGen`` / API Designer Client 프로젝트 입니다.
+# Designer-Server
+> ``Data Infuser`` / Designer-Server 프로젝트 입니다.
 
-APIGen 프로젝트에서 REST API를 통해 파일 데이터, Database 정보를 통해 데이터를 API로 자동 변환을 해주는 기능을 맡는 모듈입니다.
+Data Infuser 프로젝트에서 REST API를 통해 파일 데이터, Database 정보를 통해 데이터를 API로 자동 변환을 해주는 기능을 맡는 모듈입니다.
 
 모든 기능은 REST API 형태로 제공되어, 간단하게 사용 할 수 있습니다.
 
@@ -53,7 +53,7 @@ chai : https://www.chaijs.com/
 > npm run migration:run
 - InsertDefaultUser : admin/admin 계정 생성
 
-## Drip Schema
+## Drop Schema
 
 DB 구조가 변경되어 기존 사용하던 DB Schema와 맞지 않아 오류가 생기는 경우가 있습니다.
 
@@ -73,7 +73,7 @@ DB 구조가 변경되어 기존 사용하던 DB Schema와 맞지 않아 오류�
 
 ## API Documentation
 
-OAS 3.0 기준 문서를 아래 결로에서 확인 가능합니다.
+OAS 3.0 기준 문서를 아래 경로에서 확인 가능합니다.
 
 /api-docs
 
@@ -84,3 +84,6 @@ Promptechnology - [@Homepage](http://www.promptech.co.kr/) - [promptech@promptec
 프로젝트는 아파치 2.0 라이센스로 배포되었습니다. 자세한 사항은 ``LICENSE`` 파일을 확인해주세요.
 
 Distributed under the Apache 2.0 license. See ``LICENSE`` for more information.
+
+## Support
+![alt text](http://wisepaip.org/assets/home/promptech-d8574a0910561aaea077bc759b1cf94c07baecc551f034ee9c7e830572d671de.png "Title Text")
