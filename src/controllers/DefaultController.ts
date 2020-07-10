@@ -25,7 +25,6 @@ class DefaultController {
   }
 
   getLoginPage = async(req: Request, res: Response) => {
-    console.log("...?")
     res.render("login");
   }
 

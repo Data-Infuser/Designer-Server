@@ -446,7 +446,7 @@
 			},
 			"ApplicationParams": {
 				"properties": {
-					"namespace": {
+					"nameSpace": {
 						"type": "string"
 					},
 					"title": {
@@ -457,9 +457,229 @@
 					}
 				},
 				"required": [
-					"namespace",
+					"nameSpace",
 					"title",
 					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MetaColumnSaveParams": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"columnName": {
+						"type": "string"
+					},
+					"isHidden": {
+						"type": "boolean"
+					},
+					"isSearchable": {
+						"type": "boolean"
+					},
+					"size": {
+						"anyOf": [
+							{
+								"type": "number",
+								"format": "double"
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"type": {
+						"type": "string"
+					},
+					"serviceId": {
+						"anyOf": [
+							{
+								"type": "number",
+								"format": "double"
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"originalColumnName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"columnName",
+					"isHidden",
+					"isSearchable",
+					"type",
+					"serviceId",
+					"order",
+					"originalColumnName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MetaSaveParams": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"dataType": {
+						"type": "string"
+					},
+					"columns": {
+						"items": {
+							"$ref": "#/components/schemas/MetaColumnSaveParams"
+						},
+						"type": "array"
+					},
+					"originalFileName": {},
+					"filePath": {},
+					"extension": {},
+					"host": {},
+					"port": {},
+					"db": {},
+					"dbUser": {},
+					"pwd": {},
+					"table": {},
+					"dbms": {},
+					"rowCounts": {},
+					"skip": {},
+					"sheet": {},
+					"isActive": {},
+					"createdAt": {},
+					"updatedAt": {}
+				},
+				"required": [
+					"id",
+					"title",
+					"dataType",
+					"columns"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ServiceSaveParams": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"method": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"entityName": {
+						"type": "string"
+					},
+					"tableName": {},
+					"columnLength": {},
+					"dataCounts": {},
+					"status": {},
+					"createdAt": {},
+					"updatedAt": {},
+					"meta": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/MetaSaveParams"
+							},
+							{
+								"type": "number",
+								"enum": [
+									null
+								],
+								"nullable": true
+							}
+						]
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"method",
+					"description",
+					"entityName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MetaParamSaveParams": {
+				"properties": {
+					"description": {
+						"type": "string"
+					},
+					"isRequired": {
+						"type": "boolean"
+					},
+					"operator": {
+						"$ref": "#/components/schemas/ParamOperatorType"
+					}
+				},
+				"required": [
+					"description",
+					"isRequired",
+					"operator"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApplicationSaveParams": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nameSpace": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"services": {
+						"items": {
+							"$ref": "#/components/schemas/ServiceSaveParams"
+						},
+						"type": "array"
+					},
+					"params": {
+						"properties": {},
+						"additionalProperties": {
+							"items": {
+								"$ref": "#/components/schemas/MetaParamSaveParams"
+							},
+							"type": "array"
+						},
+						"type": "object"
+					},
+					"status": {},
+					"createdAt": {},
+					"updatedAt": {}
+				},
+				"required": [
+					"id",
+					"nameSpace",
+					"title",
+					"description",
+					"services",
+					"params"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -804,7 +1024,9 @@
 					"required": true,
 					"content": {
 						"application/json": {
-							"schema": {}
+							"schema": {
+								"$ref": "#/components/schemas/ApplicationSaveParams"
+							}
 						}
 					}
 				}

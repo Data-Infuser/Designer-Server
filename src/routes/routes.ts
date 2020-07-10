@@ -170,9 +170,97 @@ const models: TsoaRoute.Models = {
     "ApplicationParams": {
         "dataType": "refObject",
         "properties": {
-            "namespace": { "dataType": "string", "required": true },
+            "nameSpace": { "dataType": "string", "required": true },
             "title": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaColumnSaveParams": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "columnName": { "dataType": "string", "required": true },
+            "isHidden": { "dataType": "boolean", "required": true },
+            "isSearchable": { "dataType": "boolean", "required": true },
+            "size": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }] },
+            "type": { "dataType": "string", "required": true },
+            "serviceId": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }], "required": true },
+            "order": { "dataType": "double", "required": true },
+            "originalColumnName": { "dataType": "string", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaSaveParams": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "title": { "dataType": "string", "required": true },
+            "dataType": { "dataType": "string", "required": true },
+            "columns": { "dataType": "array", "array": { "ref": "MetaColumnSaveParams" }, "required": true },
+            "originalFileName": { "dataType": "any" },
+            "filePath": { "dataType": "any" },
+            "extension": { "dataType": "any" },
+            "host": { "dataType": "any" },
+            "port": { "dataType": "any" },
+            "db": { "dataType": "any" },
+            "dbUser": { "dataType": "any" },
+            "pwd": { "dataType": "any" },
+            "table": { "dataType": "any" },
+            "dbms": { "dataType": "any" },
+            "rowCounts": { "dataType": "any" },
+            "skip": { "dataType": "any" },
+            "sheet": { "dataType": "any" },
+            "isActive": { "dataType": "any" },
+            "createdAt": { "dataType": "any" },
+            "updatedAt": { "dataType": "any" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ServiceSaveParams": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "title": { "dataType": "string", "required": true },
+            "method": { "dataType": "string", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "entityName": { "dataType": "string", "required": true },
+            "tableName": { "dataType": "any" },
+            "columnLength": { "dataType": "any" },
+            "dataCounts": { "dataType": "any" },
+            "status": { "dataType": "any" },
+            "createdAt": { "dataType": "any" },
+            "updatedAt": { "dataType": "any" },
+            "meta": { "dataType": "union", "subSchemas": [{ "ref": "MetaSaveParams" }, { "dataType": "enum", "enums": [null] }] },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaParamSaveParams": {
+        "dataType": "refObject",
+        "properties": {
+            "description": { "dataType": "string", "required": true },
+            "isRequired": { "dataType": "boolean", "required": true },
+            "operator": { "ref": "ParamOperatorType", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApplicationSaveParams": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "nameSpace": { "dataType": "string", "required": true },
+            "title": { "dataType": "string", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "services": { "dataType": "array", "array": { "ref": "ServiceSaveParams" }, "required": true },
+            "params": { "dataType": "nestedObjectLiteral", "nestedProperties": {}, "additionalProperties": { "dataType": "array", "array": { "ref": "MetaParamSaveParams" } }, "required": true },
+            "status": { "dataType": "any" },
+            "createdAt": { "dataType": "any" },
+            "updatedAt": { "dataType": "any" },
         },
         "additionalProperties": false,
     },
@@ -339,7 +427,7 @@ export function RegisterRoutes(app: express.Express) {
         function(request: any, response: any, next: any) {
             const args = {
                 id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
-                applicationSavePrams: { "in": "body", "name": "applicationSavePrams", "required": true, "dataType": "any" },
+                applicationSavePrams: { "in": "body", "name": "applicationSavePrams", "required": true, "ref": "ApplicationSaveParams" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
