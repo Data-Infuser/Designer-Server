@@ -510,7 +510,10 @@
 					},
 					"originalColumnName": {
 						"type": "string"
-					}
+					},
+					"createdAt": {},
+					"updatedAt": {},
+					"params": {}
 				},
 				"required": [
 					"id",
@@ -518,7 +521,6 @@
 					"isHidden",
 					"isSearchable",
 					"type",
-					"serviceId",
 					"order",
 					"originalColumnName"
 				],

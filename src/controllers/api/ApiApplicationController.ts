@@ -1,7 +1,7 @@
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
 import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
 import { Route, Get, Tags, Security, Path, Request, Post, Body, Put } from "tsoa";
-import { Request as exRequest } from "express";
+import { Request as exRequest, application } from "express";
 import { Application } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
 import { Service } from '../../entity/manager/Service';
@@ -93,6 +93,7 @@ export class ApiApplicationController {
     @Path("id") id: number,
     @Body() applicationSavePrams: ApplicationSaveParams
   ): Promise<Application> {
+    console.log(applicationSavePrams);
     return new Promise(async (resolve, reject) => {
       const applicationRepo = getRepository(Application);
       const serviceRepo = getRepository(Service);
@@ -119,7 +120,6 @@ export class ApiApplicationController {
           const metaColumns = service.meta.columns
           for(const column of metaColumns) {
             let modifiedColumn = modifiedService.meta.columns.find(columnParam => columnParam.id === column.id);
-            console.log(modifiedColumn);
             column.isHidden = modifiedColumn.isHidden;
             column.isSearchable = modifiedColumn.isSearchable;
             column.columnName = modifiedColumn.columnName;
@@ -223,9 +223,12 @@ interface MetaColumnSaveParams {
   isSearchable: boolean,
   size?: number|string,
   type: AcceptableType,
-  serviceId: number|string,
+  serviceId?: number|string,
   order: number,
-  originalColumnName: string
+  originalColumnName: string,
+  createdAt?: any,
+  updatedAt?: any,
+  params?: any
 }
 
 interface MetaParamSaveParams {
