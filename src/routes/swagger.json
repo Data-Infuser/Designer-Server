@@ -378,7 +378,7 @@
 					"operator": {
 						"$ref": "#/components/schemas/ParamOperatorType"
 					},
-					"desctiption": {
+					"description": {
 						"type": "string"
 					},
 					"isRequired": {
@@ -397,7 +397,7 @@
 					"id",
 					"metaColumn",
 					"operator",
-					"desctiption",
+					"description",
 					"isRequired",
 					"createdAt",
 					"updatedAt"
@@ -491,7 +491,7 @@
 						]
 					},
 					"type": {
-						"type": "string"
+						"$ref": "#/components/schemas/AcceptableType"
 					},
 					"serviceId": {
 						"anyOf": [
@@ -620,6 +620,10 @@
 			},
 			"MetaParamSaveParams": {
 				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
 					"description": {
 						"type": "string"
 					},
@@ -628,10 +632,11 @@
 					},
 					"operator": {
 						"$ref": "#/components/schemas/ParamOperatorType"
-					}
+					},
+					"createdAt": {},
+					"updatedAt": {}
 				},
 				"required": [
-					"description",
 					"isRequired",
 					"operator"
 				],

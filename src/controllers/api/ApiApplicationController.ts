@@ -5,7 +5,7 @@ import { Request as exRequest } from "express";
 import { Application } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
 import { Service } from '../../entity/manager/Service';
-import { MetaColumn } from "../../entity/manager/MetaColumn";
+import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 
 @Route("/api/applications")
@@ -115,15 +115,23 @@ export class ApiApplicationController {
         
         for(const service of services) {
           if(!service.meta) continue;
+          const modifiedService = applicationSavePrams.services.find(el => el.id === service.id);
           const metaColumns = service.meta.columns
           for(const column of metaColumns) {
+            let modifiedColumn = modifiedService.meta.columns.find(columnParam => columnParam.id === column.id);
+            console.log(modifiedColumn);
+            column.isHidden = modifiedColumn.isHidden;
+            column.isSearchable = modifiedColumn.isSearchable;
+            column.columnName = modifiedColumn.columnName;
+            column.type = modifiedColumn.type;
+            column.size = Number(modifiedColumn.size);
             if(applicationSavePrams.params[column.id]) {
               paramsForDelete = paramsForDelete.concat(column.params);
               const params = applicationSavePrams.params[column.id]
               for(const param of params) {
                 const newParam = new MetaParam();
                 newParam.operator = param.operator;
-                newParam.desctiption = param.description;
+                newParam.description = param.description;
                 newParam.isRequired = param.isRequired;
                 newParam.metaColumn = column;
                 newPrams.push(newParam);
@@ -134,6 +142,10 @@ export class ApiApplicationController {
         await getManager().transaction(async transactionEntityManager => {
           await transactionEntityManager.save(application);
           await transactionEntityManager.save(services);
+          for(const service of services) {
+            if(!service.meta) continue;
+            await transactionEntityManager.save(service.meta.columns);
+          }
           await metaParamRepo.remove(paramsForDelete);
           await transactionEntityManager.save(newPrams);
         })
@@ -210,14 +222,17 @@ interface MetaColumnSaveParams {
   isHidden: boolean,
   isSearchable: boolean,
   size?: number|string,
-  type: string,
+  type: AcceptableType,
   serviceId: number|string,
   order: number,
   originalColumnName: string
 }
 
 interface MetaParamSaveParams {
-  description: string,
+  id?: number,
+  description?: string,
   isRequired: boolean,
-  operator: ParamOperatorType
+  operator: ParamOperatorType,
+  createdAt?: any,
+  updatedAt?: any
 }

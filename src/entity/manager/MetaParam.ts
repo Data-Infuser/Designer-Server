@@ -27,7 +27,7 @@ export class MetaParam {
   operator: ParamOperatorType;
 
   @Column({ default: ""})
-  desctiption: string;
+  description: string;
 
   @Column({ default: false })
   isRequired: boolean;
