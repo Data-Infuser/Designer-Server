@@ -11,6 +11,9 @@ import DataLoaderHelper from '../../helpers/DataLoaderHelper';
 import mysqlTypes from "../../util/dbms_data_types/mysql.json";
 import { MetaColumn } from "../../entity/manager/MetaColumn";
 import { convertType } from "../../util/MetaLoader";
+import multer from "multer";
+import property from "../../../property.json";
+import * as Excel from 'exceljs';
 
 @Route("/api/metas")
 @Tags("Meta")
@@ -95,6 +98,101 @@ export class ApiMetaController {
         reject(new ApplicationError(500, err.message));
         return;
       }
+    });
+  }
+
+  /**
+   * File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.
+   *  body param 정보는 tsoa.json을 참고해주세요.
+   * @param request 
+   */
+  @Post("/file")
+  @Security("jwt")
+  public async postFile(
+    @Request() request: exRequest
+  ): Promise<any> {
+    const serviceRepo = getRepository(Service);
+    const metaRepo = getRepository(Meta);
+    const metaColumnRepo = getRepository(MetaColumn);
+
+    await this.handleFile(request);
+    return new Promise(async function(resolve, reject) {
+      try {
+        const { title, skip, sheet, serviceId } = request.body;
+        const service = await serviceRepo.findOneOrFail(serviceId);
+
+        const filePath = request.file.path;
+        const originalFileName:string = request.file.originalname;
+        const originalFileNameTokens = originalFileName.split(".");
+        const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
+        const loadedWorkbook = await new Excel.Workbook().xlsx.readFile(filePath);
+        const worksheet = loadedWorkbook.worksheets[sheet]
+        const totalRowCount = worksheet.rowCount
+
+        const header = worksheet.getRow(skip + 1).values;
+
+        const meta = new Meta();
+        meta.title = title;
+        meta.originalFileName = originalFileName;
+        meta.filePath = filePath;
+        meta.rowCounts = totalRowCount - 1;
+        meta.extension = ext;
+        meta.skip = skip;
+        meta.sheet = sheet;
+        
+        let columns = []
+        for(let i = 1; i < header.length; i++) {
+          const col = header[i];
+          const metaCol = new MetaColumn();
+          metaCol.originalColumnName = col;
+          metaCol.columnName = col;
+          metaCol.meta = meta;
+          metaCol.order = i;
+          columns.push(metaCol);
+        }
+
+        let updatedMeta
+        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+          updatedMeta = await metaRepo.save(meta);
+          await metaColumnRepo.save(columns);
+          service.status = ServiceStatus.METALOADED;
+          await serviceRepo.save(service);
+        });
+
+        updatedMeta = await metaRepo.findOneOrFail({
+          relations: ["service", "columns"],
+          where: {
+            id: updatedMeta.id
+          }
+        });
+        resolve(updatedMeta);
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
+  }
+
+  private handleFile(request: exRequest): Promise<any> {
+    var storage = multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, property["upload-dist"].localPath)
+      },
+      filename: function (req, file, cb) {
+        const originalFileName:string = file.originalname;
+        const originalFileNameTokens = originalFileName.split(".");
+        const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
+        cb(null, req.user.id + "-" + Date.now() + "." + ext)
+      }
+    })
+    const multerSingle = multer({ storage }).single("file");
+    return new Promise((resolve, reject) => {
+      multerSingle(request, undefined, async (error) => {
+        if (error) {
+          reject(error);
+        }
+        resolve();
+      });
     });
   }
 }

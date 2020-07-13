@@ -888,7 +888,7 @@
 				"type": "http",
 				"authorizationUrl": "http://swagger.io/api/oauth/dialog",
 				"scheme": "bearer",
-				"bearerFormet": "JWT",
+				"bearerFormat": "JWT",
 				"scopes": {}
 			}
 		}
@@ -1276,6 +1276,62 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/postDbmsParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/metas/file": {
+			"post": {
+				"operationId": "PostFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"required": true,
+										"type": "string",
+										"format": "binary"
+									},
+									"title": {
+										"required": true,
+										"type": "string"
+									},
+									"skip": {
+										"required": true,
+										"type": "integer"
+									},
+									"sheet": {
+										"required": true,
+										"type": "integer"
+									},
+									"serviceId": {
+										"required": true,
+										"type": "integer"
+									}
+								}
 							}
 						}
 					}

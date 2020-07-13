@@ -4,6 +4,6 @@
   "dataLoaderUrl": "http://localhost:4000",
   "upload-dist": {
     "type": "local",
-    "path": "/Users/chunghyup/projects/api-gen/api-designer/server/upload"
+    "localPath": "/Users/chunghyup/projects/api-gen/api-designer/server/upload"
   }
 }
