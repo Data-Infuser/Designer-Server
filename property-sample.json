@@ -1,5 +1,9 @@
 {
   "host": "http://localhost:3000",
   "apiServerUrl": "http://localhost:3000",
-  "dataLoaderUrl": "http://localhost:4000"
+  "dataLoaderUrl": "http://localhost:4000",
+  "upload-dist": {
+    "type": "local",
+    "path": "/Users/chunghyup/projects/api-gen/api-designer/server/upload"
+  }
 }
