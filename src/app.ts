@@ -12,7 +12,7 @@ import ApplicationError from "./ApplicationError";
 import cors from "cors";
 import { RegisterRoutes } from './routes/routes';
 import swaggerUi from "swagger-ui-express";
-
+import BullManager from "./util/BullManager";
 
 export class Application {
   app: express.Application;
@@ -49,7 +49,7 @@ export class Application {
       next();
     });
     
-    this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length]"));
+    this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] :response-time ms"));
   }
 
   setupDbAndServer = async () => {
@@ -59,6 +59,8 @@ export class Application {
       setupPassport(this.app);
       // await setupRoutes(this.app);
       RegisterRoutes(<express.Express>this.app);
+      BullManager.setupBull(this.app);
+      
       this.app.use("/api-docs", swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
         return res.send(
           swaggerUi.generateHTML(await import("./routes/swagger.json"))
