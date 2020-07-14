@@ -151,6 +151,7 @@ export class ApiMetaController {
           columns.push(metaCol);
         }
 
+        meta.service = service;
         let updatedMeta
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           updatedMeta = await metaRepo.save(meta);

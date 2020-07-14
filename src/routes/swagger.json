@@ -1295,6 +1295,7 @@
 						}
 					}
 				},
+				"description": "File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.\n  body param 정보는 tsoa.json을 참고해주세요.",
 				"tags": [
 					"Meta"
 				],
@@ -1311,24 +1312,19 @@
 								"type": "object",
 								"properties": {
 									"file": {
-										"required": true,
 										"type": "string",
 										"format": "binary"
 									},
 									"title": {
-										"required": true,
 										"type": "string"
 									},
 									"skip": {
-										"required": true,
 										"type": "integer"
 									},
 									"sheet": {
-										"required": true,
 										"type": "integer"
 									},
 									"serviceId": {
-										"required": true,
 										"type": "integer"
 									}
 								}
