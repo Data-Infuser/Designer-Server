@@ -2,11 +2,12 @@ import { getRepository, getConnection, getManager, ConnectionOptions } from "typ
 import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
 import { Route, Get, Tags, Security, Path, Request, Post, Body, Put } from "tsoa";
 import { Request as exRequest, application } from "express";
-import { Application } from "../../entity/manager/Application";
+import { Application, ApplicationStatus } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
 import { Service } from '../../entity/manager/Service';
 import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
+import BullManager from '../../util/BullManager';
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -87,13 +88,59 @@ export class ApiApplicationController {
     });
   }
 
+  @Post("/{id}/deploy")
+  @Security("jwt")
+  public async deploy(
+    @Request() request: exRequest,
+    @Path("id") id: number
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const applicationRepo = getRepository(Application);
+      try {
+        const application = await applicationRepo.findOneOrFail({
+          relations: ["user", "services"],
+          where: {
+            id: id,
+            user: {
+              id: request.user.id
+            }
+          }
+        });
+        let errorMessage;
+        if (application.isDeployed) {
+          errorMessage = "이미 배포된 어플리케이션 입니다."
+        } else if (!application.isDeployable) {
+          errorMessage = "완성되지 않은 명세가 있습니다."
+        }
+
+        if(errorMessage) {
+          reject(new ApplicationError(401, errorMessage));
+          return;
+        }
+
+        
+        application.status = ApplicationStatus.SCHEDULED;
+        await applicationRepo.save(application);
+        BullManager.Instance.setSchedule(application);
+        /**
+         * 만약 JobQueue 등록이 실패한다면?
+         * 이후 DataLoader에서 JobQueue에 등록되지 않은 Scheduled Job을 찾아 Queue에 등록하는 로직을 만들어야 함
+         */
+
+        resolve(application);
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
+  }
+
   @Post("/{id}/save")
   @Security("jwt")
   public async save(
     @Path("id") id: number,
     @Body() applicationSavePrams: ApplicationSaveParams
   ): Promise<Application> {
-    console.log(applicationSavePrams);
     return new Promise(async (resolve, reject) => {
       const applicationRepo = getRepository(Application);
       const serviceRepo = getRepository(Service);

@@ -5,5 +5,9 @@
   "upload-dist": {
     "type": "local",
     "localPath": "/Users/chunghyup/projects/api-gen/api-designer/server/upload"
+  },
+  "jobqueue-redis": {
+    "host": "localhost",
+    "port": 6379
   }
 }
