@@ -1,5 +1,5 @@
 import { Request as exRequest, Response, NextFunction, response, Router } from "express";
-import { getRepository, getConnection, getManager, ConnectionOptions, FindManyOptions, FindOneOptions } from "typeorm";
+import { getRepository, getConnection, getManager, ConnectionOptions, FindManyOptions, FindOneOptions, Like } from "typeorm";
 import passport from "passport";
 import { User } from "../../entity/manager/User";
 import { Tags, Route, Post, Security, Request, Body, Delete, Path, Get, Query } from "tsoa";
@@ -14,7 +14,8 @@ export class RestApplicationController {
   @Get("/")
   public async get(
     @Query() page?: number,
-    @Query() perPage?: number
+    @Query() perPage?: number,
+    @Query() nameSpace?: string
   ) {
     if(!page) page = 1;
     if(!perPage) perPage = 10;
@@ -27,8 +28,14 @@ export class RestApplicationController {
         take: perPage,
         order: {
           id: 'ASC'
-        }
+        },
+        where: {}
       }
+
+      if (nameSpace) {
+        findOption.where["nameSpace"] = Like(`%${nameSpace}%`)
+      }
+      
       try {
         const applications = await appRepo.findAndCount(findOption);
         resolve(new RestResponse("", {

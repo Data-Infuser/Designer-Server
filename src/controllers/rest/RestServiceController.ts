@@ -1,4 +1,4 @@
-import { getRepository, FindManyOptions, FindOneOptions } from "typeorm";
+import { getRepository, FindManyOptions, FindOneOptions, Like } from "typeorm";
 import { Tags, Route, Path, Get, Query } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
@@ -10,7 +10,8 @@ export class RestServiceController {
   @Get("/")
   public async get(
     @Query() page?: number,
-    @Query() perPage?: number
+    @Query() perPage?: number,
+    @Query() entityName?: string,
   ) {
     if(!page) page = 1;
     if(!perPage) perPage = 10;
@@ -23,8 +24,14 @@ export class RestServiceController {
         take: perPage,
         order: {
           id: 'ASC'
-        }
+        },
+        where: {}
       }
+
+      if (entityName) {
+        findOption.where["entityName"] = Like(`%${entityName}%`);
+      }
+      console.log(findOption);
       try {
         const services = await serviceRepo.findAndCount(findOption);
         resolve(new RestResponse("", {

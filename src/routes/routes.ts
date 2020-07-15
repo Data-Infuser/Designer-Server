@@ -766,6 +766,7 @@ export function RegisterRoutes(app: express.Express) {
             const args = {
                 page: { "in": "query", "name": "page", "dataType": "double" },
                 perPage: { "in": "query", "name": "perPage", "dataType": "double" },
+                nameSpace: { "in": "query", "name": "nameSpace", "dataType": "string" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -811,6 +812,7 @@ export function RegisterRoutes(app: express.Express) {
             const args = {
                 page: { "in": "query", "name": "page", "dataType": "double" },
                 perPage: { "in": "query", "name": "perPage", "dataType": "double" },
+                entityName: { "in": "query", "name": "entityName", "dataType": "string" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
