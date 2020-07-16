@@ -4,7 +4,7 @@ import { Route, Get, Tags, Security, Path, Request, Post, Body, Put } from "tsoa
 import { Request as exRequest, application } from "express";
 import { Application, ApplicationStatus } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
-import { Service } from '../../entity/manager/Service';
+import { Service, ServiceStatus } from '../../entity/manager/Service';
 import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';
@@ -96,6 +96,7 @@ export class ApiApplicationController {
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const applicationRepo = getRepository(Application);
+      const serviceRepo = getRepository(Service);
       try {
         const application = await applicationRepo.findOneOrFail({
           relations: ["user", "services"],
@@ -120,7 +121,11 @@ export class ApiApplicationController {
 
         
         application.status = ApplicationStatus.SCHEDULED;
+        for(const service of application.services) {
+          service.status = ServiceStatus.SCHEDULED
+        }
         await applicationRepo.save(application);
+        await serviceRepo.save(application.services);
         BullManager.Instance.setSchedule(application);
         /**
          * 만약 JobQueue 등록이 실패한다면?
@@ -222,7 +227,8 @@ interface ApplicationSaveParams {
   },
   status?: any,
   createdAt?: any,
-  updatedAt?: any
+  updatedAt?: any,
+  user?: any
 }
 
 interface ServiceSaveParams {

@@ -312,7 +312,7 @@ class ApplicationController {
       res.redirect(`/applications/${id}`)
     } catch (err) {
       tablesForDelete.forEach(async table => {
-        await getConnection('dataset').createQueryRunner().dropTable(table, true);
+        await defaultQueryRunner.dropTable(table, true);
       })
       await defaultQueryRunner.rollbackTransaction();
       await datasetQueryRunner.rollbackTransaction();

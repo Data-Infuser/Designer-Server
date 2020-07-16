@@ -269,6 +269,7 @@ const models: TsoaRoute.Models = {
             "status": { "dataType": "any" },
             "createdAt": { "dataType": "any" },
             "updatedAt": { "dataType": "any" },
+            "user": { "dataType": "any" },
         },
         "additionalProperties": false,
     },

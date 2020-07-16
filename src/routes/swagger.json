@@ -680,7 +680,8 @@
 					},
 					"status": {},
 					"createdAt": {},
-					"updatedAt": {}
+					"updatedAt": {},
+					"user": {}
 				},
 				"required": [
 					"id",
