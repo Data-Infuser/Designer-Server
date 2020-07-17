@@ -1,19 +1,16 @@
 import { Request as exRequest, Response, NextFunction, response, Router } from "express";
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
-import passport from "passport";
-import { User } from "../../entity/manager/User";
 import { Tags, Route, Post, Security, Request, Body, Delete, Path } from "tsoa";
 import { Service, ServiceStatus } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
-import { Application } from "../../entity/manager/Application";
 import { Meta } from '../../entity/manager/Meta';
-import DataLoaderHelper from '../../helpers/DataLoaderHelper';
-import mysqlTypes from "../../util/dbms_data_types/mysql.json";
 import { MetaColumn } from "../../entity/manager/MetaColumn";
-import { convertType } from "../../util/MetaLoader";
 import multer from "multer";
 import property from "../../../property.json";
 import * as Excel from 'exceljs';
+import MysqlMetaLoadStrategy from "../../lib/MysqlMetaLoadStrategy";
+import MetaLoader from "../../lib/MetaLoader";
+import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
 
 @Route("/api/metas")
 @Tags("Meta")
@@ -41,45 +38,32 @@ export class ApiMetaController {
       }
       try {
         const service = await serviceRepo.findOneOrFail(serviceId);
-        const getParams = {
+        const connectionInfo = {
           dbms: dbms,
           username: user,
           password: password,
           hostname: host,
           port: port,
           database: database,
-          tableNm: table
+          tableNm: table,
+          title: title
         }
-        const columnsResponse = await DataLoaderHelper.getTableColumns(getParams)
-        console.log(columnsResponse);
 
-        const meta = new Meta();
-        meta.title = title;
-        meta.dataType = 'dbms';
-        meta.host = host;
-        meta.port = port;
-        meta.db = database;
-        meta.dbUser = user;
-        meta.pwd = password;
-        meta.table = table;
-        meta.service = service;
-        meta.user = request.user;
-
-        let columns = []
-        for(let i = 0; i < columnsResponse.length; i++) {
-          console.log(i);
-          const info = columnsResponse[i]
-          const metaCol = new MetaColumn();
-          metaCol.originalColumnName = info.name;
-          metaCol.columnName = info.name;
-          const convertedType = convertType(info.type);
-          metaCol.type = convertedType.type;
-          if(convertedType.size) metaCol.size = convertedType.size;
-          metaCol.meta = meta;
-          metaCol.order = i;
-          columns.push(metaCol);
+        let loadStrategy: MetaLoadStrategy;
+        switch(connectionInfo.dbms) {
+          case 'mysql':
+            loadStrategy = new MysqlMetaLoadStrategy();
+            break;
+          default:
+            throw new Error("unexceptable dbms");
         }
+        const metaLoader = new MetaLoader(loadStrategy);
+        const loaderResult = await metaLoader.loadMeta(connectionInfo);
+        const meta = loaderResult.meta;
+        const columns = loaderResult.columns;
         let updatedMeta;
+        
+        service.meta = meta;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           updatedMeta = await metaRepo.save(meta);
           await metaColumnRepo.save(columns);

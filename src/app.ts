@@ -16,10 +16,8 @@ import BullManager from "./util/BullManager";
 
 export class Application {
   app: express.Application;
-  controllers: any[];
   auth;
-  constructor(controllers: any[]) {
-    this.controllers = controllers;
+  constructor() {
     this.app = express();
     this.app.use(cors());
     this.app.use(bodyParser.json());
@@ -60,17 +58,12 @@ export class Application {
       // await setupRoutes(this.app);
       RegisterRoutes(<express.Express>this.app);
       BullManager.setupBull(this.app);
-      
+
       this.app.use("/api-docs", swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
         return res.send(
           swaggerUi.generateHTML(await import("./routes/swagger.json"))
         );
       });
-      this.controllers.forEach(
-        (controller) => {
-          this.app.use(controller.path, controller.router);
-        }
-      )
 
       this.app.use(function(req, res, next) {
         let err = new ApplicationError(404, 'Not Found');
