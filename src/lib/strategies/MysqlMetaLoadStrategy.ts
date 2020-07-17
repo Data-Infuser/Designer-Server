@@ -1,10 +1,10 @@
-import mysqlTypes from "../util/dbms_data_types/mysql.json";
-import { MetaInfo } from "../interfaces/MetaInfo";
+import mysqlTypes from "../../util/dbms_data_types/mysql.json";
+import { MetaInfo } from "../../interfaces/MetaInfo";
 import { createConnections, getManager, getConnection, ConnectionOptions } from "typeorm";
-import { Meta } from "../entity/manager/Meta";
-import { MetaColumn } from "../entity/manager/MetaColumn";
-import MetaLoadStrategy from "./MetaLoadStrategy";
-import MetaLoaderDbConnection from "./interfaces/MetaLoaderDbConnection";
+import { Meta } from "../../entity/manager/Meta";
+import { MetaColumn } from "../../entity/manager/MetaColumn";
+import MetaLoadStrategy from "../MetaLoadStrategy";
+import MetaLoaderDbConnection from "../interfaces/MetaLoaderDbConnection";
 
 class MysqlMetaLoadStrategy implements MetaLoadStrategy {
 

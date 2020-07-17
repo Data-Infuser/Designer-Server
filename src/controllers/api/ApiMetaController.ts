@@ -8,9 +8,10 @@ import { MetaColumn } from "../../entity/manager/MetaColumn";
 import multer from "multer";
 import property from "../../../property.json";
 import * as Excel from 'exceljs';
-import MysqlMetaLoadStrategy from "../../lib/MysqlMetaLoadStrategy";
+import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
 import MetaLoader from "../../lib/MetaLoader";
 import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
+import XlsxMetaLoadStrategy from "../../lib/strategies/XlsxMetaLoadStrategy";
 
 @Route("/api/metas")
 @Tags("Meta")
@@ -98,52 +99,46 @@ export class ApiMetaController {
     const serviceRepo = getRepository(Service);
     const metaRepo = getRepository(Meta);
     const metaColumnRepo = getRepository(MetaColumn);
-
     await this.handleFile(request);
     return new Promise(async function(resolve, reject) {
       try {
         const { title, skip, sheet, serviceId } = request.body;
         const service = await serviceRepo.findOneOrFail(serviceId);
-
+        
         const filePath = request.file.path;
         const originalFileName:string = request.file.originalname;
         const originalFileNameTokens = originalFileName.split(".");
         const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
-        const loadedWorkbook = await new Excel.Workbook().xlsx.readFile(filePath);
-        const worksheet = loadedWorkbook.worksheets[sheet]
-        const totalRowCount = worksheet.rowCount
 
-        const header = worksheet.getRow(skip + 1).values;
-
-        const meta = new Meta();
-        meta.title = title;
-        meta.originalFileName = originalFileName;
-        meta.filePath = filePath;
-        meta.rowCounts = totalRowCount - 1;
-        meta.extension = ext;
-        meta.skip = skip;
-        meta.sheet = sheet;
-        
-        let columns = []
-        for(let i = 1; i < header.length; i++) {
-          const col = header[i];
-          const metaCol = new MetaColumn();
-          metaCol.originalColumnName = col;
-          metaCol.columnName = col;
-          metaCol.meta = meta;
-          metaCol.order = i;
-          columns.push(metaCol);
+        const fileParam = {
+          title: title,
+          skip: skip,
+          sheet: sheet,
+          filePath: filePath,
+          originalFileName: originalFileName,
+          ext: ext
         }
-
-        meta.service = service;
-        let updatedMeta
+        let loadStrategy: MetaLoadStrategy;
+        switch(ext) {
+          case 'xlsx':
+            loadStrategy = new XlsxMetaLoadStrategy();
+            break;
+          default:
+            throw new Error("unexceptable dbms");
+        }
+        const metaLoader = new MetaLoader(loadStrategy);
+        const loaderResult = await metaLoader.loadMeta(fileParam);
+        const meta = loaderResult.meta;
+        const columns = loaderResult.columns;
+        let updatedMeta;
+        
+        service.meta = meta;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           updatedMeta = await metaRepo.save(meta);
           await metaColumnRepo.save(columns);
           service.status = ServiceStatus.METALOADED;
           await serviceRepo.save(service);
         });
-
         updatedMeta = await metaRepo.findOneOrFail({
           relations: ["service", "columns"],
           where: {
