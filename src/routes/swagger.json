@@ -560,7 +560,8 @@
 					"sheet": {},
 					"isActive": {},
 					"createdAt": {},
-					"updatedAt": {}
+					"updatedAt": {},
+					"service": {}
 				},
 				"required": [
 					"id",

@@ -268,7 +268,8 @@ interface MetaSaveParams {
   sheet?: any,
   isActive?: any,
   createdAt?: any,
-  updatedAt?: any
+  updatedAt?: any,
+  service?: any
 }
 
 interface MetaColumnSaveParams {
