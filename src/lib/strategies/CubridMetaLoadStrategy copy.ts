@@ -46,7 +46,6 @@ class CubridMetaLoadStrategy implements MetaLoadStrategy {
 
         const countQuery = `SELECT COUNT(*) FROM \`${tableNm}\`;`
         const countResult = await client.query(countQuery);
-        console.log(countResult);
         const count = countResult.result.ColumnValues[0][0];
 
         const describeQuery = `DESCRIBE \`${tableNm}\`;`
@@ -88,7 +87,6 @@ class CubridMetaLoadStrategy implements MetaLoadStrategy {
           meta: meta, 
           columns: columns
         });
-        resolve();
         return;
       } catch (err) {
         await client.close();
