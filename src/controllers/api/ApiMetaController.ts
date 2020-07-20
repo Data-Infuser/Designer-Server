@@ -12,6 +12,7 @@ import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
 import MetaLoader from "../../lib/MetaLoader";
 import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
 import XlsxMetaLoadStrategy from "../../lib/strategies/XlsxMetaLoadStrategy";
+import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy copy";
 
 @Route("/api/metas")
 @Tags("Meta")
@@ -54,6 +55,9 @@ export class ApiMetaController {
         switch(connectionInfo.dbms) {
           case 'mysql':
             loadStrategy = new MysqlMetaLoadStrategy();
+            break;
+          case 'cubrid':
+            loadStrategy = new CubridMetaLoadStrategy();
             break;
           default:
             throw new Error("unexceptable dbms");

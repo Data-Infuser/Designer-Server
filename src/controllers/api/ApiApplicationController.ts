@@ -124,9 +124,16 @@ export class ApiApplicationController {
         for(const service of application.services) {
           service.status = ServiceStatus.SCHEDULED
         }
-        await applicationRepo.save(application);
-        await serviceRepo.save(application.services);
-        BullManager.Instance.setSchedule(application);
+
+        if(!await BullManager.Instance.dataLoaderQueue.isReady()) {
+          reject(new ApplicationError(401, "Job Queue가 준비되지 않았습니다."));
+          return;
+        }
+        await getManager().transaction(async transactionEntityManager => {
+          await applicationRepo.save(application);
+          await serviceRepo.save(application.services);
+          BullManager.Instance.setSchedule(application);
+        });
         /**
          * 만약 JobQueue 등록이 실패한다면?
          * 이후 DataLoader에서 JobQueue에 등록되지 않은 Scheduled Job을 찾아 Queue에 등록하는 로직을 만들어야 함
