@@ -1,4 +1,4 @@
-import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
+import { getRepository, getConnection, getManager, ConnectionOptions, In } from "typeorm";
 import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
 import { Route, Get, Tags, Security, Path, Request, Post, Body, Put } from "tsoa";
 import { Request as exRequest, application } from "express";
@@ -54,7 +54,6 @@ export class ApiApplicationController {
           }
         }
       });
-      console.log(app);
       resolve(app);
     } catch (err) {
       console.error(err);
@@ -134,10 +133,6 @@ export class ApiApplicationController {
           await serviceRepo.save(application.services);
           BullManager.Instance.setSchedule(application);
         });
-        /**
-         * 만약 JobQueue 등록이 실패한다면?
-         * 이후 DataLoader에서 JobQueue에 등록되지 않은 Scheduled Job을 찾아 Queue에 등록하는 로직을 만들어야 함
-         */
 
         resolve(application);
       } catch (err) {
@@ -145,6 +140,56 @@ export class ApiApplicationController {
         reject(new ApplicationError(500, err.message));
       }
     })
+  }
+
+  @Post("/{id}/undeploy")
+  @Security("jwt")
+  public async undeploy(
+    @Request() request: exRequest,
+    @Path("id") id: number
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const applicationRepo = getRepository(Application);
+      try {
+        const application = await applicationRepo.findOneOrFail({
+          relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
+          where: {
+            id: id,
+            user: {
+              id: request.user.id
+            }
+          }
+        });
+
+        application.services.forEach( (service) => {
+          service.status = ServiceStatus.METALOADED;
+        })
+
+        if(application.status !== ApplicationStatus.DEPLOYED) {
+          reject(new ApplicationError(400, "It's not a deployed Application"));
+          return;
+        }
+
+        application.status = ApplicationStatus.IDLE;
+
+        await getManager().transaction(async transactionEntityManager => {
+          await transactionEntityManager.save(application);
+          await transactionEntityManager.save(application.services);
+          await transactionEntityManager.delete('ServiceColumn', {
+            where: {
+              service: {
+                id: In(application.services.map((service) => service.id))
+              }
+            }
+          })
+        });
+
+        resolve(application);
+      } catch(err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    });
   }
 
   @Post("/{id}/save")
@@ -163,6 +208,11 @@ export class ApiApplicationController {
       try {
         //application
         const application = await applicationRepo.findOneOrFail(id)
+
+        if (application.status !== ApplicationStatus.IDLE) {
+          reject(new ApplicationError(400, "It's not IDLE state application"));
+          return;
+        }
         application.description = applicationSavePrams.description;
         application.nameSpace = applicationSavePrams.nameSpace;
         application.title = applicationSavePrams.title;

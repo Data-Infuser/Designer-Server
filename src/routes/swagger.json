@@ -89,7 +89,8 @@
 					"mysql",
 					"oracle",
 					"mariadb",
-					"postgres"
+					"postgres",
+					"cubrid"
 				],
 				"type": "string"
 			},
@@ -1000,6 +1001,40 @@
 		"/api/applications/{id}/deploy": {
 			"post": {
 				"operationId": "Deploy",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/applications/{id}/undeploy": {
+			"post": {
+				"operationId": "Undeploy",
 				"responses": {
 					"200": {
 						"description": "Ok",
