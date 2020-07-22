@@ -1,6 +1,6 @@
 import { getRepository, getConnection, getManager, ConnectionOptions, In } from "typeorm";
 import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
-import { Route, Get, Tags, Security, Path, Request, Post, Body, Put } from "tsoa";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Put, Delete } from "tsoa";
 import { Request as exRequest, application } from "express";
 import { Application, ApplicationStatus } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
@@ -85,6 +85,35 @@ export class ApiApplicationController {
         reject(new ApplicationError(500, err.message));
       }
     });
+  }
+
+  @Delete("/{id}")
+  @Security("jwt")
+  public async delete(
+    @Request() request: exRequest,
+    @Path("id") id: number
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const applicationRepo = getRepository(Application);
+      try {
+        const application = await applicationRepo.findOneOrFail({
+          relations: ["user"],
+          where: {
+            id
+          }
+        });
+
+        if(application.user.id !== request.user.id) {
+          reject(new ApplicationError(401, "Unauthorized Error"));
+        }
+
+        await applicationRepo.remove(application);
+        resolve(application);
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
   }
 
   @Post("/{id}/deploy")
