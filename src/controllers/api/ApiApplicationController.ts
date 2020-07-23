@@ -23,7 +23,7 @@ export class ApiApplicationController {
     return new Promise(async function(resolve, reject) {
       const appRepo = getRepository(Application);
       page = page || 1;
-      perPage = perPage || 1;
+      perPage = perPage || 10;
       try {
         const apps = await appRepo.findAndCount({
           where: {

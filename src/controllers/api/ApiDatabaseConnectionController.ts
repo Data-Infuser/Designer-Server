@@ -4,7 +4,7 @@ import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/Databas
 import { User } from "../../entity/manager/User";
 import { MysqlHelper } from "../../helpers/MysqlHelper";
 import { needAuth } from "../../middlewares/checkAuth";
-import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete } from "tsoa";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete, Query } from "tsoa";
 import { reject } from "lodash";
 import { resolve } from "url";
 import { Request as exRequest } from "express";
@@ -17,23 +17,35 @@ export class ApiDatabaseConnectionController {
   @Get("/")
   @Security("jwt")
   public async get(
-    @Request() request: exRequest
+    @Request() request: exRequest,
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number
   ){
     return new Promise(async function(resolve, reject) {
       const dbcRepo = getRepository(DatabaseConnection);
-    try {
-      const dbcs = await dbcRepo.find({
-        where: {
-          user: {
-            id: request.user.id
-          }
-        }
-      });
-      resolve(dbcs);
-    } catch (err) {
-      console.error(err);
-      reject(new ApplicationError(500, err.message));
-    }
+      page = page || 1;
+      perPage = perPage || 10;
+      try {
+        const dbcs = await dbcRepo.findAndCount({
+          where: {
+            user: {
+              id: request.user.id
+            }
+          },
+          skip: (page - 1) * perPage,
+          take: perPage
+        });
+        console.log(dbcs);
+        resolve({
+          dbcs: dbcs[0],
+          totalCount: dbcs[1],
+          page: page,
+          perPage: perPage
+        });
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
     });
   }
   
