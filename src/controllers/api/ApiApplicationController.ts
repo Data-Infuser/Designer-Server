@@ -1,6 +1,6 @@
 import { getRepository, getConnection, getManager, ConnectionOptions, In } from "typeorm";
 import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
-import { Route, Get, Tags, Security, Path, Request, Post, Body, Put, Delete } from "tsoa";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Put, Delete, Query } from "tsoa";
 import { Request as exRequest, application } from "express";
 import { Application, ApplicationStatus } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
@@ -16,23 +16,34 @@ export class ApiApplicationController {
   @Get("/")
   @Security("jwt")
   public async get(
-    @Request() request: exRequest
+    @Request() request: exRequest,
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number
   ){
     return new Promise(async function(resolve, reject) {
       const appRepo = getRepository(Application);
-    try {
-      const apps = await appRepo.find({
-        where: {
-          user: {
-            id: request.user.id
-          }
-        }
-      });
-      resolve(apps);
-    } catch (err) {
-      console.error(err);
-      reject(new ApplicationError(500, err.message));
-    }
+      page = page || 1;
+      perPage = perPage || 1;
+      try {
+        const apps = await appRepo.findAndCount({
+          where: {
+            user: {
+              id: request.user.id
+            }
+          },
+          take: perPage,
+          skip: (page - 1) * perPage
+        });
+        resolve({
+          apps: apps[0],
+          page,
+          perPage,
+          totalCount: apps[1]
+        });
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
     });
   }
 
