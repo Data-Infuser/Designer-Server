@@ -119,7 +119,7 @@ export class ApiApplicationController {
         }
 
         await applicationRepo.remove(application);
-        resolve(application);
+        resolve();
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));

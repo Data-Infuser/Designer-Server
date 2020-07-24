@@ -35,7 +35,6 @@ export class ApiDatabaseConnectionController {
           skip: (page - 1) * perPage,
           take: perPage
         });
-        console.log(dbcs);
         resolve({
           dbcs: dbcs[0],
           totalCount: dbcs[1],
@@ -193,19 +192,7 @@ export class ApiDatabaseConnectionController {
         
         await dbcRepo.delete(connectionId);
 
-        const dbcs = await dbcRepo.find({
-          where: {
-            user: {
-              id: request.user.id
-            }
-          }
-        })
-        
-        resolve({
-          message: "delete success",
-          connectionId : connectionId,
-          dbcs: dbcs
-        })
+        resolve();
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));
