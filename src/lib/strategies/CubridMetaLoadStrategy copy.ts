@@ -6,13 +6,22 @@ import { MetaColumn } from "../../entity/manager/MetaColumn";
 import MetaLoadStrategy from "../MetaLoadStrategy";
 import MetaLoaderDbConnection from "../interfaces/MetaLoaderDbConnection";
 import CUBRID = require('node-cubrid');
+import DbmsMetaLoadStrategy from "./DbmsMetaLoadStrategy";
 
-class CubridMetaLoadStrategy implements MetaLoadStrategy {
+class CubridMetaLoadStrategy implements DbmsMetaLoadStrategy {
 
   typeConvertMap:{};
 
   constructor() {
     this.typeConvertMap = mysqlTypes;
+  }
+
+  showTables(info: MetaLoaderDbConnection) {
+    throw new Error("Method not implemented.");
+  }
+
+  descTable(info: MetaLoaderDbConnection) {
+    throw new Error("Method not implemented.");
   }
   
   async loadMeta(info:MetaLoaderDbConnection) {

@@ -9,6 +9,12 @@ import { reject } from "lodash";
 import { resolve } from "url";
 import { Request as exRequest } from "express";
 import { connect } from "http2";
+import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
+import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
+import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy copy";
+import MetaLoader from "../../lib/MetaLoader";
+import MetaLoaderDbConnection from "../../lib/interfaces/MetaLoaderDbConnection";
+import DbmsMetaLoadStrategy from "../../lib/strategies/DbmsMetaLoadStrategy";
 
 @Route("/api/database-connections")
 @Tags("Database Connection")
@@ -91,21 +97,26 @@ export class ApiDatabaseConnectionController {
       const dbcRepo = getRepository(DatabaseConnection);
       try {
         const dbc = await dbcRepo.findOneOrFail(connectionId);
-        const connectOption:ConnectionOptions = {
-          name: "mysqlTempConnection",
-          type: "mysql",
-          host: dbc.hostname,
-          port: Number(dbc.port),
-          username: dbc.username,
-          password: dbc.password,
-          database: dbc.database
+
+        let loadStrategy: DbmsMetaLoadStrategy;
+        switch(dbc.dbms) {
+          case 'mysql':
+            loadStrategy = new MysqlMetaLoadStrategy();
+            break;
+          case 'cubrid':
+            loadStrategy = new CubridMetaLoadStrategy();
+            break;
+          default:
+            throw new Error("unexceptable dbms");
         }
-        const tables = await MysqlHelper.showTables(connectOption);
-        const tableStatuses = await MysqlHelper.showTableStatus(connectOption);
-        resolve({
-          tables: tables,
-          tableStatuses: tableStatuses
-        })
+        const metaLoader = new MetaLoader(loadStrategy);
+        const connectionInfo:MetaLoaderDbConnection = {
+          ...dbc,
+          title: dbc.connectionName,
+          tableNm: ""
+        }
+        const loaderResult = await metaLoader.showTables(connectionInfo);
+        resolve(loaderResult)
       } catch(err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));
@@ -131,19 +142,27 @@ export class ApiDatabaseConnectionController {
       const dbcRepo = getRepository(DatabaseConnection);
       try {
         const dbc = await dbcRepo.findOneOrFail(connectionId);
-        const connectOption:ConnectionOptions = {
-          name: "mysqlTempConnection",
-          type: "mysql",
-          host: dbc.hostname,
-          port: Number(dbc.port),
-          username: dbc.username,
-          password: dbc.password,
-          database: dbc.database
+
+        let loadStrategy: DbmsMetaLoadStrategy;
+        switch(dbc.dbms) {
+          case 'mysql':
+            loadStrategy = new MysqlMetaLoadStrategy();
+            break;
+          case 'cubrid':
+            loadStrategy = new CubridMetaLoadStrategy();
+            break;
+          default:
+            throw new Error("unexceptable dbms");
         }
-        const columns = await MysqlHelper.getColumns(connectOption, tableName);
-        resolve(
-          columns
-        );
+        const metaLoader = new MetaLoader(loadStrategy);
+        const connectionInfo:MetaLoaderDbConnection = {
+          ...dbc,
+          title: dbc.connectionName,
+          tableNm: tableName
+        }
+
+        const loaderResult = await metaLoader.descTable(connectionInfo);
+        resolve(loaderResult);
       } catch(err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));

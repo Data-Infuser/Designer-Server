@@ -5,13 +5,86 @@ import { Meta } from "../../entity/manager/Meta";
 import { MetaColumn } from "../../entity/manager/MetaColumn";
 import MetaLoadStrategy from "../MetaLoadStrategy";
 import MetaLoaderDbConnection from "../interfaces/MetaLoaderDbConnection";
+import DbmsMetaLoadStrategy from "./DbmsMetaLoadStrategy";
+import DescTableResult from "../interfaces/DescTableResult";
 
-class MysqlMetaLoadStrategy implements MetaLoadStrategy {
+class MysqlMetaLoadStrategy implements DbmsMetaLoadStrategy {
 
   typeConvertMap:{};
 
   constructor() {
     this.typeConvertMap = mysqlTypes;
+  }
+
+  async showTables(info:MetaLoaderDbConnection):Promise<string[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let { hostname, port, database, username, password } = info
+
+        if(!password) password = ""
+
+        const mysqlConnectionOption:ConnectionOptions = {
+          name: "connectionForMeta",
+          type: "mysql",
+          host: hostname,
+          port: Number(port),
+          username: username,
+          password: password,
+          database: database
+        }
+        await createConnections([mysqlConnectionOption])
+        const manager = await getManager('connectionForMeta')
+        const showResults = await manager.query(`show tables;`)
+
+        const resultArray = []
+        for(const row of showResults) {
+          const key = Object.keys(row)[0]
+          resultArray.push(row[key]);
+        }
+        await getConnection("connectionForMeta").close();
+        resolve(resultArray)
+      } catch (err) {
+        console.error(err);
+        await getConnection("connectionForMeta").close();
+        reject(err);
+      }
+    })
+  }
+
+  async descTable(info:MetaLoaderDbConnection):Promise<DescTableResult[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let { hostname, port, database, username, password, tableNm } = info
+
+        if(!password) password = ""
+
+        const mysqlConnectionOption:ConnectionOptions = {
+          name: "connectionForMeta",
+          type: "mysql",
+          host: hostname,
+          port: Number(port),
+          username: username,
+          password: password,
+          database: database
+        }
+        await createConnections([mysqlConnectionOption])
+        const manager = await getManager('connectionForMeta')
+        const descResults = await manager.query(`desc \`${tableNm}\`;`)
+        const resultArray:DescTableResult[] = []
+        for(const row of descResults) {
+          resultArray.push({
+            field: row["Field"],
+            type: row["Type"]
+          });
+        }
+        await getConnection("connectionForMeta").close();
+        resolve(resultArray)
+      } catch (err) {
+        await getConnection("connectionForMeta").close();
+        console.error(err);
+        reject(err);
+      }
+    })
   }
   
   async loadMeta(info:MetaLoaderDbConnection) {
@@ -30,7 +103,6 @@ class MysqlMetaLoadStrategy implements MetaLoadStrategy {
           password: password,
           database: database
         }
-        console.log(mysqlConnectionOption)
         await createConnections([mysqlConnectionOption])
 
         const manager = await getManager('connectionForMeta')
@@ -74,6 +146,7 @@ class MysqlMetaLoadStrategy implements MetaLoadStrategy {
         });
         return;
       } catch (err) {
+        await getConnection("connectionForMeta").close();
         reject(err);
         return;
       }
