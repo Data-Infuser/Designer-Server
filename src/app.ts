@@ -13,9 +13,12 @@ import cors from "cors";
 import { RegisterRoutes } from './routes/routes';
 import swaggerUi from "swagger-ui-express";
 import BullManager from "./util/BullManager";
-
+import * as grpc from "grpc";
+import * as protoLoader from "@grpc/proto-loader";
+import setupUsers from "./grpc/users";
 export class Application {
   app: express.Application;
+  grpcServer;
   auth;
   constructor() {
     this.app = express();
@@ -79,6 +82,14 @@ export class Application {
       });
 
       this.startServer();
+      this.setupGrpcServer();
+  }
+
+  setupGrpcServer() {
+    this.grpcServer = new grpc.Server();
+    setupUsers(this.grpcServer);
+    this.grpcServer.bind("127.0.0.1:50001", grpc.ServerCredentials.createInsecure());
+    this.grpcServer.start();
   }
 
   startServer(): Promise<boolean> {

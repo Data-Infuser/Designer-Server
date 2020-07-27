@@ -21,6 +21,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
+    "@grpc/proto-loader": "^0.5.5",
     "@types/bcryptjs": "^2.4.2",
     "@types/body-parser": "^1.19.0",
     "@types/bull": "^3.14.0",
@@ -50,9 +51,10 @@
     "express-compile-sass": "^4.0.0",
     "express-flash": "0.0.2",
     "express-session": "^1.17.0",
+    "grpc": "^1.24.3",
     "jquery": "^3.5.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
