@@ -13,6 +13,7 @@ import MetaLoader from "../../lib/MetaLoader";
 import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
 import XlsxMetaLoadStrategy from "../../lib/strategies/XlsxMetaLoadStrategy";
 import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy copy";
+import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
 
 @Route("/api/metas")
 @Tags("Meta")
@@ -127,8 +128,11 @@ export class ApiMetaController {
           case 'xlsx':
             loadStrategy = new XlsxMetaLoadStrategy();
             break;
+          case 'csv':
+            loadStrategy = new CsvMetaLoadStrategy();
+            break;
           default:
-            throw new Error("unexceptable dbms");
+            throw new Error("unexceptable file extension");
         }
         const metaLoader = new MetaLoader(loadStrategy);
         const loaderResult = await metaLoader.loadMeta(fileParam);

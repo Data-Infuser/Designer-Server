@@ -374,7 +374,7 @@ interface MetaColumnSaveParams {
   columnName: string,
   isHidden: boolean,
   isSearchable: boolean,
-  size?: number|string,
+  size?: number|string|null,
   type: AcceptableType,
   serviceId?: number|string,
   order: number,

@@ -488,6 +488,13 @@
 							},
 							{
 								"type": "string"
+							},
+							{
+								"type": "number",
+								"enum": [
+									null
+								],
+								"nullable": true
 							}
 						]
 					},

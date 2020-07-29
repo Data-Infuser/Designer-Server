@@ -184,7 +184,7 @@ const models: TsoaRoute.Models = {
             "columnName": { "dataType": "string", "required": true },
             "isHidden": { "dataType": "boolean", "required": true },
             "isSearchable": { "dataType": "boolean", "required": true },
-            "size": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }] },
+            "size": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }, { "dataType": "enum", "enums": [null] }] },
             "type": { "ref": "AcceptableType", "required": true },
             "serviceId": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }] },
             "order": { "dataType": "double", "required": true },
