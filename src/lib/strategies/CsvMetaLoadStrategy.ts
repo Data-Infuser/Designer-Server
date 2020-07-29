@@ -8,7 +8,6 @@ import fs from 'fs';
 const parse = require('csv-parse/lib/sync')
 const iconv = require('iconv-lite');
 
-
 class CsvMetaLoadStrategy implements MetaLoadStrategy {
   async loadMeta(info:MetaLoaderFileParam) {
     return new Promise(async (resolve, reject) => {
@@ -31,17 +30,16 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
 
         const file = iconv.decode(fs.readFileSync(filePath), 'euc-kr');
 
-        const toLine = 2 + Number(skip);
+        const toLine = 1 + Number(skip);
         const records = parse(file.toString("utf-8"), {
-          to_line: toLine,
-          columns: true
+          to_line: toLine
         })
 
         if(records.length < 1) {
           reject(new Error('파일 정보가 잘못되었습니다.'));
         }
 
-        const header = Object.keys(records[0]);
+        const header = records[0];
 
         const meta = new Meta();
         meta.title = title;
