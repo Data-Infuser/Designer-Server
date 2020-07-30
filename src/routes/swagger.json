@@ -52,6 +52,10 @@
 					"status": {
 						"type": "string"
 					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
 					"user": {
 						"$ref": "#/components/schemas/User"
 					},
@@ -76,6 +80,7 @@
 					"title",
 					"description",
 					"status",
+					"userId",
 					"user",
 					"services",
 					"createdAt",

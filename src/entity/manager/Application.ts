@@ -37,6 +37,9 @@ export class Application {
   })
   status: string;
 
+  @Column()
+  userId: number;
+
   @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
   user: User;
 
@@ -44,7 +47,7 @@ export class Application {
   services: Service[];
 
   @Column()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
 
   @Column()

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+service ApplicationService {
+    rpc ListApplication (ListApplicationRequest) returns (ApplicationList) {}
+}
+
+message Empty {}
+
+message Application {
+  int32 id = 1;
+  string nameSpace = 2;
+  string title = 3;
+  string description = 4;
+  string status = 5;
+  int32 userId = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+message ApplicationList {
+  int32 totalCount = 1;
+  int32 page = 2;
+  int32 perPage = 3;
+  repeated Application Applications = 4;
+}
+
+message ListApplicationRequest {
+  int32 perPage = 1;
+  int32 page = 2;
+  string nameSpace = 3;
+}
