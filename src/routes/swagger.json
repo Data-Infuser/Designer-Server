@@ -990,6 +990,36 @@
 				}
 			}
 		},
+		"/api/applications/{applicationId}/api-docs": {
+			"get": {
+				"operationId": "GetDocs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "applicationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/applications/{applicationId}": {
 			"get": {
 				"operationId": "GetDetail",

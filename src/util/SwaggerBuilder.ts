@@ -107,6 +107,17 @@ export class SwaggerBuilder {
     pathTemplate["get"].tags.push(service.entityName);
     pathTemplate["get"].description = service.description;
     pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${service.tableName}_api`;
+    service.meta.columns.forEach((column) => {
+      column.params.forEach((param) => {
+        const json:any = {
+          name: `cond[${column.columnName}:${param.operator}]`,
+          in: "query",
+          description: param.description,
+          type: "string",
+        }
+        pathTemplate["get"].parameters.push(json)
+      })
+    })
 
     return pathTemplate;
   }

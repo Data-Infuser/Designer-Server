@@ -8,6 +8,7 @@ import { Service, ServiceStatus } from '../../entity/manager/Service';
 import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';
+import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -40,6 +41,31 @@ export class ApiApplicationController {
           perPage,
           totalCount: apps[1]
         });
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    });
+  }
+
+  @Get("/{applicationId}/api-docs")
+  //@Security("jwt")
+  public async getDocs(
+    @Path() applicationId: number,
+    @Request() request: exRequest
+  ){
+    return new Promise(async function(resolve, reject) {
+      const appRepo = getRepository(Application);
+      try {
+        const app = await appRepo.findOneOrFail({
+          relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params", "services.columns"],
+          where: {
+            id: applicationId
+          }
+        });
+        console.log(app);
+        const doc = SwaggerBuilder.buildApplicationDoc(app);
+        resolve(doc);
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));

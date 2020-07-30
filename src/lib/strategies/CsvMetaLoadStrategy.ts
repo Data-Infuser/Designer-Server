@@ -50,7 +50,7 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
         meta.sheet = sheet;
         
         let columns = []
-        for(let i = 1; i < header.length; i++) {
+        for(let i = 0; i < header.length; i++) {
           const col = header[i];
           const metaCol = new MetaColumn();
           metaCol.originalColumnName = col;
