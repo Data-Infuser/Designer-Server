@@ -1,0 +1,3 @@
+[submodule "infuser-protobuf"]
+	path = infuser-protobuf
+	url = https://gitlab.com/promptech1/data-infuser/infuser-protobuf.git
