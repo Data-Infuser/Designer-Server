@@ -15,7 +15,6 @@ import swaggerUi from "swagger-ui-express";
 import BullManager from "./util/BullManager";
 import * as grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
-import setupUsers from "./grpc/users";
 import setupApplications from "./grpc/applications";
 export class Application {
   app: express.Application;
@@ -88,9 +87,8 @@ export class Application {
 
   setupGrpcServer() {
     this.grpcServer = new grpc.Server();
-    setupUsers(this.grpcServer);
     setupApplications(this.grpcServer);
-    this.grpcServer.bind("127.0.0.1:50001", grpc.ServerCredentials.createInsecure());
+    this.grpcServer.bind("0.0.0.0:50001", grpc.ServerCredentials.createInsecure());
     this.grpcServer.start();
   }
 

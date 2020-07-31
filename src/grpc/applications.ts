@@ -4,53 +4,60 @@ import { getRepository, FindManyOptions, Like } from 'typeorm';
 import { User } from "../entity/manager/User";
 import { application } from 'express';
 import { Application } from "../entity/manager/Application";
+import { ApplicationServiceService, IApplicationServiceServer } from '../../infuser-protobuf/gen/proto/designer/application_grpc_pb';
+import { ApplicationList as GApplicationList, ListApplicationRequest } from "../../infuser-protobuf/gen/proto/designer/application_pb";
+import { Application as GApplication } from '../../infuser-protobuf/gen/proto/designer/application_pb';
 
-export default function setupApplications(server) {
-  const PROTO_PATH = './src/grpc/protos/applications.proto';
-  const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    arrays: true
-  })
+class ApplicationServer implements IApplicationServiceServer {
+  async listApplication(call: grpc.ServerUnaryCall<ListApplicationRequest>, callback: grpc.sendUnaryData<GApplicationList>): Promise<void> {
+    try {
+      var page = call.request.getPage();
+      var perPage = call.request.getPerPage();
+      var nameSpace = call.request.getNameSpace();
 
-  const applicationProto = grpc.loadPackageDefinition(packageDefinition);
+      if(!page) page = 1;
+      if(!perPage) perPage = 10;
 
-  server.addService((<any>applicationProto.ApplicationService).service , {
-    listApplication: async (call, callback) => {
-      console.log(call);
-      try {
-        var { perPage, page, nameSpace } = call.request
-
-        if(!page) page = 1;
-        if(!perPage) perPage = 10;
-
-        const findOption:FindManyOptions = {
-          select: ["id", "nameSpace", "title", "description" ,"status" ,"userId" ,"createdAt" ,"updatedAt"],
-          relations: ["services", "services.columns"],
-          skip: perPage*(page - 1),
-          take: perPage,
-          order: {
-            id: 'ASC'
-          },
-          where: {}
-        }
-
-        if (nameSpace) {
-          findOption.where["nameSpace"] = Like(`%${nameSpace}%`)
-        }
-        const applicationRepo = getRepository(Application);
-        const findResult = await applicationRepo.findAndCount(findOption);
-        callback(null, {
-          totalCount: findResult[1],
-          page: page,
-          perPage: perPage,
-          Applications: findResult[0]
-        });
-      } catch (err) {
-        callback(err, null);
+      const findOption:FindManyOptions = {
+        select: ["id", "nameSpace", "title", "description" ,"status" ,"userId" ,"createdAt" ,"updatedAt"],
+        skip: perPage*(page - 1),
+        take: perPage,
+        order: {
+          id: 'ASC'
+        },
+        where: {}
       }
+
+      if (nameSpace) {
+        findOption.where["nameSpace"] = Like(`%${nameSpace}%`)
+      }
+      const applicationRepo = getRepository(Application);
+      const findResult = await applicationRepo.findAndCount(findOption);
       
+      
+      const applicationList = new GApplicationList();
+      applicationList.setTotalCount(findResult[1]);
+      applicationList.setPage(page);
+      applicationList.setPerPage(perPage);
+      applicationList.setApplicationsList(findResult[0].map((app) => {
+        const application = new GApplication();
+        application.setId(app.id);
+        application.setCreatedAt(app.createdAt.toDateString());
+        application.setDescription(app.description);
+        application.setNameSpace(app.nameSpace);
+        application.setStatus(app.status);
+        application.setTitle(app.title);
+        application.setUpdatedAt(app.updatedAt.toDateString());
+        application.setUserId(app.userId);
+        return application;
+      }))
+      callback(null, applicationList);
+    } catch (err) {
+      callback(err, null);
     }
-  });
+  };
+
+}
+export default function setupApplications(server: grpc.Server) {  
+  server.addService<IApplicationServiceServer>(ApplicationServiceService, new ApplicationServer());
 }
