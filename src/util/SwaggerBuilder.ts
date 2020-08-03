@@ -1,13 +1,12 @@
 import { getRepository } from "typeorm";
 import _ from "lodash";
-
 import { Service } from "../entity/manager/Service";
 import { ServiceColumn } from "../entity/manager/ServiceColumn";
-
-import Config from "../../property.json"
-import ApiResponseTemplate from "./swagger_template/api_response.json";
-import PathTemplate from "./swagger_template/path_template.json";
 import { Application } from "../entity/manager/Application";
+
+const ApiResponseTemplate = require("./swagger_template/api_response.json");
+const PathTemplate = require("./swagger_template/path_template.json");
+const property = require("../../property.json");
 
 
 export class SwaggerBuilder {
@@ -21,7 +20,7 @@ export class SwaggerBuilder {
           "title": application.title,
           "description": application.description
         },
-        "host": Config.host.replace(/https?(:\/\/)/gi, ""),
+        "host": property.host.replace(/https?(:\/\/)/gi, ""),
         "schemes": ["http"],
         "paths": {},
         "definitions": {}
@@ -51,11 +50,11 @@ export class SwaggerBuilder {
       let doc = {
         "swagger": "2.0",
         "info": {
-          "version": Config.app.version,
-          "title": Config.app.title,
-          "description": Config.app.description
+          "version": property.app.version,
+          "title": property.app.title,
+          "description": property.app.description
         },
-        "host": Config.host.replace(/https?(:\/\/)/gi, ""),
+        "host": property.host.replace(/https?(:\/\/)/gi, ""),
         "schemes": ["http"],
         "paths": {},
         "definitions": {}

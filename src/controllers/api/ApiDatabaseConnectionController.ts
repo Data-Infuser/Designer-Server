@@ -11,7 +11,7 @@ import { Request as exRequest } from "express";
 import { connect } from "http2";
 import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
 import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
-import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy copy";
+import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy";
 import MetaLoader from "../../lib/MetaLoader";
 import MetaLoaderDbConnection from "../../lib/interfaces/MetaLoaderDbConnection";
 import DbmsMetaLoadStrategy from "../../lib/strategies/DbmsMetaLoadStrategy";

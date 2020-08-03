@@ -2,7 +2,7 @@ import express from 'express';
 import bullBoard from 'bull-board';
 import Queue from 'bull';
 import { Application, ApplicationStatus } from '../entity/manager/Application';
-import property from "../../property.json";
+const property = require("../../property.json");
 
 class BullManager {
   private static _instance: BullManager;

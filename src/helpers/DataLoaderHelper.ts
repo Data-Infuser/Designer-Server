@@ -1,6 +1,7 @@
 import DataLoaderTableColumnsParams from "../interfaces/dataloader/DataLoaderTableColumnsParams";
 import axios from "axios";
-import property from "../../property.json";
+
+const property = require("../../property.json");
 
 export default class DataLoaderHelper {
   static getTableColumns(dataLoaderDbmsParams: DataLoaderTableColumnsParams):Promise<any> {

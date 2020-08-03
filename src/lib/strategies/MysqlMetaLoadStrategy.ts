@@ -1,4 +1,3 @@
-import mysqlTypes from "../../util/dbms_data_types/mysql.json";
 import { MetaInfo } from "../../interfaces/MetaInfo";
 import { createConnections, getManager, getConnection, ConnectionOptions } from "typeorm";
 import { Meta } from "../../entity/manager/Meta";
@@ -8,6 +7,7 @@ import MetaLoaderDbConnection from "../interfaces/MetaLoaderDbConnection";
 import DbmsMetaLoadStrategy from "./DbmsMetaLoadStrategy";
 import DescTableResult from "../interfaces/DescTableResult";
 
+const mysqlTypes = require("../../util/dbms_data_types/mysql.json");
 class MysqlMetaLoadStrategy implements DbmsMetaLoadStrategy {
 
   typeConvertMap:{};

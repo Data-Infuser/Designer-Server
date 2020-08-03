@@ -16,6 +16,7 @@ import BullManager from "./util/BullManager";
 import * as grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import setupApplications from "./grpc/applications";
+import swagger from './routes/swagger.json';
 export class Application {
   app: express.Application;
   grpcServer;
@@ -63,8 +64,9 @@ export class Application {
       BullManager.setupBull(this.app);
 
       this.app.use("/api-docs", swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
+        
         return res.send(
-          swaggerUi.generateHTML(await import("./routes/swagger.json"))
+          swaggerUi.generateHTML(swagger)
         );
       });
 

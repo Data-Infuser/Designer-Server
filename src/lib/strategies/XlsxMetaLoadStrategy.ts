@@ -1,8 +1,9 @@
 import MetaLoadStrategy from "../MetaLoadStrategy";
 import { Meta } from "../../entity/manager/Meta";
-import * as Excel from 'exceljs';
 import { MetaColumn } from "../../entity/manager/MetaColumn";
 import MetaLoaderFileParam from "../interfaces/MetaLoaderFileParam";
+
+const Excel = require("exceljs");
 
 class XlsxMetaLoadStrategy implements MetaLoadStrategy {
   async loadMeta(info:MetaLoaderFileParam) {

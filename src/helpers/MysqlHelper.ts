@@ -1,8 +1,7 @@
 import { ConnectionOptions, createConnections, getManager, getConnection } from "typeorm";
 import { Meta } from "../entity/manager/Meta";
 import { MetaColumn } from "../entity/manager/MetaColumn";
-import mysqlTypes from "../util/dbms_data_types/mysql.json";
-
+const mysqlTypes = require("../util/dbms_data_types/mysql.json");
 
 export class MysqlHelper {
   static showTables = async(connectOption: ConnectionOptions) => {

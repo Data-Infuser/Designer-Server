@@ -6,15 +6,14 @@ import ApplicationError from "../../ApplicationError";
 import { Meta } from '../../entity/manager/Meta';
 import { MetaColumn } from "../../entity/manager/MetaColumn";
 import multer from "multer";
-import property from "../../../property.json";
-import * as Excel from 'exceljs';
 import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
 import MetaLoader from "../../lib/MetaLoader";
 import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
 import XlsxMetaLoadStrategy from "../../lib/strategies/XlsxMetaLoadStrategy";
-import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy copy";
+import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy";
 import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
 
+const property = require("../../../property.json")
 @Route("/api/metas")
 @Tags("Meta")
 export class ApiMetaController {

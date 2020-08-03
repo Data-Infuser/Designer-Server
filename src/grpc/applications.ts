@@ -4,9 +4,9 @@ import { getRepository, FindManyOptions, Like } from 'typeorm';
 import { User } from "../entity/manager/User";
 import { application } from 'express';
 import { Application } from "../entity/manager/Application";
-import { ApplicationServiceService, IApplicationServiceServer } from '../../infuser-protobuf/gen/proto/designer/application_grpc_pb';
-import { ApplicationList as GApplicationList, ListApplicationRequest } from "../../infuser-protobuf/gen/proto/designer/application_pb";
-import { Application as GApplication } from '../../infuser-protobuf/gen/proto/designer/application_pb';
+import { ApplicationServiceService, IApplicationServiceServer } from '../lib/infuser-protobuf/gen/proto/designer/application_grpc_pb';
+import { ApplicationList as GApplicationList, ListApplicationRequest } from "../lib//infuser-protobuf/gen/proto/designer/application_pb";
+import { Application as GApplication } from '../lib//infuser-protobuf/gen/proto/designer/application_pb';
 
 class ApplicationServer implements IApplicationServiceServer {
   async listApplication(call: grpc.ServerUnaryCall<ListApplicationRequest>, callback: grpc.sendUnaryData<GApplicationList>): Promise<void> {

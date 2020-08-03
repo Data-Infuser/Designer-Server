@@ -6,14 +6,15 @@
     "test": "mocha -r ts-node/register ./test/*.test.ts",
     "start": "tsoa spec-and-routes && set debug=* && ts-node-dev --ignore-watch node_modules --respawn --transpileOnly ./src/index.ts",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
-    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop"
+    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
+    "build": "tsc -b ."
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
-    "@types/node": "^8.10.61",
+    "@types/node": "^8.10.62",
     "chai": "^4.2.0",
     "grpc-tools": "^1.9.1",
     "grpc_tools_node_protoc_ts": "^4.1.0",
