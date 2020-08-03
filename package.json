@@ -7,7 +7,7 @@
     "start": "tsoa spec-and-routes && set debug=* && ts-node-dev --ignore-watch node_modules --respawn --transpileOnly ./src/index.ts",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
-    "build": "tsc -b ."
+    "build": "tsc -p ."
   },
   "author": "",
   "license": "ISC",
