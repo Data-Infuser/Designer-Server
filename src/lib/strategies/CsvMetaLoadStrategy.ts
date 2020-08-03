@@ -6,6 +6,7 @@ import fs from 'fs';
 
 const parse = require('csv-parse/lib/sync')
 const iconv = require('iconv-lite');
+const jschardet = require('jschardet');
 
 class CsvMetaLoadStrategy implements MetaLoadStrategy {
   async loadMeta(info:MetaLoaderFileParam) {
@@ -26,8 +27,9 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
         const originalFileNameTokens = originalFileName.split(".");
         const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
 
-
-        const file = iconv.decode(fs.readFileSync(filePath), 'euc-kr');
+        const encodedFile = fs.readFileSync(filePath);
+        const encoding = jschardet.detect(encodedFile).encoding;
+        const file = iconv.decode(encodedFile, encoding);
 
         const toLine = 1 + Number(skip);
         const records = parse(file.toString("utf-8"), {
