@@ -695,7 +695,11 @@
 					"status": {},
 					"createdAt": {},
 					"updatedAt": {},
-					"user": {}
+					"user": {},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					}
 				},
 				"required": [
 					"id",

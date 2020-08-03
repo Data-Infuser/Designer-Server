@@ -351,7 +351,8 @@ interface ApplicationSaveParams {
   status?: any,
   createdAt?: any,
   updatedAt?: any,
-  user?: any
+  user?: any,
+  userId?: number
 }
 
 interface ServiceSaveParams {
