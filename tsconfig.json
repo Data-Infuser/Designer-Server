@@ -13,7 +13,8 @@
       "esModuleInterop": true,
       "resolveJsonModule": true,
       "composite": true,
-      "types": ["node"]
+      "types": ["node"],
+      "allowJs": false
    },
    "typeRoots": [
       "./@types",

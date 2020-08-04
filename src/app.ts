@@ -7,7 +7,7 @@ import setupPassport from "./config/passportConfig";
 import session from "express-session";
 import morgan from "morgan";
 import flash from "express-flash";
-import {createConnection} from "typeorm";
+import {createConnection, ConnectionOptions} from "typeorm";
 import ApplicationError from "./ApplicationError";
 import cors from "cors";
 import { RegisterRoutes } from './routes/routes';
@@ -17,6 +17,7 @@ import * as grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import setupApplications from "./grpc/applications";
 import swagger from './routes/swagger.json';
+import ormConfig from "./config/ormConfig";
 export class Application {
   app: express.Application;
   grpcServer;
@@ -55,36 +56,36 @@ export class Application {
   }
 
   setupDbAndServer = async () => {
-      const conn = await createConnection().catch(error => console.log(error));
-      const datasetConn = await createConnection('dataset').catch(error => console.log(error));
+    const conn = await createConnection(ormConfig.defaultConnection).catch(error => console.log(error));
+    const datasetConn = await createConnection(ormConfig.datasetConnection).catch(error => console.log(error));
 
-      setupPassport(this.app);
-      // await setupRoutes(this.app);
-      RegisterRoutes(<express.Express>this.app);
-      BullManager.setupBull(this.app);
+    setupPassport(this.app);
+    // await setupRoutes(this.app);
+    RegisterRoutes(<express.Express>this.app);
+    BullManager.setupBull(this.app);
 
-      this.app.use("/api-docs", swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
-        
-        return res.send(
-          swaggerUi.generateHTML(swagger)
-        );
-      });
+    this.app.use("/api-docs", swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
+      
+      return res.send(
+        swaggerUi.generateHTML(swagger)
+      );
+    });
 
-      this.app.use(function(req, res, next) {
-        let err = new ApplicationError(404, 'Not Found');
-        next(err);
-      });
+    this.app.use(function(req, res, next) {
+      let err = new ApplicationError(404, 'Not Found');
+      next(err);
+    });
 
-      this.app.use(function(err, req, res, next) {
-        if (res.headersSent) {
-          return;
-        }
-        console.error(err);
-        res.status(err.status||err.statusCode).json(err);
-      });
+    this.app.use(function(err, req, res, next) {
+      if (res.headersSent) {
+        return;
+      }
+      console.error(err);
+      res.status(err.status||err.statusCode).json(err);
+    });
 
-      this.startServer();
-      this.setupGrpcServer();
+    this.startServer();
+    this.setupGrpcServer();
   }
 
   setupGrpcServer() {
