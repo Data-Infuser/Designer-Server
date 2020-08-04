@@ -6,13 +6,10 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm install typescript -g 
-RUN npm install ts-node -g 
-
-COPY . .
+COPY ./build .
 
 EXPOSE 3000
 
-CMD [ "ts-node", "./src/index.ts" ]
+CMD [ "node", "./src/index.js" ]
 
 
