@@ -1,7 +1,6 @@
-import { getRepository, getConnection, getManager, ConnectionOptions, In } from "typeorm";
-import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
-import { Route, Get, Tags, Security, Path, Request, Post, Body, Put, Delete, Query } from "tsoa";
-import { Request as exRequest, application } from "express";
+import { getRepository, getManager, In } from "typeorm";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete, Query } from "tsoa";
+import { Request as exRequest } from "express";
 import { Application, ApplicationStatus } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
 import { Service, ServiceStatus } from '../../entity/manager/Service';
@@ -10,7 +9,6 @@ import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 import { TrafficConfig } from "../../entity/manager/TrafficConfig";
-import { resolve } from 'url';
 
 @Route("/api/applications")
 @Tags("Applications")
