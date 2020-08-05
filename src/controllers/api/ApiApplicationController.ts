@@ -10,6 +10,7 @@ import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 import { TrafficConfig } from "../../entity/manager/TrafficConfig";
+import { resolve } from 'url';
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -84,7 +85,7 @@ export class ApiApplicationController {
       const appRepo = getRepository(Application);
     try {
       const app = await appRepo.findOneOrFail({
-        relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params", "trafficConfigs"],
+        relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
         where: {
           id: applicationId,
           user: {
@@ -333,6 +334,32 @@ export class ApiApplicationController {
     })
   }
 
+
+  @Get("/{id}/traffic-configs")
+  @Security("jwt")
+  public async getTrafficConfigs(
+    @Request() request: exRequest,
+    @Path("id") id: number
+  ): Promise<TrafficConfig[]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const applicationRepo = getRepository(Application);
+        const application = await applicationRepo.findOne({
+          relations: ["trafficConfigs"],
+          where: {
+            id: id,
+            userId: request.user.id
+          }
+        })
+        const configs = application.trafficConfigs;
+        resolve(configs);
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
+  }
+
   @Post("/{id}/traffic-configs")
   @Security("jwt")
   public async postTrafficConfigs(
@@ -364,7 +391,6 @@ export class ApiApplicationController {
         newTrafficConfig.maxCount = trafficConfigParam.maxCount;
 
         await trafficConfigRepo.save(newTrafficConfig);
-
         resolve(newTrafficConfig);
       } catch (err) {
         console.error(err);
