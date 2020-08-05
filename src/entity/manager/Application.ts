@@ -18,7 +18,7 @@ export class Application {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 100 })
   @Length(1, 100)
   @NotContains("-")
   nameSpace: string;

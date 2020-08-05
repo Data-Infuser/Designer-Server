@@ -3,7 +3,7 @@ import { Length, IsNotEmpty } from "class-validator";
 import { Service } from "./Service";
 
 @Entity()
-@Unique("serviceColumn_columnName_unique", ["service", "columnName"])
+@Unique("service_columnName_unique", ["service", "columnName"])
 export class ServiceColumn {
 
   constructor(colunmName?:string, type?:string, service?: Service) {
@@ -15,8 +15,8 @@ export class ServiceColumn {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
-  @Length(4, 100)
+  @Column({ nullable: true, length: 64})
+  @Length(4, 64)
   columnName: string;
 
   @Column({ default: 'varchar' })
