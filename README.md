@@ -71,6 +71,16 @@ DB 구조가 변경되어 기존 사용하던 DB Schema와 맞지 않아 오류�
 
 위 명령어를 통해 파일 생성 후 코드 입력
 
+## BUILD and RUN For Production env
+
+ts-node를 운영으로 사용하기에는, 메모리 점유, deploy후 빌드 시간 등 적합하지 않은 부분들이 확인되어 js로 빌드 후 실행
+
+> npm run build
+
+./build 에 js로 빌드된 결과물이 저장됩니다.
+
+배포시 js로 빌드된 프로젝트를 배포
+
 ## API Documentation
 
 OAS 3.0 기준 문서를 아래 경로에서 확인 가능합니다.
