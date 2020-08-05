@@ -49,6 +49,7 @@ const models: TsoaRoute.Models = {
             "userId": { "dataType": "double", "required": true },
             "user": { "ref": "User", "required": true },
             "services": { "dataType": "array", "array": { "ref": "Service" }, "required": true },
+            "trafficConfigs": { "dataType": "array", "array": { "ref": "TrafficConfig" }, "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },
@@ -168,6 +169,19 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TrafficConfig": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "application": { "ref": "Application", "required": true },
+            "type": { "dataType": "string", "required": true },
+            "maxCount": { "dataType": "double", "required": true },
+            "createdAt": { "dataType": "datetime", "required": true },
+            "updatedAt": { "dataType": "datetime", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ApplicationParams": {
         "dataType": "refObject",
         "properties": {
@@ -273,6 +287,15 @@ const models: TsoaRoute.Models = {
             "updatedAt": { "dataType": "any" },
             "user": { "dataType": "any" },
             "userId": { "dataType": "double" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TrafficConfigParam": {
+        "dataType": "refObject",
+        "properties": {
+            "type": { "dataType": "string", "required": true },
+            "maxCount": { "dataType": "double", "required": true },
         },
         "additionalProperties": false,
     },
@@ -552,6 +575,31 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.save.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/api/applications/:id/traffic-configs',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
+                trafficConfigParam: { "in": "body", "name": "trafficConfigParam", "required": true, "ref": "TrafficConfigParam" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiApplicationController();
+
+
+            const promise = controller.postTrafficConfigs.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -65,6 +65,12 @@
 						},
 						"type": "array"
 					},
+					"trafficConfigs": {
+						"items": {
+							"$ref": "#/components/schemas/TrafficConfig"
+						},
+						"type": "array"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -83,6 +89,7 @@
 					"userId",
 					"user",
 					"services",
+					"trafficConfigs",
 					"createdAt",
 					"updatedAt"
 				],
@@ -450,6 +457,42 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"TrafficConfig": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"application": {
+						"$ref": "#/components/schemas/Application"
+					},
+					"type": {
+						"type": "string"
+					},
+					"maxCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"application",
+					"type",
+					"maxCount",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ApplicationParams": {
 				"properties": {
 					"nameSpace": {
@@ -708,6 +751,23 @@
 					"description",
 					"services",
 					"params"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TrafficConfigParam": {
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"maxCount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"type",
+					"maxCount"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1205,6 +1265,52 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/ApplicationSaveParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/applications/{id}/traffic-configs": {
+			"post": {
+				"operationId": "PostTrafficConfigs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TrafficConfig"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TrafficConfigParam"
 							}
 						}
 					}

@@ -2,6 +2,7 @@ import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColu
 import { Length, IsNotEmpty, NotContains } from "class-validator";
 import { User } from "./User";
 import { Service, ServiceStatus } from "./Service";
+import { TrafficConfig } from "./TrafficConfig";
 
 export enum ApplicationStatus {
   // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
@@ -45,6 +46,9 @@ export class Application {
 
   @OneToMany(type => Service, service => service.application)
   services: Service[];
+
+  @OneToMany(type => TrafficConfig, trafficConfig => trafficConfig.application)
+  trafficConfigs: TrafficConfig[];
 
   @Column()
   @CreateDateColumn({ type: "timestamp" })

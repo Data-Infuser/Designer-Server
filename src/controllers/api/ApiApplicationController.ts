@@ -9,6 +9,7 @@ import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
+import { TrafficConfig } from "../../entity/manager/TrafficConfig";
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -83,7 +84,7 @@ export class ApiApplicationController {
       const appRepo = getRepository(Application);
     try {
       const app = await appRepo.findOneOrFail({
-        relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
+        relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params", "trafficConfigs"],
         where: {
           id: applicationId,
           user: {
@@ -331,6 +332,47 @@ export class ApiApplicationController {
       }
     })
   }
+
+  @Post("/{id}/traffic-configs")
+  @Security("jwt")
+  public async postTrafficConfigs(
+    @Request() request: exRequest,
+    @Path("id") id: number,
+    @Body() trafficConfigParam: TrafficConfigParam
+  ): Promise<TrafficConfig> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const applicationRepo = getRepository(Application);
+        const trafficConfigRepo = getRepository(TrafficConfig);
+
+        const application = await applicationRepo.findOneOrFail(id)
+        if(application.userId !== request.user.id) {
+          throw Error("unAuthorized Error");
+        }
+
+        let newTrafficConfig = await trafficConfigRepo.findOne({
+          where: {
+            application: {
+              id: id
+            },
+            type: trafficConfigParam.type
+          }
+        })
+        if(!newTrafficConfig) newTrafficConfig = new TrafficConfig();
+        newTrafficConfig.application = application;
+        newTrafficConfig.type = trafficConfigParam.type;
+        newTrafficConfig.maxCount = trafficConfigParam.maxCount;
+
+        await trafficConfigRepo.save(newTrafficConfig);
+
+        resolve(newTrafficConfig);
+      } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
+  }
+
 }
 
 interface ApplicationParams {
@@ -418,4 +460,9 @@ interface MetaParamSaveParams {
   operator: ParamOperatorType,
   createdAt?: any,
   updatedAt?: any
+}
+
+interface TrafficConfigParam {
+  type: string,
+  maxCount: number
 }

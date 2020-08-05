@@ -1,11 +1,8 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn, Table, Db} from "typeorm";
-import { Length, IsNotEmpty, NotContains } from "class-validator";
-import * as bcrypt from "bcryptjs";
+import { Length, NotContains } from "class-validator";
 import { User } from "./User";
-import { MetaColumn } from "./MetaColumn";
 import { Meta } from "./Meta";
 import { ServiceColumn } from "./ServiceColumn";
-import { HttpClientResponse } from "typed-rest-client/HttpClient";
 import { Application } from "./Application";
 
 
