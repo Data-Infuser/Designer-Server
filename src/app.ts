@@ -18,6 +18,9 @@ import * as protoLoader from "@grpc/proto-loader";
 import setupApplications from "./grpc/applications";
 import swagger from './routes/swagger.json';
 import ormConfig from "./config/ormConfig";
+
+const property = require("../property.json")
+
 export class Application {
   app: express.Application;
   grpcServer;
@@ -91,14 +94,14 @@ export class Application {
   setupGrpcServer() {
     this.grpcServer = new grpc.Server();
     setupApplications(this.grpcServer);
-    this.grpcServer.bind("0.0.0.0:50001", grpc.ServerCredentials.createInsecure());
+    this.grpcServer.bind(`0.0.0.0:${property.grpcPort}`, grpc.ServerCredentials.createInsecure());
     this.grpcServer.start();
   }
 
   startServer(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.app.listen(3000, () => {
-        console.log("Server started on port: " + 3000);
+      this.app.listen(property.port, () => {
+        console.log("Server started on port: " + property.port);
         resolve(true);
       });
     });

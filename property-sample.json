@@ -1,4 +1,6 @@
 {
+  "port": 3000,
+  "grpcPort": 50000,
   "host": "http://localhost:3000",
   "apiServerUrl": "http://localhost:3000",
   "dataLoaderUrl": "http://localhost:4000",
