@@ -221,9 +221,7 @@ export class ApiApplicationController {
           relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
           where: {
             id: id,
-            user: {
-              id: request.user.id
-            }
+            userId: request.user.id
           }
         });
 
@@ -237,15 +235,13 @@ export class ApiApplicationController {
         }
 
         application.status = ApplicationStatus.IDLE;
-
+        
         await getManager().transaction(async transactionEntityManager => {
           await transactionEntityManager.save(application);
           await transactionEntityManager.save(application.services);
           await transactionEntityManager.delete('ServiceColumn', {
-            where: {
-              service: {
-                id: In(application.services.map((service) => service.id))
-              }
+            service: {
+              id: In(application.services.map((service) => service.id))
             }
           })
         });
