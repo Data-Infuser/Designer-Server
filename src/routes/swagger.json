@@ -1317,7 +1317,10 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TrafficConfig"
+									"items": {
+										"$ref": "#/components/schemas/TrafficConfig"
+									},
+									"type": "array"
 								}
 							}
 						}
@@ -1347,7 +1350,10 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TrafficConfigParam"
+								"items": {
+									"$ref": "#/components/schemas/TrafficConfigParam"
+								},
+								"type": "array"
 							}
 						}
 					}

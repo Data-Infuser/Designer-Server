@@ -235,7 +235,7 @@ export class ApiApplicationController {
         }
 
         application.status = ApplicationStatus.IDLE;
-        
+
         await getManager().transaction(async transactionEntityManager => {
           await transactionEntityManager.save(application);
           await transactionEntityManager.save(application.services);
@@ -359,8 +359,8 @@ export class ApiApplicationController {
   public async postTrafficConfigs(
     @Request() request: exRequest,
     @Path("id") id: number,
-    @Body() trafficConfigParam: TrafficConfigParam
-  ): Promise<TrafficConfig> {
+    @Body() trafficConfigParams: TrafficConfigParam[]
+  ): Promise<TrafficConfig[]> {
     return new Promise(async (resolve, reject) => {
       try {
         const applicationRepo = getRepository(Application);
@@ -371,21 +371,26 @@ export class ApiApplicationController {
           throw Error("unAuthorized Error");
         }
 
-        let newTrafficConfig = await trafficConfigRepo.findOne({
-          where: {
-            application: {
-              id: id
-            },
-            type: trafficConfigParam.type
-          }
-        })
-        if(!newTrafficConfig) newTrafficConfig = new TrafficConfig();
-        newTrafficConfig.application = application;
-        newTrafficConfig.type = trafficConfigParam.type;
-        newTrafficConfig.maxCount = trafficConfigParam.maxCount;
+        const trafficConfigs:TrafficConfig[] = []
+        for( let trafficConfigParam of trafficConfigParams) {
+          let newTrafficConfig = await trafficConfigRepo.findOne({
+            where: {
+              application: {
+                id: id
+              },
+              type: trafficConfigParam.type
+            }
+          })
+          if(!newTrafficConfig) newTrafficConfig = new TrafficConfig();
+          newTrafficConfig.application = application;
+          newTrafficConfig.type = trafficConfigParam.type;
+          newTrafficConfig.maxCount = trafficConfigParam.maxCount;
+          trafficConfigs.push(newTrafficConfig);
+        }
+        
 
-        await trafficConfigRepo.save(newTrafficConfig);
-        resolve(newTrafficConfig);
+        await trafficConfigRepo.save(trafficConfigs);
+        resolve(trafficConfigs);
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));

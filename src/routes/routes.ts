@@ -608,7 +608,7 @@ export function RegisterRoutes(app: express.Express) {
             const args = {
                 request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
                 id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
-                trafficConfigParam: { "in": "body", "name": "trafficConfigParam", "required": true, "ref": "TrafficConfigParam" },
+                trafficConfigParams: { "in": "body", "name": "trafficConfigParams", "required": true, "dataType": "array", "array": { "ref": "TrafficConfigParam" } },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
