@@ -908,6 +908,23 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"FileUrlParam": {
+				"properties": {
+					"serviceId": {
+						"type": "number",
+						"format": "double"
+					},
+					"url": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"serviceId",
+					"url"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ServiceParams": {
 				"properties": {
 					"method": {
@@ -1666,6 +1683,40 @@
 										"type": "integer"
 									}
 								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/metas/file-url": {
+			"post": {
+				"operationId": "PostFileUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FileUrlParam"
 							}
 						}
 					}

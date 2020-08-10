@@ -197,7 +197,7 @@ export class ApiApplicationController {
         await getManager().transaction(async transactionEntityManager => {
           await applicationRepo.save(application);
           await serviceRepo.save(application.services);
-          BullManager.Instance.setSchedule(application);
+          BullManager.Instance.setDataLoaderSchedule(application);
         });
 
         resolve(application);

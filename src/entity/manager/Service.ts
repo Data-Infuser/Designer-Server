@@ -17,6 +17,7 @@ export enum HttpMethod {
 export enum ServiceStatus {
   // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
   IDLE = "idle",
+  LOADSCHDULED = "load-scheduled",
   METALOADED = "meta-loaded",
   SCHEDULED = "scheduled",
   LOADED = "loaded",

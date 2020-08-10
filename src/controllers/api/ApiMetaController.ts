@@ -12,6 +12,7 @@ import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
 import XlsxMetaLoadStrategy from "../../lib/strategies/XlsxMetaLoadStrategy";
 import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy";
 import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
+import BullManager from '../../util/BullManager';
 
 const property = require("../../../property.json")
 @Route("/api/metas")
@@ -137,23 +138,57 @@ export class ApiMetaController {
         const loaderResult = await metaLoader.loadMeta(fileParam);
         const meta = loaderResult.meta;
         const columns = loaderResult.columns;
-        let updatedMeta;
         
         service.meta = meta;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          updatedMeta = await metaRepo.save(meta);
-          await metaColumnRepo.save(columns);
+          await transactionalEntityManager.save(meta);
+          await transactionalEntityManager.save(columns);
           service.status = ServiceStatus.METALOADED;
-          await serviceRepo.save(service);
+          await transactionalEntityManager.save(service);
         });
-        updatedMeta = await metaRepo.findOneOrFail({
+        const updatedMeta = await metaRepo.findOneOrFail({
           relations: ["service", "columns"],
           where: {
-            id: updatedMeta.id
+            id: meta.id
           }
         });
         resolve(updatedMeta);
       } catch (err) {
+        console.error(err);
+        reject(new ApplicationError(500, err.message));
+      }
+    })
+  }
+
+  @Post("/file-url")
+  @Security("jwt")
+  public async postFileUrl(
+    @Request() request: exRequest,
+    @Body() fileUrlParam: FileUrlParam
+  ): Promise<any> {
+    return new Promise(async(resolve, reject) => {
+      try {
+        const serviceRepo = getRepository(Service);
+
+        const service = await serviceRepo.findOneOrFail({
+          where: {
+            id: fileUrlParam.serviceId,
+            user: {
+              id: request.user.id
+            }
+          }
+        })
+
+        service.status = ServiceStatus.LOADSCHDULED;
+        /**
+         * JobScheduler에 등록을 실패 하는 경우에도 Rollback
+         */
+        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+          await transactionalEntityManager.save(service);
+          BullManager.Instance.setMetaLoaderSchedule(fileUrlParam.serviceId, fileUrlParam.url);
+        });
+        resolve(service);
+      } catch(err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));
       }
@@ -169,7 +204,7 @@ export class ApiMetaController {
         const originalFileName:string = file.originalname;
         const originalFileNameTokens = originalFileName.split(".");
         const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
-        cb(null, req.user.id + "-" + Date.now() + "." + ext)
+        cb(null, req.user.id + "-" + req.body.serviceId + "-" + Date.now() + "." + ext)
       }
     })
     const multerSingle = multer({ storage }).single("file");
@@ -194,4 +229,9 @@ interface postDbmsParams {
   user: string,
   password:string,
   table: string
+}
+
+interface FileUrlParam {
+  serviceId: number,
+  url: string
 }
