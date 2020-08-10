@@ -95,6 +95,7 @@ const models: TsoaRoute.Models = {
             "title": { "dataType": "string", "required": true },
             "dataType": { "dataType": "string", "required": true },
             "originalFileName": { "dataType": "string", "required": true },
+            "remoteFilePath": { "dataType": "string", "required": true },
             "filePath": { "dataType": "string", "required": true },
             "extension": { "dataType": "string", "required": true },
             "host": { "dataType": "string", "required": true },
@@ -353,6 +354,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "serviceId": { "dataType": "double", "required": true },
             "url": { "dataType": "string", "required": true },
+            "ext": { "dataType": "string", "required": true },
         },
         "additionalProperties": false,
     },

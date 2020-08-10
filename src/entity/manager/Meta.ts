@@ -25,7 +25,9 @@ export class Meta {
   originalFileName: string;
 
   @Column({nullable: true})
-  @Length(4, 100)
+  remoteFilePath: string;
+
+  @Column({nullable: true})
   filePath: string;
 
   @Column({nullable: true})

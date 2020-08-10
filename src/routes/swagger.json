@@ -213,6 +213,9 @@
 					"originalFileName": {
 						"type": "string"
 					},
+					"remoteFilePath": {
+						"type": "string"
+					},
 					"filePath": {
 						"type": "string"
 					},
@@ -281,6 +284,7 @@
 					"title",
 					"dataType",
 					"originalFileName",
+					"remoteFilePath",
 					"filePath",
 					"extension",
 					"host",
@@ -916,11 +920,15 @@
 					},
 					"url": {
 						"type": "string"
+					},
+					"ext": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"serviceId",
-					"url"
+					"url",
+					"ext"
 				],
 				"type": "object",
 				"additionalProperties": false

@@ -16,8 +16,9 @@ export enum HttpMethod {
 
 export enum ServiceStatus {
   // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
-  IDLE = "idle",
-  LOADSCHDULED = "load-scheduled",
+  DEFAULT = "default",
+  METASCHEDULED = "meta-scheduled",
+  METADOWNLOADED = "meta-downloded",
   METALOADED = "meta-loaded",
   SCHEDULED = "scheduled",
   LOADED = "loaded",
@@ -61,7 +62,7 @@ export class Service {
   @Column({
     type: "enum",
     enum: ServiceStatus,
-    default: ServiceStatus.IDLE
+    default: ServiceStatus.DEFAULT
   })
   status: string;
 
@@ -96,7 +97,7 @@ export class Service {
 
   get statusString(): string {
     switch(this.status) {
-      case ServiceStatus.IDLE:
+      case ServiceStatus.DEFAULT:
         return "메타 설정 필요"
       case ServiceStatus.METALOADED:
         return "메타 설정 완료"

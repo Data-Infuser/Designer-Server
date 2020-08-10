@@ -179,13 +179,23 @@ export class ApiMetaController {
           }
         })
 
-        service.status = ServiceStatus.LOADSCHDULED;
+        service.status = ServiceStatus.METASCHEDULED;
         /**
          * JobScheduler에 등록을 실패 하는 경우에도 Rollback
          */
+
+        const newMeta = new Meta();
+        newMeta.remoteFilePath = fileUrlParam.url;
+        newMeta.dataType = 'file';
+        newMeta.service = service;
+        newMeta.extension = fileUrlParam.ext;
+        newMeta.title = fileUrlParam.title || "empty title";
+        
+        const fileName = `${request.user.id}-${service.id}-${Date.now()}.${fileUrlParam.ext}`
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           await transactionalEntityManager.save(service);
-          BullManager.Instance.setMetaLoaderSchedule(fileUrlParam.serviceId, fileUrlParam.url);
+          await transactionalEntityManager.save(newMeta);
+          BullManager.Instance.setMetaLoaderSchedule(fileUrlParam.serviceId, fileUrlParam.url, fileName);
         });
         resolve(service);
       } catch(err) {
@@ -233,5 +243,7 @@ interface postDbmsParams {
 
 interface FileUrlParam {
   serviceId: number,
-  url: string
+  url: string,
+  ext: string,
+  title: string
 }
