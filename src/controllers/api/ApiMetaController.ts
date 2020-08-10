@@ -257,5 +257,7 @@ interface FileUrlParam {
   serviceId: number,
   url: string,
   ext: string,
-  title: string
+  title: string,
+  skip: number,
+  sheet: number,
 }

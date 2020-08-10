@@ -6,6 +6,16 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"AcceptableDbms": {
+				"enum": [
+					"mysql",
+					"oracle",
+					"mariadb",
+					"postgres",
+					"cubrid"
+				],
+				"type": "string"
+			},
 			"UserInterface": {
 				"properties": {
 					"id": {
@@ -33,78 +43,6 @@
 			},
 			"User": {
 				"$ref": "#/components/schemas/UserInterface"
-			},
-			"Application": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"nameSpace": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "number",
-						"format": "double"
-					},
-					"user": {
-						"$ref": "#/components/schemas/User"
-					},
-					"services": {
-						"items": {
-							"$ref": "#/components/schemas/Service"
-						},
-						"type": "array"
-					},
-					"trafficConfigs": {
-						"items": {
-							"$ref": "#/components/schemas/TrafficConfig"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"nameSpace",
-					"title",
-					"description",
-					"status",
-					"userId",
-					"user",
-					"services",
-					"trafficConfigs",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"AcceptableDbms": {
-				"enum": [
-					"mysql",
-					"oracle",
-					"mariadb",
-					"postgres",
-					"cubrid"
-				],
-				"type": "string"
 			},
 			"Service": {
 				"properties": {
@@ -182,21 +120,103 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AcceptableType": {
-				"enum": [
-					"bigint",
-					"int",
-					"double",
-					"bit",
-					"date",
-					"datetime",
-					"time",
-					"varchar",
-					"text",
-					"longtext",
-					"boolean"
+			"Application": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nameSpace": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"services": {
+						"items": {
+							"$ref": "#/components/schemas/Service"
+						},
+						"type": "array"
+					},
+					"trafficConfigs": {
+						"items": {
+							"$ref": "#/components/schemas/TrafficConfig"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"nameSpace",
+					"title",
+					"description",
+					"status",
+					"userId",
+					"user",
+					"services",
+					"trafficConfigs",
+					"createdAt",
+					"updatedAt"
 				],
-				"type": "string"
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TrafficConfig": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"application": {
+						"$ref": "#/components/schemas/Application"
+					},
+					"type": {
+						"type": "string"
+					},
+					"maxCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"application",
+					"type",
+					"maxCount",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"Meta": {
 				"properties": {
@@ -306,6 +326,61 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"ServiceColumn": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"columnName": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"hidden": {
+						"type": "boolean"
+					},
+					"service": {
+						"$ref": "#/components/schemas/Service"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"columnName",
+					"type",
+					"hidden",
+					"service",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AcceptableType": {
+				"enum": [
+					"bigint",
+					"int",
+					"double",
+					"bit",
+					"date",
+					"datetime",
+					"time",
+					"varchar",
+					"text",
+					"longtext",
+					"boolean"
+				],
+				"type": "string"
 			},
 			"MetaColumn": {
 				"properties": {
@@ -422,77 +497,82 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ServiceColumn": {
+			"postDbmsParams": {
 				"properties": {
-					"id": {
+					"serviceId": {
 						"type": "number",
 						"format": "double"
 					},
-					"columnName": {
+					"title": {
 						"type": "string"
 					},
-					"type": {
+					"dbms": {
 						"type": "string"
 					},
-					"hidden": {
-						"type": "boolean"
+					"host": {
+						"type": "string"
 					},
-					"service": {
-						"$ref": "#/components/schemas/Service"
+					"port": {
+						"type": "string"
 					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
+					"database": {
+						"type": "string"
 					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
+					"user": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"id",
-					"columnName",
-					"type",
-					"hidden",
-					"service",
-					"createdAt",
-					"updatedAt"
+					"serviceId",
+					"title",
+					"dbms",
+					"host",
+					"port",
+					"database",
+					"user",
+					"password",
+					"table"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"TrafficConfig": {
+			"FileUrlParam": {
 				"properties": {
-					"id": {
+					"serviceId": {
 						"type": "number",
 						"format": "double"
 					},
-					"application": {
-						"$ref": "#/components/schemas/Application"
-					},
-					"type": {
+					"url": {
 						"type": "string"
 					},
-					"maxCount": {
+					"ext": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"skip": {
 						"type": "number",
 						"format": "double"
 					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
+					"sheet": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"id",
-					"application",
-					"type",
-					"maxCount",
-					"createdAt",
-					"updatedAt"
+					"serviceId",
+					"url",
+					"ext",
+					"title",
+					"skip",
+					"sheet"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -867,72 +947,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"postDbmsParams": {
-				"properties": {
-					"serviceId": {
-						"type": "number",
-						"format": "double"
-					},
-					"title": {
-						"type": "string"
-					},
-					"dbms": {
-						"type": "string"
-					},
-					"host": {
-						"type": "string"
-					},
-					"port": {
-						"type": "string"
-					},
-					"database": {
-						"type": "string"
-					},
-					"user": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"table": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"serviceId",
-					"title",
-					"dbms",
-					"host",
-					"port",
-					"database",
-					"user",
-					"password",
-					"table"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"FileUrlParam": {
-				"properties": {
-					"serviceId": {
-						"type": "number",
-						"format": "double"
-					},
-					"url": {
-						"type": "string"
-					},
-					"ext": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"serviceId",
-					"url",
-					"ext"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"ServiceParams": {
 				"properties": {
 					"method": {
@@ -1007,6 +1021,128 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/api/metas/dbms": {
+			"post": {
+				"operationId": "PostDbms",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Meta"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/postDbmsParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/metas/file": {
+			"post": {
+				"operationId": "PostFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.\n  body param 정보는 tsoa.json을 참고해주세요.",
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									},
+									"title": {
+										"type": "string"
+									},
+									"skip": {
+										"type": "integer"
+									},
+									"sheet": {
+										"type": "integer"
+									},
+									"serviceId": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/metas/file-url": {
+			"post": {
+				"operationId": "PostFileUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FileUrlParam"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/applications": {
 			"get": {
 				"operationId": "Get",
@@ -1607,128 +1743,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/api/metas/dbms": {
-			"post": {
-				"operationId": "PostDbms",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Meta"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Meta"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/postDbmsParams"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/metas/file": {
-			"post": {
-				"operationId": "PostFile",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"description": "File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.\n  body param 정보는 tsoa.json을 참고해주세요.",
-				"tags": [
-					"Meta"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary"
-									},
-									"title": {
-										"type": "string"
-									},
-									"skip": {
-										"type": "integer"
-									},
-									"sheet": {
-										"type": "integer"
-									},
-									"serviceId": {
-										"type": "integer"
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/metas/file-url": {
-			"post": {
-				"operationId": "PostFileUrl",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Meta"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/FileUrlParam"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/api/services": {

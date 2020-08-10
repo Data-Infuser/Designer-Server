@@ -61,7 +61,7 @@ export class Application {
   setupDbAndServer = async () => {
     const conn = await createConnection(ormConfig.defaultConnection).catch(error => console.log(error));
     const datasetConn = await createConnection(ormConfig.datasetConnection).catch(error => console.log(error));
-
+    console.log("Success::Database connection")
     setupPassport(this.app);
     // await setupRoutes(this.app);
     RegisterRoutes(<express.Express>this.app);
