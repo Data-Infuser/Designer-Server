@@ -8,6 +8,8 @@ import CsvMetaLoadStrategy from '../lib/strategies/CsvMetaLoadStrategy';
 import MetaLoader from '../lib/MetaLoader';
 import { getRepository, getManager } from 'typeorm';
 import { Service, ServiceStatus } from '../entity/manager/Service';
+import MetaLoaderFileParam from '../lib/interfaces/MetaLoaderFileParam';
+import { ApiMetaController } from '../controllers/api/ApiMetaController';
 
 const property = require("../../property.json");
 
@@ -43,26 +45,16 @@ class BullManager {
               id: serviceId
             }
           })
-          let loadStrategy: MetaLoadStrategy;
-          switch(service.meta.extension) {
-            case 'xlsx':
-              loadStrategy = new XlsxMetaLoadStrategy();
-              break;
-            case 'csv':
-              loadStrategy = new CsvMetaLoadStrategy();
-              break;
-            default:
-              throw new Error("unexceptable file extension");
-          }
-          const metaLoader = new MetaLoader(loadStrategy);
-          const loaderResult = await metaLoader.loadMeta({
+          const fileParam: MetaLoaderFileParam = {
             title: service.meta.title,
             skip: service.meta.skip,
             sheet: service.meta.sheet,
             filePath: service.meta.filePath,
             originalFileName: service.meta.originalFileName,
             ext: service.meta.extension
-          });
+          }
+
+          const loaderResult = await new ApiMetaController().loadMetaFromFile(fileParam);
           const meta = loaderResult.meta;
           const columns = loaderResult.columns;
           

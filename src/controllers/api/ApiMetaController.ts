@@ -13,6 +13,7 @@ import XlsxMetaLoadStrategy from "../../lib/strategies/XlsxMetaLoadStrategy";
 import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy";
 import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
 import BullManager from '../../util/BullManager';
+import MetaLoaderFileParam from "../../lib/interfaces/MetaLoaderFileParam";
 
 const property = require("../../../property.json")
 @Route("/api/metas")
@@ -115,7 +116,7 @@ export class ApiMetaController {
         const originalFileNameTokens = originalFileName.split(".");
         const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
 
-        const fileParam = {
+        const fileParam:MetaLoaderFileParam = {
           title: title,
           skip: skip,
           sheet: sheet,
@@ -123,19 +124,7 @@ export class ApiMetaController {
           originalFileName: originalFileName,
           ext: ext
         }
-        let loadStrategy: MetaLoadStrategy;
-        switch(ext) {
-          case 'xlsx':
-            loadStrategy = new XlsxMetaLoadStrategy();
-            break;
-          case 'csv':
-            loadStrategy = new CsvMetaLoadStrategy();
-            break;
-          default:
-            throw new Error("unexceptable file extension");
-        }
-        const metaLoader = new MetaLoader(loadStrategy);
-        const loaderResult = await metaLoader.loadMeta(fileParam);
+        const loaderResult = await this.loadMetaFromFile(fileParam)
         const meta = loaderResult.meta;
         const columns = loaderResult.columns;
         
@@ -156,6 +145,29 @@ export class ApiMetaController {
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));
+      }
+    })
+  }
+
+  public async loadMetaFromFile(fileParam:MetaLoaderFileParam):Promise<any> {
+    return new Promise( async (resolve, reject) => {
+      try {
+        let loadStrategy: MetaLoadStrategy;
+        switch(fileParam.ext) {
+          case 'xlsx':
+            loadStrategy = new XlsxMetaLoadStrategy();
+            break;
+          case 'csv':
+            loadStrategy = new CsvMetaLoadStrategy();
+            break;
+          default:
+            throw new Error("unexceptable file extension");
+        }
+        const metaLoader = new MetaLoader(loadStrategy);
+        const loaderResult = await metaLoader.loadMeta(fileParam);
+        resolve(loaderResult)
+      } catch (err) {
+        reject(err);
       }
     })
   }
