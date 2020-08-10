@@ -460,7 +460,8 @@ interface MetaSaveParams {
   isActive?: any,
   createdAt?: any,
   updatedAt?: any,
-  service?: any
+  service?: any,
+  remoteFilePath?: string|null,
 }
 
 interface MetaColumnSaveParams {

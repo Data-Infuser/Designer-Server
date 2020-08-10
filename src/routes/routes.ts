@@ -265,6 +265,7 @@ const models: TsoaRoute.Models = {
             "createdAt": { "dataType": "any" },
             "updatedAt": { "dataType": "any" },
             "service": { "dataType": "any" },
+            "remoteFilePath": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "enum", "enums": [null] }] },
         },
         "additionalProperties": false,
     },

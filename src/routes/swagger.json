@@ -701,7 +701,11 @@
 					"isActive": {},
 					"createdAt": {},
 					"updatedAt": {},
-					"service": {}
+					"service": {},
+					"remoteFilePath": {
+						"type": "string",
+						"nullable": true
+					}
 				},
 				"required": [
 					"id",

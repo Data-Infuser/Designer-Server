@@ -72,10 +72,10 @@ export class ApiMetaController {
         
         service.meta = meta;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          updatedMeta = await metaRepo.save(meta);
-          await metaColumnRepo.save(columns);
+          await transactionalEntityManager.save(meta);
+          await transactionalEntityManager.save(columns);
           service.status = ServiceStatus.METALOADED;
-          await serviceRepo.save(service);
+          await transactionalEntityManager.save(service);
         });
         updatedMeta = await metaRepo.findOneOrFail({
           relations: ["service", "columns"],

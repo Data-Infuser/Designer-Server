@@ -59,6 +59,7 @@ export class Application {
   }
 
   setupDbAndServer = async () => {
+    console.log("Start::Database connection")
     const conn = await createConnection(ormConfig.defaultConnection).catch(error => console.log(error));
     const datasetConn = await createConnection(ormConfig.datasetConnection).catch(error => console.log(error));
     console.log("Success::Database connection")
