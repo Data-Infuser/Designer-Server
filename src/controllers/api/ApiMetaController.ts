@@ -199,7 +199,7 @@ export class ApiMetaController {
 
         const newMeta = new Meta();
         newMeta.remoteFilePath = fileUrlParam.url;
-        newMeta.dataType = 'file';
+        newMeta.dataType = 'file-url';
         newMeta.service = service;
         newMeta.extension = fileUrlParam.ext;
         newMeta.title = fileUrlParam.title || "empty title";

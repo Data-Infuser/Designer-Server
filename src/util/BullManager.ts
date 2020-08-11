@@ -53,6 +53,9 @@ class BullManager {
           const loaderResult = await new ApiMetaController().loadMetaFromFile(fileParam);
           const meta = loaderResult.meta;
           const columns = loaderResult.columns;
+
+          meta.dataType = service.meta.dataType;
+          meta.remoteFilePath = service.meta.remoteFilePath;
           
           await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
             await transactionalEntityManager.remove(service.meta);
