@@ -104,7 +104,6 @@ export class ApiMetaController {
   ): Promise<any> {
     const serviceRepo = getRepository(Service);
     const metaRepo = getRepository(Meta);
-    const metaColumnRepo = getRepository(MetaColumn);
     await this.handleFile(request);
     const _this = this;
     return new Promise(async function(resolve, reject) {

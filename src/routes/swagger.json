@@ -970,8 +970,7 @@
 				"required": [
 					"method",
 					"entityName",
-					"description",
-					"applicationId"
+					"description"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1749,9 +1748,49 @@
 				]
 			}
 		},
+		"/api/files": {
+			"post": {
+				"operationId": "PostFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.\n  body param 정보는 tsoa.json을 참고해주세요.",
+				"tags": [
+					"File"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/services": {
 			"post": {
-				"operationId": "Put",
+				"operationId": "Post",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1786,6 +1825,50 @@
 			}
 		},
 		"/api/services/{serviceId}": {
+			"put": {
+				"operationId": "Put",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Service"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Service"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "serviceId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ServiceParams"
+							}
+						}
+					}
+				}
+			},
 			"delete": {
 				"operationId": "Delete",
 				"responses": {
