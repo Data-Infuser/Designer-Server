@@ -93,55 +93,70 @@ export class ApiMetaController {
   }
 
   /**
-   * File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.
-   *  body param 정보는 tsoa.json을 참고해주세요.
+   * 
    * @param request 
+   * @param fileParam 
    */
   @Post("/file")
   @Security("jwt")
   public async postFile(
-    @Request() request: exRequest
+    @Request() request: exRequest,
+    @Body() params: FileParam
   ): Promise<any> {
     const serviceRepo = getRepository(Service);
-    const metaRepo = getRepository(Meta);
-    await this.handleFile(request);
     const _this = this;
     return new Promise(async function(resolve, reject) {
       try {
-        const { title, skip, sheet, serviceId } = request.body;
-        const service = await serviceRepo.findOneOrFail(serviceId);
-        
-        const filePath = request.file.path;
-        const originalFileName:string = request.file.originalname;
-        const originalFileNameTokens = originalFileName.split(".");
-        const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
-
-        const fileParam:MetaLoaderFileParam = {
-          title: title,
-          skip: skip,
-          sheet: sheet,
-          filePath: filePath,
-          originalFileName: originalFileName,
-          ext: ext
-        }
-        const loaderResult = await _this.loadMetaFromFile(fileParam)
-        const meta = loaderResult.meta;
-        const columns = loaderResult.columns;
-        
-        service.meta = meta;
-        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.save(meta);
-          await transactionalEntityManager.save(columns);
-          service.status = ServiceStatus.METALOADED;
-          await transactionalEntityManager.save(service);
-        });
-        const updatedMeta = await metaRepo.findOneOrFail({
-          relations: ["service", "columns"],
-          where: {
-            id: meta.id
-          }
-        });
-        resolve(updatedMeta);
+        const service = await serviceRepo.findOneOrFail(params.serviceId);
+        console.log(params);
+        switch(params.dataType) {
+          case 'file':
+            console.log("file")
+            const fileParam:MetaLoaderFileParam = {
+              title: params.title,
+              skip: params.skip,
+              sheet: params.sheet,
+              filePath: params.filePath,
+              originalFileName: params.originalFileName,
+              ext: params.ext
+            }
+            const loaderResult = await _this.loadMetaFromFile(fileParam)
+            const meta = loaderResult.meta;
+            const columns = loaderResult.columns;
+            
+            service.meta = meta;
+            await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+              await transactionalEntityManager.save(meta);
+              await transactionalEntityManager.save(columns);
+              service.status = ServiceStatus.METALOADED;
+              await transactionalEntityManager.save(service);
+            });
+            resolve(service);
+            break;
+          case 'file-url':
+            console.log("file-url")
+            service.status = ServiceStatus.METASCHEDULED;
+            /**
+             * JobScheduler에 등록을 실패 하는 경우에도 Rollback
+             */
+            const newMeta = new Meta();
+            newMeta.remoteFilePath = params.url;
+            newMeta.dataType = params.dataType;
+            newMeta.service = service;
+            newMeta.extension = params.ext;
+            newMeta.title = params.title || "empty title";
+            
+            const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
+            await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+              await transactionalEntityManager.save(service);
+              await transactionalEntityManager.save(newMeta);
+              BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
+            });
+            resolve(service);
+            break;
+          default:
+            throw new Error("Unacceptable dataType");
+        }        
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));
@@ -171,74 +186,6 @@ export class ApiMetaController {
       }
     })
   }
-
-  @Post("/file-url")
-  @Security("jwt")
-  public async postFileUrl(
-    @Request() request: exRequest,
-    @Body() fileUrlParam: FileUrlParam
-  ): Promise<any> {
-    return new Promise(async(resolve, reject) => {
-      try {
-        const serviceRepo = getRepository(Service);
-
-        const service = await serviceRepo.findOneOrFail({
-          where: {
-            id: fileUrlParam.serviceId,
-            user: {
-              id: request.user.id
-            }
-          }
-        })
-
-        service.status = ServiceStatus.METASCHEDULED;
-        /**
-         * JobScheduler에 등록을 실패 하는 경우에도 Rollback
-         */
-
-        const newMeta = new Meta();
-        newMeta.remoteFilePath = fileUrlParam.url;
-        newMeta.dataType = 'file-url';
-        newMeta.service = service;
-        newMeta.extension = fileUrlParam.ext;
-        newMeta.title = fileUrlParam.title || "empty title";
-        
-        const fileName = `${request.user.id}-${service.id}-${Date.now()}.${fileUrlParam.ext}`
-        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.save(service);
-          await transactionalEntityManager.save(newMeta);
-          BullManager.Instance.setMetaLoaderSchedule(fileUrlParam.serviceId, fileUrlParam.url, fileName);
-        });
-        resolve(service);
-      } catch(err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    })
-  }
-
-  private handleFile(request: exRequest): Promise<any> {
-    var storage = multer.diskStorage({
-      destination: function (req, file, cb) {
-        cb(null, property["upload-dist"].localPath)
-      },
-      filename: function (req, file, cb) {
-        const originalFileName:string = file.originalname;
-        const originalFileNameTokens = originalFileName.split(".");
-        const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
-        cb(null, req.user.id + "-" + req.body.serviceId + "-" + Date.now() + "." + ext)
-      }
-    })
-    const multerSingle = multer({ storage }).single("file");
-    return new Promise((resolve, reject) => {
-      multerSingle(request, undefined, async (error) => {
-        if (error) {
-          reject(error);
-        }
-        resolve();
-      });
-    });
-  }
 }
 
 interface postDbmsParams {
@@ -253,11 +200,14 @@ interface postDbmsParams {
   table: string
 }
 
-interface FileUrlParam {
+interface FileParam {
   serviceId: number,
-  url: string,
+  dataType: string,
   ext: string,
   title: string,
   skip: number,
   sheet: number,
+  filePath?: string,
+  originalFileName?: string,
+  url?: string
 }

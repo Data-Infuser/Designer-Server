@@ -542,13 +542,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FileUrlParam": {
+			"FileParam": {
 				"properties": {
 					"serviceId": {
 						"type": "number",
 						"format": "double"
 					},
-					"url": {
+					"dataType": {
 						"type": "string"
 					},
 					"ext": {
@@ -564,11 +564,20 @@
 					"sheet": {
 						"type": "number",
 						"format": "double"
+					},
+					"filePath": {
+						"type": "string"
+					},
+					"originalFileName": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"serviceId",
-					"url",
+					"dataType",
 					"ext",
 					"title",
 					"skip",
@@ -1073,58 +1082,6 @@
 						}
 					}
 				},
-				"description": "File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.\n  body param 정보는 tsoa.json을 참고해주세요.",
-				"tags": [
-					"Meta"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary"
-									},
-									"title": {
-										"type": "string"
-									},
-									"skip": {
-										"type": "integer"
-									},
-									"sheet": {
-										"type": "integer"
-									},
-									"serviceId": {
-										"type": "integer"
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/metas/file-url": {
-			"post": {
-				"operationId": "PostFileUrl",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
 				"tags": [
 					"Meta"
 				],
@@ -1139,7 +1096,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/FileUrlParam"
+								"$ref": "#/components/schemas/FileParam"
 							}
 						}
 					}

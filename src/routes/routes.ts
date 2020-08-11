@@ -201,15 +201,18 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "FileUrlParam": {
+    "FileParam": {
         "dataType": "refObject",
         "properties": {
             "serviceId": { "dataType": "double", "required": true },
-            "url": { "dataType": "string", "required": true },
+            "dataType": { "dataType": "string", "required": true },
             "ext": { "dataType": "string", "required": true },
             "title": { "dataType": "string", "required": true },
             "skip": { "dataType": "double", "required": true },
             "sheet": { "dataType": "double", "required": true },
+            "filePath": { "dataType": "string" },
+            "originalFileName": { "dataType": "string" },
+            "url": { "dataType": "string" },
         },
         "additionalProperties": false,
     },
@@ -432,6 +435,7 @@ export function RegisterRoutes(app: express.Express) {
         function(request: any, response: any, next: any) {
             const args = {
                 request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                params: { "in": "body", "name": "params", "required": true, "ref": "FileParam" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -447,30 +451,6 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.postFile.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/api/metas/file-url',
-        authenticateMiddleware([{ "jwt": [] }]),
-        function(request: any, response: any, next: any) {
-            const args = {
-                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-                fileUrlParam: { "in": "body", "name": "fileUrlParam", "required": true, "ref": "FileUrlParam" },
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new ApiMetaController();
-
-
-            const promise = controller.postFileUrl.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
