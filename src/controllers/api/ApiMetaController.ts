@@ -106,6 +106,7 @@ export class ApiMetaController {
     const metaRepo = getRepository(Meta);
     const metaColumnRepo = getRepository(MetaColumn);
     await this.handleFile(request);
+    const _this = this;
     return new Promise(async function(resolve, reject) {
       try {
         const { title, skip, sheet, serviceId } = request.body;
@@ -124,7 +125,7 @@ export class ApiMetaController {
           originalFileName: originalFileName,
           ext: ext
         }
-        const loaderResult = await this.loadMetaFromFile(fileParam)
+        const loaderResult = await _this.loadMetaFromFile(fileParam)
         const meta = loaderResult.meta;
         const columns = loaderResult.columns;
         
