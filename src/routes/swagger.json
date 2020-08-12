@@ -642,27 +642,13 @@
 					"type": {
 						"$ref": "#/components/schemas/AcceptableType"
 					},
-					"serviceId": {
-						"anyOf": [
-							{
-								"type": "number",
-								"format": "double"
-							},
-							{
-								"type": "string"
-							}
-						]
-					},
 					"order": {
 						"type": "number",
 						"format": "double"
 					},
 					"originalColumnName": {
 						"type": "string"
-					},
-					"createdAt": {},
-					"updatedAt": {},
-					"params": {}
+					}
 				},
 				"required": [
 					"id",
@@ -693,27 +679,6 @@
 							"$ref": "#/components/schemas/MetaColumnSaveParams"
 						},
 						"type": "array"
-					},
-					"originalFileName": {},
-					"filePath": {},
-					"extension": {},
-					"host": {},
-					"port": {},
-					"db": {},
-					"dbUser": {},
-					"pwd": {},
-					"table": {},
-					"dbms": {},
-					"rowCounts": {},
-					"skip": {},
-					"sheet": {},
-					"isActive": {},
-					"createdAt": {},
-					"updatedAt": {},
-					"service": {},
-					"remoteFilePath": {
-						"type": "string",
-						"nullable": true
 					}
 				},
 				"required": [
@@ -743,12 +708,6 @@
 					"entityName": {
 						"type": "string"
 					},
-					"tableName": {},
-					"columnLength": {},
-					"dataCounts": {},
-					"status": {},
-					"createdAt": {},
-					"updatedAt": {},
 					"meta": {
 						"anyOf": [
 							{
@@ -762,9 +721,7 @@
 								"nullable": true
 							}
 						]
-					},
-					"user": {},
-					"application": {}
+					}
 				},
 				"required": [
 					"id",
@@ -790,9 +747,7 @@
 					},
 					"operator": {
 						"$ref": "#/components/schemas/ParamOperatorType"
-					},
-					"createdAt": {},
-					"updatedAt": {}
+					}
 				},
 				"required": [
 					"isRequired",
@@ -831,14 +786,6 @@
 							"type": "array"
 						},
 						"type": "object"
-					},
-					"status": {},
-					"createdAt": {},
-					"updatedAt": {},
-					"user": {},
-					"userId": {
-						"type": "number",
-						"format": "double"
 					}
 				},
 				"required": [

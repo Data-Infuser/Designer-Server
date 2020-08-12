@@ -66,7 +66,6 @@ export class ApiMetaController {
         const loaderResult = await metaLoader.loadMeta(connectionInfo);
         const meta = loaderResult.meta;
         const columns = loaderResult.columns;
-        let updatedMeta;
         
         service.meta = meta;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
@@ -75,10 +74,10 @@ export class ApiMetaController {
           service.status = ServiceStatus.METALOADED;
           await transactionalEntityManager.save(service);
         });
-        updatedMeta = await metaRepo.findOneOrFail({
+        const updatedMeta = await metaRepo.findOneOrFail({
           relations: ["service", "columns"],
           where: {
-            id: updatedMeta.id
+            id: meta.id
           }
         });
         resolve(updatedMeta);

@@ -236,12 +236,8 @@ const models: TsoaRoute.Models = {
             "isSearchable": { "dataType": "boolean", "required": true },
             "size": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }, { "dataType": "enum", "enums": [null] }] },
             "type": { "ref": "AcceptableType", "required": true },
-            "serviceId": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }] },
             "order": { "dataType": "double", "required": true },
             "originalColumnName": { "dataType": "string", "required": true },
-            "createdAt": { "dataType": "any" },
-            "updatedAt": { "dataType": "any" },
-            "params": { "dataType": "any" },
         },
         "additionalProperties": false,
     },
@@ -253,24 +249,6 @@ const models: TsoaRoute.Models = {
             "title": { "dataType": "string", "required": true },
             "dataType": { "dataType": "string", "required": true },
             "columns": { "dataType": "array", "array": { "ref": "MetaColumnSaveParams" }, "required": true },
-            "originalFileName": { "dataType": "any" },
-            "filePath": { "dataType": "any" },
-            "extension": { "dataType": "any" },
-            "host": { "dataType": "any" },
-            "port": { "dataType": "any" },
-            "db": { "dataType": "any" },
-            "dbUser": { "dataType": "any" },
-            "pwd": { "dataType": "any" },
-            "table": { "dataType": "any" },
-            "dbms": { "dataType": "any" },
-            "rowCounts": { "dataType": "any" },
-            "skip": { "dataType": "any" },
-            "sheet": { "dataType": "any" },
-            "isActive": { "dataType": "any" },
-            "createdAt": { "dataType": "any" },
-            "updatedAt": { "dataType": "any" },
-            "service": { "dataType": "any" },
-            "remoteFilePath": { "dataType": "union", "subSchemas": [{ "dataType": "string" }, { "dataType": "enum", "enums": [null] }] },
         },
         "additionalProperties": false,
     },
@@ -283,15 +261,7 @@ const models: TsoaRoute.Models = {
             "method": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
             "entityName": { "dataType": "string", "required": true },
-            "tableName": { "dataType": "any" },
-            "columnLength": { "dataType": "any" },
-            "dataCounts": { "dataType": "any" },
-            "status": { "dataType": "any" },
-            "createdAt": { "dataType": "any" },
-            "updatedAt": { "dataType": "any" },
             "meta": { "dataType": "union", "subSchemas": [{ "ref": "MetaSaveParams" }, { "dataType": "enum", "enums": [null] }] },
-            "user": { "dataType": "any" },
-            "application": { "dataType": "any" },
         },
         "additionalProperties": false,
     },
@@ -303,8 +273,6 @@ const models: TsoaRoute.Models = {
             "description": { "dataType": "string" },
             "isRequired": { "dataType": "boolean", "required": true },
             "operator": { "ref": "ParamOperatorType", "required": true },
-            "createdAt": { "dataType": "any" },
-            "updatedAt": { "dataType": "any" },
         },
         "additionalProperties": false,
     },
@@ -318,11 +286,6 @@ const models: TsoaRoute.Models = {
             "description": { "dataType": "string", "required": true },
             "services": { "dataType": "array", "array": { "ref": "ServiceSaveParams" }, "required": true },
             "params": { "dataType": "nestedObjectLiteral", "nestedProperties": {}, "additionalProperties": { "dataType": "array", "array": { "ref": "MetaParamSaveParams" } }, "required": true },
-            "status": { "dataType": "any" },
-            "createdAt": { "dataType": "any" },
-            "updatedAt": { "dataType": "any" },
-            "user": { "dataType": "any" },
-            "userId": { "dataType": "double" },
         },
         "additionalProperties": false,
     },
@@ -1180,15 +1143,15 @@ export function RegisterRoutes(app: express.Express) {
                 case 'request':
                     return request;
                 case 'query':
-                    return validationService.ValidateParam(args[key], request.query[name], name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "throw-on-extras" });
+                    return validationService.ValidateParam(args[key], request.query[name], name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "silently-remove-extras" });
                 case 'path':
-                    return validationService.ValidateParam(args[key], request.params[name], name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "throw-on-extras" });
+                    return validationService.ValidateParam(args[key], request.params[name], name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "silently-remove-extras" });
                 case 'header':
-                    return validationService.ValidateParam(args[key], request.header(name), name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "throw-on-extras" });
+                    return validationService.ValidateParam(args[key], request.header(name), name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "silently-remove-extras" });
                 case 'body':
-                    return validationService.ValidateParam(args[key], request.body, name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "throw-on-extras" });
+                    return validationService.ValidateParam(args[key], request.body, name, fieldErrors, undefined, { "noImplicitAdditionalProperties": "silently-remove-extras" });
                 case 'body-prop':
-                    return validationService.ValidateParam(args[key], request.body[name], name, fieldErrors, 'body.', { "noImplicitAdditionalProperties": "throw-on-extras" });
+                    return validationService.ValidateParam(args[key], request.body[name], name, fieldErrors, 'body.', { "noImplicitAdditionalProperties": "silently-remove-extras" });
                 case 'res':
                     return responder(response);
             }

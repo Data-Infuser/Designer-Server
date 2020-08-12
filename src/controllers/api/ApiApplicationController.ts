@@ -284,7 +284,6 @@ export class ApiApplicationController {
           relations: ["meta", "meta.columns", "meta.columns.params"]
         });
 
-        
         for(const service of services) {
           if(!service.meta) continue;
           const modifiedService = applicationSavePrams.services.find(el => el.id === service.id);
@@ -414,12 +413,7 @@ interface ApplicationSaveParams {
   services: ServiceSaveParams[],
   params: {
     [id:string]: MetaParamSaveParams[]
-  },
-  status?: any,
-  createdAt?: any,
-  updatedAt?: any,
-  user?: any,
-  userId?: number
+  }
 }
 
 interface ServiceSaveParams {
@@ -428,15 +422,7 @@ interface ServiceSaveParams {
   method: string,
   description: string,
   entityName: string,
-  tableName?: any,
-  columnLength?: any,
-  dataCounts?: any,
-  status?: any,
-  createdAt?: any,
-  updatedAt?: any,
   meta?: MetaSaveParams|null
-  user?: any,
-  application?: any
 }
 
 interface MetaSaveParams {
@@ -444,24 +430,6 @@ interface MetaSaveParams {
   title: string,
   dataType: string,
   columns: MetaColumnSaveParams[]
-  originalFileName?: any,
-  filePath?: any,
-  extension?: any,
-  host?: any,
-  port?: any,
-  db?: any,
-  dbUser?: any,
-  pwd?: any,
-  table?: any,
-  dbms?: any,
-  rowCounts?: any,
-  skip?: any,
-  sheet?: any,
-  isActive?: any,
-  createdAt?: any,
-  updatedAt?: any,
-  service?: any,
-  remoteFilePath?: string|null,
 }
 
 interface MetaColumnSaveParams {
@@ -471,21 +439,15 @@ interface MetaColumnSaveParams {
   isSearchable: boolean,
   size?: number|string|null,
   type: AcceptableType,
-  serviceId?: number|string,
   order: number,
   originalColumnName: string,
-  createdAt?: any,
-  updatedAt?: any,
-  params?: any
 }
 
 interface MetaParamSaveParams {
   id?: number,
   description?: string,
   isRequired: boolean,
-  operator: ParamOperatorType,
-  createdAt?: any,
-  updatedAt?: any
+  operator: ParamOperatorType
 }
 
 interface TrafficConfigParam {
