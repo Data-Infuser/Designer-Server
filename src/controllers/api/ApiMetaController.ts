@@ -1,11 +1,9 @@
-import { Request as exRequest, Response, NextFunction, response, Router } from "express";
-import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
-import { Tags, Route, Post, Security, Request, Body, Delete, Path } from "tsoa";
+import { Request as exRequest } from "express";
+import { getRepository, getManager } from "typeorm";
+import { Tags, Route, Post, Security, Request, Body } from "tsoa";
 import { Service, ServiceStatus } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta } from '../../entity/manager/Meta';
-import { MetaColumn } from "../../entity/manager/MetaColumn";
-import multer from "multer";
 import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
 import MetaLoader from "../../lib/MetaLoader";
 import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
@@ -29,7 +27,6 @@ export class ApiMetaController {
     return new Promise(async function(resolve, reject) {
       const metaRepo = getRepository(Meta);
       const serviceRepo = getRepository(Service);
-      const metaColumnRepo = getRepository(MetaColumn);
       const { serviceId, title, dbms, host, port, database, user, password, table } = dbmsParams;
       if(title.length == 0 
         || dbms.length == 0 

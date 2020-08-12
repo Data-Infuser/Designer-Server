@@ -26,6 +26,7 @@ export class Application {
   grpcServer;
   auth;
   constructor() {
+    console.log("Start::constructor")
     this.app = express();
     this.app.use(cors());
     this.app.use(bodyParser.json());
@@ -42,7 +43,7 @@ export class Application {
       logToConsole: false
     }));
     this.app.use(express.static('./src/public'));
-
+    console.log("Start::Session")
     this.app.use(session({
       resave: true,
       saveUninitialized: true,
@@ -54,8 +55,9 @@ export class Application {
       res.locals.flashMessages = req.flash();
       next();
     });
-    
+    console.log("Start::Morgan")
     this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] :response-time ms"));
+    console.log("Success::constructor")
   }
 
   setupDbAndServer = async () => {

@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -r ts-node/register ./test/*.test.ts",
-    "start": "tsoa spec-and-routes && set debug=* && ts-node-dev --ignore-watch node_modules --respawn --transpile-only ./src/index.ts",
+    "start": "tsoa spec-and-routes && set debug=* && ts-node-dev --debug --ignore-watch node_modules --respawn --transpile-only ./src/index.ts",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
     "build": "tsc -p . && cp -r ./src/lib/infuser-protobuf ./build/src/lib"
