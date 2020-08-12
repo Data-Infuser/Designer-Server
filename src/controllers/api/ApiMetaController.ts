@@ -12,6 +12,7 @@ import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy"
 import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
 import BullManager from '../../util/BullManager';
 import MetaLoaderFileParam from "../../lib/interfaces/MetaLoaderFileParam";
+import { MetaColumn } from "../../entity/manager/MetaColumn";
 
 const property = require("../../../property.json")
 @Route("/api/metas")
@@ -105,7 +106,6 @@ export class ApiMetaController {
     return new Promise(async function(resolve, reject) {
       try {
         const service = await serviceRepo.findOneOrFail(params.serviceId);
-        console.log(params);
         switch(params.dataType) {
           case 'file':
             console.log("file")
@@ -118,8 +118,8 @@ export class ApiMetaController {
               ext: params.ext
             }
             const loaderResult = await _this.loadMetaFromFile(fileParam)
-            const meta = loaderResult.meta;
-            const columns = loaderResult.columns;
+            const meta: Meta = loaderResult.meta;
+            const columns: MetaColumn[] = loaderResult.columns;
             
             service.meta = meta;
             await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
@@ -128,7 +128,13 @@ export class ApiMetaController {
               service.status = ServiceStatus.METALOADED;
               await transactionalEntityManager.save(service);
             });
-            resolve(service);
+            const response = await serviceRepo.findOneOrFail({
+              relations: ["meta", "meta.columns"],
+              where: {
+                id: service.id
+              }
+            })
+            resolve(response);
             break;
           case 'file-url':
             console.log("file-url")
