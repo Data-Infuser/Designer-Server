@@ -23,7 +23,7 @@ export class ApiMetaController {
   @Security("jwt")
   public async postDbms(
     @Request() request: exRequest,
-    @Body() dbmsParams: postDbmsParams
+    @Body() dbmsParams: DbmsParams
   ): Promise<Meta> {
     return new Promise(async function(resolve, reject) {
       const metaRepo = getRepository(Meta);
@@ -98,7 +98,7 @@ export class ApiMetaController {
   @Security("jwt")
   public async postFile(
     @Request() request: exRequest,
-    @Body() params: FileParam
+    @Body() params: FileParams
   ): Promise<any> {
     const serviceRepo = getRepository(Service);
     const _this = this;
@@ -107,7 +107,6 @@ export class ApiMetaController {
         const service = await serviceRepo.findOneOrFail(params.serviceId);
         switch(params.dataType) {
           case 'file':
-            console.log("file")
             const fileParam:MetaLoaderFileParam = {
               title: params.title,
               skip: params.skip,
@@ -136,7 +135,6 @@ export class ApiMetaController {
             resolve(response);
             break;
           case 'file-url':
-            console.log("file-url")
             service.status = ServiceStatus.METASCHEDULED;
             /**
              * JobScheduler에 등록을 실패 하는 경우에도 Rollback
@@ -190,7 +188,7 @@ export class ApiMetaController {
   }
 }
 
-interface postDbmsParams {
+export interface DbmsParams {
   serviceId: number,
   title: string,
   dbms: string,
@@ -202,7 +200,7 @@ interface postDbmsParams {
   table: string
 }
 
-interface FileParam {
+export interface FileParams {
   serviceId: number,
   dataType: string,
   ext: string,

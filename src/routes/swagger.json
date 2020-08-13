@@ -497,7 +497,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"postDbmsParams": {
+			"DbmsParams": {
 				"properties": {
 					"serviceId": {
 						"type": "number",
@@ -542,7 +542,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FileParam": {
+			"FileParams": {
 				"properties": {
 					"serviceId": {
 						"type": "number",
@@ -921,6 +921,12 @@
 					"applicationId": {
 						"type": "number",
 						"format": "double"
+					},
+					"fileParams": {
+						"$ref": "#/components/schemas/FileParams"
+					},
+					"dbmsParams": {
+						"$ref": "#/components/schemas/DbmsParams"
 					}
 				},
 				"required": [
@@ -1009,7 +1015,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/postDbmsParams"
+								"$ref": "#/components/schemas/DbmsParams"
 							}
 						}
 					}
@@ -1043,7 +1049,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/FileParam"
+								"$ref": "#/components/schemas/FileParams"
 							}
 						}
 					}

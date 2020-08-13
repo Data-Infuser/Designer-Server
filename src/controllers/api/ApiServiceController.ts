@@ -6,6 +6,11 @@ import { Tags, Route, Post, Security, Request, Body, Delete, Path, Put } from "t
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
+import { FileParams, DbmsParams } from './ApiMetaController';
+import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
+import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
+import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy";
+import MetaLoader from "../../lib/MetaLoader";
 
 @Route("/api/services")
 @Tags("Service")
@@ -55,7 +60,13 @@ export class ApiServiceController {
         reject(new ApplicationError(400, "Need all params"));
       }
       try {
-        const service = await serviceRepo.findOneOrFail(serviceId);
+        console.log(serviceParams);
+        const service = await serviceRepo.findOneOrFail({
+          relations: ["meta", "meta.columns"],
+          where: {
+            id: serviceId
+          }
+        });
         service.method = method;
         service.entityName = entityName;
         service.description = description;
@@ -79,7 +90,7 @@ export class ApiServiceController {
       const serviceRepo = getRepository(Service);
       try {
         const service = await serviceRepo.findOneOrFail({
-          relations: ["application"],
+          relations: ["application", "meta"],
           where: {
             id: serviceId,
             user: {
@@ -88,7 +99,10 @@ export class ApiServiceController {
           }
         })
         const applicationId = service.application.id;
-        await serviceRepo.delete(serviceId);
+        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+          await transactionalEntityManager.remove(service.meta);
+          await transactionalEntityManager.remove(service);
+        });
         resolve({
           message: "delete success",
           serviceId: serviceId,
@@ -107,5 +121,7 @@ interface ServiceParams {
   method: string,
   entityName: string,
   description: string,
-  applicationId?: number
+  applicationId?: number,
+  fileParams?: FileParams,
+  dbmsParams?: DbmsParams
 }

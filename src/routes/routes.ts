@@ -185,7 +185,7 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "postDbmsParams": {
+    "DbmsParams": {
         "dataType": "refObject",
         "properties": {
             "serviceId": { "dataType": "double", "required": true },
@@ -201,7 +201,7 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "FileParam": {
+    "FileParams": {
         "dataType": "refObject",
         "properties": {
             "serviceId": { "dataType": "double", "required": true },
@@ -338,6 +338,8 @@ const models: TsoaRoute.Models = {
             "entityName": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
             "applicationId": { "dataType": "double" },
+            "fileParams": { "ref": "FileParams" },
+            "dbmsParams": { "ref": "DbmsParams" },
         },
         "additionalProperties": false,
     },
@@ -374,7 +376,7 @@ export function RegisterRoutes(app: express.Express) {
         function(request: any, response: any, next: any) {
             const args = {
                 request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-                dbmsParams: { "in": "body", "name": "dbmsParams", "required": true, "ref": "postDbmsParams" },
+                dbmsParams: { "in": "body", "name": "dbmsParams", "required": true, "ref": "DbmsParams" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -398,7 +400,7 @@ export function RegisterRoutes(app: express.Express) {
         function(request: any, response: any, next: any) {
             const args = {
                 request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-                params: { "in": "body", "name": "params", "required": true, "ref": "FileParam" },
+                params: { "in": "body", "name": "params", "required": true, "ref": "FileParams" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
