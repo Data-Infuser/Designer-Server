@@ -6,6 +6,7 @@ import { getRepository, getManager } from 'typeorm';
 import { Service, ServiceStatus } from '../entity/manager/Service';
 import MetaLoaderFileParam from '../lib/interfaces/MetaLoaderFileParam';
 import { ApiMetaController } from '../controllers/api/ApiMetaController';
+import { Stage } from '../entity/manager/Stage';
 
 const property = require("../../property.json");
 
@@ -76,12 +77,12 @@ class BullManager {
     return this._instance;
   }
 
-  setDataLoaderSchedule = async(application: Application):Promise<any> => {
+  setDataLoaderSchedule = async(stage: Stage):Promise<any> => {
     return new Promise(async (resolve, reject) => {
       try {    
         await this.dataLoaderQueue.add({
-          id: application.id,
-          userId: application.user.id
+          id: stage.id,
+          userId: stage.application.user.id
         })
         resolve();
       } catch (err) {

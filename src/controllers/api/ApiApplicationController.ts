@@ -9,6 +9,7 @@ import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 import { TrafficConfig } from "../../entity/manager/TrafficConfig";
+import { Stage } from "../../entity/manager/Stage";
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -153,18 +154,18 @@ export class ApiApplicationController {
     })
   }
 
-  @Post("/{id}/deploy")
+  @Post("/{id}/stages")
   @Security("jwt")
-  public async deploy(
+  public async postStage(
     @Request() request: exRequest,
     @Path("id") id: number
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const applicationRepo = getRepository(Application);
-      const serviceRepo = getRepository(Service);
+      const stageRepo = getRepository(Stage);
       try {
         const application = await applicationRepo.findOneOrFail({
-          relations: ["user", "services"],
+          relations: ["user", "services", "services.stage"],
           where: {
             id: id,
             user: {
@@ -172,35 +173,28 @@ export class ApiApplicationController {
             }
           }
         });
-        let errorMessage;
-        if (application.isDeployed) {
-          errorMessage = "이미 배포된 어플리케이션 입니다."
-        } else if (!application.isDeployable) {
-          errorMessage = "완성되지 않은 명세가 있습니다."
-        }
-
-        if(errorMessage) {
-          reject(new ApplicationError(401, errorMessage));
-          return;
-        }
-
         
-        application.status = ApplicationStatus.SCHEDULED;
-        for(const service of application.services) {
-          service.status = ServiceStatus.SCHEDULED
-        }
+        const newStage:Stage = application.createStage(`V1-${Date.now()}`);
 
         if(!await BullManager.Instance.dataLoaderQueue.isReady()) {
           reject(new ApplicationError(401, "Job Queue가 준비되지 않았습니다."));
           return;
         }
-        await getManager().transaction(async transactionEntityManager => {
-          await applicationRepo.save(application);
-          await serviceRepo.save(application.services);
-          BullManager.Instance.setDataLoaderSchedule(application);
-        });
 
-        resolve(application);
+        await getManager().transaction(async transactionEntityManager => {
+          await transactionEntityManager.save(newStage);
+          newStage.services.forEach(el => {
+            el.stage = newStage
+          });
+          await transactionEntityManager.save(newStage.services);
+          BullManager.Instance.setDataLoaderSchedule(newStage);
+        });
+        resolve(await stageRepo.findOneOrFail({
+          relations: ["services", "application"],
+          where: {
+            id: newStage.id
+          }
+        }));
       } catch (err) {
         console.error(err);
         reject(new ApplicationError(500, err.message));

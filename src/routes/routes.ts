@@ -54,11 +54,11 @@ const models: TsoaRoute.Models = {
             "description": { "dataType": "string", "required": true },
             "entityName": { "dataType": "string", "required": true },
             "tableName": { "dataType": "string", "required": true },
-            "columnLength": { "dataType": "double", "required": true },
-            "dataCounts": { "dataType": "double", "required": true },
             "status": { "dataType": "string", "required": true },
             "user": { "ref": "User", "required": true },
             "application": { "ref": "Application", "required": true },
+            "stage": { "ref": "Stage", "required": true },
+            "stageId": { "dataType": "double", "required": true },
             "meta": { "ref": "Meta", "required": true },
             "columns": { "dataType": "array", "array": { "ref": "ServiceColumn" }, "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
@@ -79,6 +79,7 @@ const models: TsoaRoute.Models = {
             "user": { "ref": "User", "required": true },
             "services": { "dataType": "array", "array": { "ref": "Service" }, "required": true },
             "trafficConfigs": { "dataType": "array", "array": { "ref": "TrafficConfig" }, "required": true },
+            "stages": { "dataType": "array", "array": { "ref": "Stage" }, "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },
@@ -92,6 +93,20 @@ const models: TsoaRoute.Models = {
             "application": { "ref": "Application", "required": true },
             "type": { "dataType": "string", "required": true },
             "maxCount": { "dataType": "double", "required": true },
+            "createdAt": { "dataType": "datetime", "required": true },
+            "updatedAt": { "dataType": "datetime", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Stage": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "status": { "dataType": "string", "required": true },
+            "application": { "ref": "Application", "required": true },
+            "services": { "dataType": "array", "array": { "ref": "Service" }, "required": true },
+            "name": { "dataType": "string", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },
@@ -539,7 +554,7 @@ export function RegisterRoutes(app: express.Express) {
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/api/applications/:id/deploy',
+    app.post('/api/applications/:id/stages',
         authenticateMiddleware([{ "jwt": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
@@ -559,7 +574,7 @@ export function RegisterRoutes(app: express.Express) {
             const controller = new ApiApplicationController();
 
 
-            const promise = controller.deploy.apply(controller, validatedArgs as any);
+            const promise = controller.postStage.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

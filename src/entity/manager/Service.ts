@@ -4,7 +4,7 @@ import { User } from "./User";
 import { Meta } from "./Meta";
 import { ServiceColumn } from "./ServiceColumn";
 import { Application } from "./Application";
-
+import { Stage } from "./Stage";
 
 export enum HttpMethod {
   GET = "get",
@@ -53,12 +53,6 @@ export class Service {
   @Length(1, 100)
   tableName: string;
 
-  @Column({nullable: true})
-  columnLength: number;
-
-  @Column({nullable: true})
-  dataCounts: number;
-
   @Column({
     type: "enum",
     enum: ServiceStatus,
@@ -66,11 +60,17 @@ export class Service {
   })
   status: string;
 
-  @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(type => User, user => user.metas, { nullable: false, onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne(type => Application, app => app.services, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(type => Application, app => app.services, { nullable: false, onDelete: 'CASCADE' })
   application: Application;
+
+  @ManyToOne(type => Stage, stage => stage.services, { nullable: true, onDelete: 'SET NULL' })
+  stage: Stage;
+
+  @Column({nullable: true})
+  stageId: number;
 
   @OneToOne(type => Meta, {nullable: true, onDelete: "SET NULL"})
   @JoinColumn()
@@ -93,22 +93,5 @@ export class Service {
 
   get fullUrl(): string {
     return `/api/${this.application.nameSpace}/${this.entityName}`
-  }
-
-  get statusString(): string {
-    switch(this.status) {
-      case ServiceStatus.DEFAULT:
-        return "메타 설정 필요"
-      case ServiceStatus.METALOADED:
-        return "메타 설정 완료"
-      case ServiceStatus.SCHEDULED:
-        return "스케쥴 등록 완료"
-      case ServiceStatus.LOADED:
-        return "데이터 적재 완료"
-      case ServiceStatus.FAILED:
-        return "데이터 적재 실패"
-      default:
-        return "-"
-    }
   }
 }

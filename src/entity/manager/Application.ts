@@ -3,6 +3,7 @@ import { Length, IsNotEmpty, NotContains } from "class-validator";
 import { User } from "./User";
 import { Service, ServiceStatus } from "./Service";
 import { TrafficConfig } from "./TrafficConfig";
+import { Stage, StageStatus } from './Stage';
 
 export enum ApplicationStatus {
   // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
@@ -50,6 +51,9 @@ export class Application {
   @OneToMany(type => TrafficConfig, trafficConfig => trafficConfig.application)
   trafficConfigs: TrafficConfig[];
 
+  @OneToMany(type => Stage, stage => stage.application)
+  stages: Stage[];
+
   @Column()
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
@@ -68,5 +72,17 @@ export class Application {
 
   get isDeployed():boolean {
     return this.status == ApplicationStatus.DEPLOYED ? true : false
+  }
+
+  createStage(name) {
+    if(!this.services || this.services.length === 0) throw new Error("Service가 존재하지 않습니다.");
+
+    const newStage = new Stage();
+    newStage.name = name;
+    newStage.application = this;
+    newStage.status = StageStatus.SCHEDULED;
+    newStage.services = this.services.filter(el => el.stage !== null || el.stage !== undefined);
+
+    return newStage;
   }
 }
