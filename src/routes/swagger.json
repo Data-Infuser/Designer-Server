@@ -654,6 +654,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"StageParams": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"MetaColumnSaveParams": {
 				"properties": {
 					"id": {
@@ -1310,7 +1322,17 @@
 							"type": "number"
 						}
 					}
-				]
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/StageParams"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/applications/{id}/undeploy": {

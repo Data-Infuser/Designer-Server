@@ -84,7 +84,7 @@ export class ApiApplicationController {
       const appRepo = getRepository(Application);
     try {
       const app = await appRepo.findOneOrFail({
-        relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
+        relations: ["stages", "services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
         where: {
           id: applicationId,
           user: {
@@ -158,7 +158,8 @@ export class ApiApplicationController {
   @Security("jwt")
   public async postStage(
     @Request() request: exRequest,
-    @Path("id") id: number
+    @Path("id") id: number,
+    @Body() stageParams: StageParams
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const applicationRepo = getRepository(Application);
@@ -174,7 +175,7 @@ export class ApiApplicationController {
           }
         });
         
-        const newStage:Stage = application.createStage(`V1-${Date.now()}`);
+        const newStage:Stage = application.createStage(stageParams.name);
 
         if(!await BullManager.Instance.dataLoaderQueue.isReady()) {
           reject(new ApplicationError(401, "Job Queue가 준비되지 않았습니다."));
@@ -447,4 +448,8 @@ interface MetaParamSaveParams {
 interface TrafficConfigParam {
   type: string,
   maxCount: number
+}
+
+interface StageParams {
+  name: string
 }
