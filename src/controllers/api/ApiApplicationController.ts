@@ -218,7 +218,12 @@ export class ApiApplicationController {
       const newPrams: MetaParam[] = []
       try {
         //application
-        const application = await applicationRepo.findOneOrFail(id)
+        const application = await applicationRepo.findOneOrFail({
+          relations: ['stages'],
+          where: {
+            id: id
+          }
+        })
 
         // if (application.status !== ApplicationStatus.IDLE) {
         //   reject(new ApplicationError(400, "It's not IDLE state application"));
