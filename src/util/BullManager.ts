@@ -1,7 +1,7 @@
 import express from 'express';
 import bullBoard from 'bull-board';
 import Bull from 'bull';
-import { Application, ApplicationStatus } from '../entity/manager/Application';
+import { Application } from '../entity/manager/Application';
 import { getRepository, getManager } from 'typeorm';
 import { Service, ServiceStatus } from '../entity/manager/Service';
 import MetaLoaderFileParam from '../lib/interfaces/MetaLoaderFileParam';

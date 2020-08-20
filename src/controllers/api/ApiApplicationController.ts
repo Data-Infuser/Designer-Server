@@ -1,7 +1,7 @@
 import { getRepository, getManager, In } from "typeorm";
 import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete, Query } from "tsoa";
 import { Request as exRequest } from "express";
-import { Application, ApplicationStatus } from "../../entity/manager/Application";
+import { Application } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
 import { Service, ServiceStatus } from '../../entity/manager/Service';
 import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
@@ -203,51 +203,51 @@ export class ApiApplicationController {
     })
   }
 
-  @Post("/{id}/undeploy")
-  @Security("jwt")
-  public async undeploy(
-    @Request() request: exRequest,
-    @Path("id") id: number
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const applicationRepo = getRepository(Application);
-      try {
-        const application = await applicationRepo.findOneOrFail({
-          relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
-          where: {
-            id: id,
-            userId: request.user.id
-          }
-        });
+  // @Post("/{id}/undeploy")
+  // @Security("jwt")
+  // public async undeploy(
+  //   @Request() request: exRequest,
+  //   @Path("id") id: number
+  // ): Promise<any> {
+  //   return new Promise(async (resolve, reject) => {
+  //     const applicationRepo = getRepository(Application);
+  //     try {
+  //       const application = await applicationRepo.findOneOrFail({
+  //         relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
+  //         where: {
+  //           id: id,
+  //           userId: request.user.id
+  //         }
+  //       });
 
-        application.services.forEach( (service) => {
-          service.status = ServiceStatus.METALOADED;
-        })
+  //       application.services.forEach( (service) => {
+  //         service.status = ServiceStatus.METALOADED;
+  //       })
 
-        if(application.status !== ApplicationStatus.DEPLOYED) {
-          reject(new ApplicationError(400, "It's not a deployed Application"));
-          return;
-        }
+  //       if(application.status !== ApplicationStatus.DEPLOYED) {
+  //         reject(new ApplicationError(400, "It's not a deployed Application"));
+  //         return;
+  //       }
 
-        application.status = ApplicationStatus.IDLE;
+  //       application.status = ApplicationStatus.IDLE;
 
-        await getManager().transaction(async transactionEntityManager => {
-          await transactionEntityManager.save(application);
-          await transactionEntityManager.save(application.services);
-          await transactionEntityManager.delete('ServiceColumn', {
-            service: {
-              id: In(application.services.map((service) => service.id))
-            }
-          })
-        });
+  //       await getManager().transaction(async transactionEntityManager => {
+  //         await transactionEntityManager.save(application);
+  //         await transactionEntityManager.save(application.services);
+  //         await transactionEntityManager.delete('ServiceColumn', {
+  //           service: {
+  //             id: In(application.services.map((service) => service.id))
+  //           }
+  //         })
+  //       });
 
-        resolve(application);
-      } catch(err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    });
-  }
+  //       resolve(application);
+  //     } catch(err) {
+  //       console.error(err);
+  //       reject(new ApplicationError(500, err.message));
+  //     }
+  //   });
+  // }
 
   @Post("/{id}/save")
   @Security("jwt")
@@ -266,10 +266,10 @@ export class ApiApplicationController {
         //application
         const application = await applicationRepo.findOneOrFail(id)
 
-        if (application.status !== ApplicationStatus.IDLE) {
-          reject(new ApplicationError(400, "It's not IDLE state application"));
-          return;
-        }
+        // if (application.status !== ApplicationStatus.IDLE) {
+        //   reject(new ApplicationError(400, "It's not IDLE state application"));
+        //   return;
+        // }
         application.description = applicationSavePrams.description;
         application.nameSpace = applicationSavePrams.nameSpace;
         application.title = applicationSavePrams.title;

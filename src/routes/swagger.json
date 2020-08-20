@@ -134,9 +134,6 @@
 					"description": {
 						"type": "string"
 					},
-					"status": {
-						"type": "string"
-					},
 					"userId": {
 						"type": "number",
 						"format": "double"
@@ -176,7 +173,6 @@
 					"nameSpace",
 					"title",
 					"description",
-					"status",
 					"userId",
 					"user",
 					"services",
@@ -1333,40 +1329,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/api/applications/{id}/undeploy": {
-			"post": {
-				"operationId": "Undeploy",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
 			}
 		},
 		"/api/applications/{id}/save": {

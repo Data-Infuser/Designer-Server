@@ -5,15 +5,6 @@ import { Service, ServiceStatus } from "./Service";
 import { TrafficConfig } from "./TrafficConfig";
 import { Stage, StageStatus } from './Stage';
 
-export enum ApplicationStatus {
-  // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
-  IDLE = "idle",
-  SCHEDULED = "scheduled",
-  LOADED = "loaded",
-  FAILED = "failed" ,
-  DEPLOYED = "deployed"
-}
-
 @Entity()
 @Unique("application_namespace_unique", ["nameSpace"])
 export class Application {
@@ -31,13 +22,6 @@ export class Application {
 
   @Column({type: "text"})
   description: string;
-
-  @Column({
-    type: "enum",
-    enum: ApplicationStatus,
-    default: ApplicationStatus.IDLE
-  })
-  status: string;
 
   @Column()
   userId: number;
@@ -61,18 +45,6 @@ export class Application {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
-
-  get isDeployable(): boolean {
-    if(this.services.length == 0) return false;
-    this.services.forEach(service => {
-      if(service.status == ServiceStatus.METALOADED) return false
-    });
-    return true; 
-  }
-
-  get isDeployed():boolean {
-    return this.status == ApplicationStatus.DEPLOYED ? true : false
-  }
 
   createStage(name) {
     if(!this.services || this.services.length === 0) throw new Error("Service가 존재하지 않습니다.");

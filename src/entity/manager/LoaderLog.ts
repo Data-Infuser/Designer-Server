@@ -1,5 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne} from "typeorm";
 import { Application } from "./Application";
+import { Stage } from "./Stage";
 
 /**
  * @tsoaModel
@@ -10,9 +11,9 @@ export class LoaderLog {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(type => Application)
+  @ManyToOne(type => Stage)
   @JoinColumn()
-  application: Application;
+  stage: Stage;
 
   @Column({type: "text", nullable: true})
   content: string;
