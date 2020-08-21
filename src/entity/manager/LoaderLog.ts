@@ -11,7 +11,7 @@ export class LoaderLog {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(type => Stage)
+  @ManyToOne(type => Stage, {onDelete:'CASCADE'})
   @JoinColumn()
   stage: Stage;
 
