@@ -188,7 +188,9 @@ export class ApiApplicationController {
             el.stage = newStage
           });
           await transactionEntityManager.save(newStage.services);
+          console.log(newStage);
           BullManager.Instance.setDataLoaderSchedule(newStage);
+          console.log("done");
         });
         resolve(await stageRepo.findOneOrFail({
           relations: ["services", "application"],

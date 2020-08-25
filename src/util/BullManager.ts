@@ -80,7 +80,7 @@ class BullManager {
   setDataLoaderSchedule = async(stage: Stage):Promise<any> => {
     return new Promise(async (resolve, reject) => {
       try {    
-        await this.dataLoaderQueue.add({
+        const job = await this.dataLoaderQueue.add({
           id: stage.id,
           userId: stage.application.user.id
         })

@@ -123,6 +123,7 @@ const models: TsoaRoute.Models = {
             "originalFileName": { "dataType": "string", "required": true },
             "remoteFilePath": { "dataType": "string", "required": true },
             "filePath": { "dataType": "string", "required": true },
+            "encoding": { "dataType": "string", "required": true },
             "extension": { "dataType": "string", "required": true },
             "host": { "dataType": "string", "required": true },
             "port": { "dataType": "string", "required": true },

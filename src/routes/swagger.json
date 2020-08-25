@@ -283,6 +283,9 @@
 					"filePath": {
 						"type": "string"
 					},
+					"encoding": {
+						"type": "string"
+					},
 					"extension": {
 						"type": "string"
 					},
@@ -350,6 +353,7 @@
 					"originalFileName",
 					"remoteFilePath",
 					"filePath",
+					"encoding",
 					"extension",
 					"host",
 					"port",

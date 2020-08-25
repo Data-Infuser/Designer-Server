@@ -39,11 +39,9 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
           throw err;
         })
         .on('data', (chunk) => {
-          console.log(chunk);
           const count = chunk.toString().split('\n').length - 1;
           rowCounts = rowCounts + count;
           chunks.push(chunk);
-          console.log(rowCounts);
           if(rowCounts >= MAX_LINE) fileStream.close();
         })
         .on('end', () => {
@@ -59,7 +57,6 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
           if(records.length < 1) {
             reject(new Error('파일 정보가 잘못되었습니다.'));
           }
-          console.log(file);
           const header = records[0];
 
           const meta = new Meta();
@@ -69,6 +66,7 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
           meta.extension = ext;
           meta.skip = skip;
           meta.sheet = sheet;
+          meta.encoding = encoding;
           
           const types = this.checkTypes(records);
 

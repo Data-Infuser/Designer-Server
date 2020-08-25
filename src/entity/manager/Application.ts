@@ -54,6 +54,9 @@ export class Application {
     newStage.application = this;
     newStage.status = StageStatus.SCHEDULED;
     newStage.services = this.services.filter(el => el.stage === null || el.stage === undefined);
+    newStage.services.forEach(element => {
+      element.status = ServiceStatus.SCHEDULED;
+    });
     return newStage;
   }
 }

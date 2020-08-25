@@ -31,6 +31,9 @@ export class Meta {
   filePath: string;
 
   @Column({nullable: true})
+  encoding: string;
+
+  @Column({nullable: true})
   @Length(1, 20)
   extension: string;
 

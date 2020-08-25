@@ -11,7 +11,7 @@
       "experimentalDecorators": true,
       "sourceMap": true,
       "esModuleInterop": true,
-      "resolveJsonModule": false,
+      "resolveJsonModule": true,
       "composite": true,
       "types": ["node"],
       "allowJs": false
