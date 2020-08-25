@@ -26,7 +26,6 @@ class XlsxMetaLoadStrategy implements MetaLoadStrategy {
         const loadedWorkbook = await new Excel.Workbook().xlsx.readFile(filePath);
         const worksheet = loadedWorkbook.worksheets[sheet]
         const totalRowCount = worksheet.rowCount
-
         const header = worksheet.getRow(skip + 1).values;
 
         const meta = new Meta();

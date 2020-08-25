@@ -36,6 +36,13 @@ export class MetaColumn {
   })
   type: AcceptableType;
 
+  @Column({
+    type: "enum",
+    enum: AcceptableType,
+    default: AcceptableType.VARCHAR
+  })
+  originalType: AcceptableType;
+
   @Column({ nullable: true })
   size: number;
 

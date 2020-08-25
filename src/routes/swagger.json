@@ -441,6 +441,9 @@
 					"type": {
 						"$ref": "#/components/schemas/AcceptableType"
 					},
+					"originalType": {
+						"$ref": "#/components/schemas/AcceptableType"
+					},
 					"size": {
 						"type": "number",
 						"format": "double"
@@ -478,6 +481,7 @@
 					"originalColumnName",
 					"columnName",
 					"type",
+					"originalType",
 					"size",
 					"order",
 					"isHidden",

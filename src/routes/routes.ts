@@ -170,6 +170,7 @@ const models: TsoaRoute.Models = {
             "originalColumnName": { "dataType": "string", "required": true },
             "columnName": { "dataType": "string", "required": true },
             "type": { "ref": "AcceptableType", "required": true },
+            "originalType": { "ref": "AcceptableType", "required": true },
             "size": { "dataType": "double", "required": true },
             "order": { "dataType": "double", "required": true },
             "isHidden": { "dataType": "boolean", "required": true },

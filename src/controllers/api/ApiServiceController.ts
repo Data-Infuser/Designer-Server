@@ -100,7 +100,7 @@ export class ApiServiceController {
         })
         const applicationId = service.application.id;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.remove(service.meta);
+          if(service.meta) await transactionalEntityManager.remove(service.meta);
           await transactionalEntityManager.remove(service);
         });
         resolve({
