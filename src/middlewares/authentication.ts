@@ -9,7 +9,6 @@ export function expressAuthentication(
   securityName: string,
   scopes?: string[]
 ): Promise<User> {
-  console.log(request.headers);
   if (securityName === "jwt") {
     const bearerToken =
       request.body.authorization ||

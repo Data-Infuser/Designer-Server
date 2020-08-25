@@ -23,8 +23,8 @@ export function getSecret() {
 }
 
 export function generateTokens(user: User): User {
-  const token = jwt.sign({user}, TOKEN_SECRET, { expiresIn: "2d" })
-  const refreshToken =  jwt.sign({user}, REFRESH_TOKEN_SECRET, { expiresIn: "30d" })
+  const token = jwt.sign({user}, TOKEN_SECRET, { expiresIn: "30s" })
+  const refreshToken =  jwt.sign({user}, REFRESH_TOKEN_SECRET, { expiresIn: "5m" })
   user.token = token;
   user.refreshToken = refreshToken;
   return user

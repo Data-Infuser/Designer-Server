@@ -29,7 +29,6 @@ export class ApiServiceController {
       if(method.length == 0 || entityName.length == 0 || description.length == 0 || !applicationId) {
         reject(new ApplicationError(400, "Need all params"));
       }
-
       
       try {
         const newService = new Service();
