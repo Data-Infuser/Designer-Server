@@ -86,8 +86,18 @@ export class Application {
       if (res.headersSent) {
         return;
       }
+
       console.error(err);
-      res.status(err.status||err.statusCode).json(err);
+
+      if (err instanceof ApplicationError) {
+        return res.status(err.statusCode).json(err);
+      }
+
+      if(err instanceof Error) {
+        return res.status(500).json({
+          message: "Internal Server Error"
+        })
+      }
     });
 
     this.startServer();

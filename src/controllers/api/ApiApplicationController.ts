@@ -199,7 +199,6 @@ export class ApiApplicationController {
           }
         }));
       } catch (err) {
-        console.error(err);
         reject(new ApplicationError(500, err.message));
       }
     })
