@@ -94,7 +94,7 @@ export class ApiStageController {
           await transactionalEntityManager.remove(stage.services);
           await transactionalEntityManager.remove(stage);
         })
-
+        stage.id = id;
         resolve(stage);
       } catch (err) {
         console.error(err);
