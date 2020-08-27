@@ -14,7 +14,7 @@ const  defaultConnection: ConnectionOptions = {
   password: process.env.DESIGNER_PASSWORD || defaultConnectionInfo.password,
   database: process.env.DESIGNER_DB_NAME || defaultConnectionInfo.database,
   synchronize: true,
-  logging: true,
+  logging: false,
   entities: [
     "src/entity/manager/*{.ts,.js}"
   ],

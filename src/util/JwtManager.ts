@@ -23,8 +23,8 @@ export function getSecret() {
 }
 
 export function generateTokens(user: User): User {
-  const token = jwt.sign({user}, TOKEN_SECRET, { expiresIn: "30s" })
-  const refreshToken =  jwt.sign({user}, REFRESH_TOKEN_SECRET, { expiresIn: "5m" })
+  const token = jwt.sign({user}, TOKEN_SECRET, { expiresIn: "2d" })
+  const refreshToken =  jwt.sign({user}, REFRESH_TOKEN_SECRET, { expiresIn: "3d" })
   user.token = token;
   user.refreshToken = refreshToken;
   return user
@@ -33,7 +33,7 @@ export function generateTokens(user: User): User {
 
 export function refreshTokens(refreshToken: string) {
   const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-  const user = (<User>decoded)
+  const user = (<User>decoded['user'])
   const tokens = generateTokens(user)
   return tokens
 }
@@ -41,11 +41,10 @@ export function refreshTokens(refreshToken: string) {
 export function getUserFromToken(token: string):User {
   try {
     const decoded = jwt.verify(token, TOKEN_SECRET);
-    const user = (<User>decoded)
+    const user = (<User>decoded['user'])
     return user;
   } catch (err) {
     console.error(err);
     throw err;
   }
-  
 }

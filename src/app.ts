@@ -1,4 +1,8 @@
-import express from "express";
+import express, {
+  Response as ExResponse,
+  Request as ExRequest,
+  NextFunction,
+} from "express";
 import bodyParser from "body-parser";
 import methodOverride from "method-override";
 import compileSass from "express-compile-sass";
@@ -18,6 +22,8 @@ import * as protoLoader from "@grpc/proto-loader";
 import setupApplications from "./grpc/applications";
 import swagger from './routes/swagger.json';
 import ormConfig from "./config/ormConfig";
+import { ValidateError } from "tsoa";
+import { TokenExpiredError } from "jsonwebtoken";
 
 const property = require("../property.json")
 
@@ -82,12 +88,37 @@ export class Application {
       next(err);
     });
 
-    this.app.use(function(err, req, res, next) {
-      if (res.headersSent) {
-        return;
+    this.app.use(function errorHandler(
+      err: unknown,
+      req: ExRequest,
+      res: ExResponse,
+      next: NextFunction
+    ): ExResponse | void {
+      if (err instanceof ValidateError) {
+        console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+        return res.status(422).json({
+          message: "Validation Failed",
+          details: err?.fields,
+        });
       }
-      console.error(err);
-      res.status(err.status||err.statusCode).json(err);
+
+      if (err instanceof TokenExpiredError) {
+        res.status(401).json({
+          message: "Token expired"
+        })
+      }
+      
+      if (err instanceof ApplicationError) {
+        res.status(err.statusCode).json(err);
+      }
+
+      if (err instanceof Error) {
+        return res.status(500).json({
+          message: "Internal Server Error",
+        });
+      }
+
+      next();
     });
 
     this.startServer();

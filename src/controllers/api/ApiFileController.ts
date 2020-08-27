@@ -18,24 +18,16 @@ export class ApiFileController {
   public async postFile(
     @Request() request: exRequest
   ): Promise<any> {
-    const _this = this;
-    return new Promise(async function(resolve, reject) {
-      try {
-        await _this.handleFile(request);
-        const filePath = request.file.path;
-        const originalFileName:string = request.file.originalname;
-        const originalFileNameTokens = originalFileName.split(".");
-        const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
+    await this.handleFile(request);
+    const filePath = request.file.path;
+    const originalFileName:string = request.file.originalname;
+    const originalFileNameTokens = originalFileName.split(".");
+    const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
 
-        resolve({
-          filePath,
-          originalFileName,
-          ext
-        })
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
+    return Promise.resolve({
+      filePath,
+      originalFileName,
+      ext
     })
   };
 

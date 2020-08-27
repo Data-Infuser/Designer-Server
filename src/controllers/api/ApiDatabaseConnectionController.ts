@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getRepository, FindManyOptions, FindOneOptions } from "typeorm";
 import ApplicationError from "../../ApplicationError";
 import { DatabaseConnection, AcceptableDbms } from "../../entity/manager/DatabaseConnection";
 import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete, Query } from "tsoa";
@@ -20,30 +20,26 @@ export class ApiDatabaseConnectionController {
     @Query('page') page?: number,
     @Query('perPage') perPage?: number
   ){
-    return new Promise(async function(resolve, reject) {
-      const dbcRepo = getRepository(DatabaseConnection);
-      page = page || 1;
-      perPage = perPage || 10;
-      try {
-        const dbcs = await dbcRepo.findAndCount({
-          where: {
-            user: {
-              id: request.user.id
-            }
-          },
-          skip: (page - 1) * perPage,
-          take: perPage
-        });
-        resolve({
-          dbcs: dbcs[0],
-          totalCount: dbcs[1],
-          page: page,
-          perPage: perPage
-        });
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
+    const dbcRepo = getRepository(DatabaseConnection);
+    page = page || 1;
+    perPage = perPage || 10;
+
+    const findOptions:FindManyOptions = {
+      where: {
+        user: {
+          id: request.user.id
+        }
+      },
+      skip: (page - 1) * perPage,
+      take: perPage
+    }
+    const dbcs = await dbcRepo.findAndCount(findOptions);
+
+    return Promise.resolve({
+      dbcs: dbcs[0],
+      totalCount: dbcs[1],
+      page: page,
+      perPage: perPage
     });
   }
   
@@ -57,23 +53,17 @@ export class ApiDatabaseConnectionController {
     @Request() request: exRequest,
     @Path() connectionId: number
   ){
-    return new Promise(async function(resolve, reject) {
-      const dbcRepo = getRepository(DatabaseConnection);
-      try {
-        const dbc = await dbcRepo.findOneOrFail({
-          where: {
-            id: connectionId,
-            user: {
-              id: request.user.id
-            }
-          }
-        });
-        resolve(dbc);
-      } catch(err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
+    const dbcRepo = getRepository(DatabaseConnection);
+    const findOptions: FindOneOptions = {
+      where: {
+        id: connectionId,
+        user: {
+          id: request.user.id
+        }
       }
-    })
+    }
+    const dbc = await dbcRepo.findOneOrFail(findOptions);
+    return Promise.resolve(dbc);
   }
 
   /**
@@ -86,35 +76,30 @@ export class ApiDatabaseConnectionController {
     @Request() request: exRequest,
     @Path() connectionId: number
   ){
-    return new Promise(async function(resolve, reject) {
-      const dbcRepo = getRepository(DatabaseConnection);
-      try {
-        const dbc = await dbcRepo.findOneOrFail(connectionId);
+    const dbcRepo = getRepository(DatabaseConnection);
 
-        let loadStrategy: DbmsMetaLoadStrategy;
-        switch(dbc.dbms) {
-          case 'mysql':
-            loadStrategy = new MysqlMetaLoadStrategy();
-            break;
-          case 'cubrid':
-            loadStrategy = new CubridMetaLoadStrategy();
-            break;
-          default:
-            throw new Error("unexceptable dbms");
-        }
-        const metaLoader = new MetaLoader(loadStrategy);
-        const connectionInfo:MetaLoaderDbConnection = {
-          ...dbc,
-          title: dbc.connectionName,
-          tableNm: ""
-        }
-        const loaderResult = await metaLoader.showTables(connectionInfo);
-        resolve(loaderResult)
-      } catch(err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    })
+    const dbc = await dbcRepo.findOneOrFail(connectionId);
+
+    let loadStrategy: DbmsMetaLoadStrategy;
+    switch(dbc.dbms) {
+      case 'mysql':
+        loadStrategy = new MysqlMetaLoadStrategy();
+        break;
+      case 'cubrid':
+        loadStrategy = new CubridMetaLoadStrategy();
+        break;
+      default:
+        throw new Error("unexceptable dbms");
+    }
+    const metaLoader = new MetaLoader(loadStrategy);
+    const connectionInfo:MetaLoaderDbConnection = {
+      ...dbc,
+      title: dbc.connectionName,
+      tableNm: ""
+    }
+    const loaderResult = await metaLoader.showTables(connectionInfo);
+
+    return Promise.resolve(loaderResult)
   }
 
 
@@ -131,36 +116,31 @@ export class ApiDatabaseConnectionController {
     @Path() connectionId: number,
     @Path() tableName: string
   ){
-    return new Promise(async function(resolve, reject) {
-      const dbcRepo = getRepository(DatabaseConnection);
-      try {
-        const dbc = await dbcRepo.findOneOrFail(connectionId);
+    const dbcRepo = getRepository(DatabaseConnection);
 
-        let loadStrategy: DbmsMetaLoadStrategy;
-        switch(dbc.dbms) {
-          case 'mysql':
-            loadStrategy = new MysqlMetaLoadStrategy();
-            break;
-          case 'cubrid':
-            loadStrategy = new CubridMetaLoadStrategy();
-            break;
-          default:
-            throw new Error("unexceptable dbms");
-        }
-        const metaLoader = new MetaLoader(loadStrategy);
-        const connectionInfo:MetaLoaderDbConnection = {
-          ...dbc,
-          title: dbc.connectionName,
-          tableNm: tableName
-        }
+    const dbc = await dbcRepo.findOneOrFail(connectionId);
 
-        const loaderResult = await metaLoader.descTable(connectionInfo);
-        resolve(loaderResult);
-      } catch(err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    })
+    let loadStrategy: DbmsMetaLoadStrategy;
+    switch(dbc.dbms) {
+      case 'mysql':
+        loadStrategy = new MysqlMetaLoadStrategy();
+        break;
+      case 'cubrid':
+        loadStrategy = new CubridMetaLoadStrategy();
+        break;
+      default:
+        throw new Error("unexceptable dbms");
+    }
+    const metaLoader = new MetaLoader(loadStrategy);
+    const connectionInfo:MetaLoaderDbConnection = {
+      ...dbc,
+      title: dbc.connectionName,
+      tableNm: tableName
+    }
+
+    const loaderResult = await metaLoader.descTable(connectionInfo);
+
+    return Promise.resolve(loaderResult);
   }
 
   @Post("/")
@@ -169,48 +149,31 @@ export class ApiDatabaseConnectionController {
     @Request() request: exRequest,
     @Body() databaseConnectionCreateParams: DatabaseConnectionCreateParams
   ): Promise<DatabaseConnection>{
-    return new Promise(async function(resolve, reject){
-      const dbcRepo = getRepository(DatabaseConnection);
-      const { title, host, port, db, user, pwd, dbms } = databaseConnectionCreateParams;
+    const dbcRepo = getRepository(DatabaseConnection);
+    const { title, host, port, db, user, pwd, dbms } = databaseConnectionCreateParams;
+    
+    const newConnection = new DatabaseConnection();
+    newConnection.connectionName = title;
+    newConnection.hostname = host;
+    newConnection.port = port;
+    newConnection.database = db;
+    newConnection.username = user;
+    newConnection.password = pwd ? pwd : "";
+    newConnection.dbms = dbms;
+    newConnection.user = request.user;
+    await dbcRepo.save(newConnection);
 
-      try {
-        const newConnection = new DatabaseConnection();
-        newConnection.connectionName = title;
-        newConnection.hostname = host;
-        newConnection.port = port;
-        newConnection.database = db;
-        newConnection.username = user;
-        newConnection.password = pwd ? pwd : "";
-        newConnection.dbms = dbms;
-        newConnection.user = request.user;
-        await dbcRepo.save(newConnection);
-        resolve(newConnection);
-      } catch(err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    })
+    return Promise.resolve(newConnection);
   }
 
   @Delete("/{connectionId}")
   @Security("jwt")
   public async delete(
-    @Request() request: exRequest,
     @Path() connectionId: number
   ): Promise<any> {
-    return new Promise(async function(resolve, reject) {
-      const dbcRepo = getRepository(DatabaseConnection);
-      try {
-        
-        await dbcRepo.delete(connectionId);
-
-        resolve();
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-        return;
-      }
-    });
+    const dbcRepo = getRepository(DatabaseConnection);        
+    await dbcRepo.delete(connectionId);
+    return Promise.resolve();
   }
 }
 

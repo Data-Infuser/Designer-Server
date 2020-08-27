@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 import { User, UserInterface } from "../../entity/manager/User";
 import { generateTokens, refreshTokens } from '../../util/JwtManager';
-import { Route, Post, Body, Tags } from "tsoa";
+import { Route, Post, Body, Tags, SuccessResponse, Controller } from "tsoa";
 import ApplicationError from "../../ApplicationError";
 
 interface LoginParams {
@@ -14,7 +14,7 @@ interface TokenParams {
 }
 @Route("/api/oauth")
 @Tags("Auth")
-export class AuthController {
+export class AuthController extends Controller {
   
   /**
    * username과 password를 사용하여 JWT 를 발급합니다.
@@ -24,21 +24,14 @@ export class AuthController {
   public async login(
     @Body() loginPrams: LoginParams
   ): Promise<UserInterface>{
-    return new Promise(async function(resolve, reject) {
-      const { username, password } = loginPrams;
-      const userRepo = getRepository(User);
-      try {
-        let currentUser = await userRepo.findOne({username: username})
-        if (!currentUser || !currentUser.checkIfUnencryptedPasswordIsValid(password)) {
-          reject(new ApplicationError(401, "Unauthurized User"));
-        }
-        currentUser = generateTokens(currentUser);
-        resolve(currentUser)
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    });
+    const { username, password } = loginPrams;
+    const userRepo = getRepository(User);
+    let currentUser = await userRepo.findOne({username: username})
+    if (!currentUser || !currentUser.checkIfUnencryptedPasswordIsValid(password)) {
+      throw new ApplicationError(401, "Unauthurized User");
+    }
+    currentUser = generateTokens(currentUser);
+    return Promise.resolve(currentUser);
   }
 
   /**
@@ -46,19 +39,14 @@ export class AuthController {
    * @param refreshToken 
    */
   @Post("/token")
+  @SuccessResponse('201', 'success to refresh token')
   public async refresh(
     @Body() refreshTokenParams: TokenParams
   ): Promise<User> {
-    return new Promise(async function(resolve, reject) {
-      const { refreshToken } = refreshTokenParams;
-      try {
-        const user = refreshTokens(refreshToken)
-        resolve(user);
-      } catch (err) {
-        console.log(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    });
+    const { refreshToken } = refreshTokenParams;
+    const user = refreshTokens(refreshToken)
+    this.setStatus(201);
+    return Promise.resolve(user);
   }
 }
 

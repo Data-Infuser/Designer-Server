@@ -14,29 +14,21 @@ export class ApiStageController {
     @Request() request: exRequest,
     @Path('id') id: number
   ): Promise<Stage> {
-    return new Promise(async function(resolve, reject) {
-      try {
-        const stageRepo = getRepository(Stage);
+    const stageRepo = getRepository(Stage);
 
-        const stage = await stageRepo.findOneOrFail({
-          relations:['application'],
-          where: {
-            id: id
-          }
-        })
-
-        if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
-        if(stage.status !== StageStatus.LOADED) throw new ApplicationError(400, 'Bad Request')
-        stage.status = StageStatus.DEPLOYED;
-        await stageRepo.save(stage);
-
-        resolve(stage);
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-        return;
+    const stage = await stageRepo.findOneOrFail({
+      relations:['application'],
+      where: {
+        id: id
       }
-    });
+    })
+
+    if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
+    if(stage.status !== StageStatus.LOADED) throw new ApplicationError(400, 'Bad Request')
+    stage.status = StageStatus.DEPLOYED;
+    await stageRepo.save(stage);
+
+    return Promise.resolve(stage);
   }
 
   @Post('/{id}/undeploy')
@@ -45,30 +37,22 @@ export class ApiStageController {
     @Request() request: exRequest,
     @Path('id') id: number
   ): Promise<Stage> {
-    return new Promise(async function(resolve, reject) {
-      try {
-        const stageRepo = getRepository(Stage);
+    const stageRepo = getRepository(Stage);
 
-        const stage = await stageRepo.findOneOrFail({
-          relations:['application'],
-          where: {
-            id: id
-          }
-        })
-
-        if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
-        if(stage.status !== StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
-
-        stage.status = StageStatus.LOADED;
-        await stageRepo.save(stage);
-
-        resolve(stage);
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-        return;
+    const stage = await stageRepo.findOneOrFail({
+      relations:['application'],
+      where: {
+        id: id
       }
-    });
+    })
+
+    if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
+    if(stage.status !== StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
+
+    stage.status = StageStatus.LOADED;
+    await stageRepo.save(stage);
+
+    return Promise.resolve(stage);
   }
 
   @Delete('/{id}')
@@ -77,30 +61,23 @@ export class ApiStageController {
     @Request() request: exRequest,
     @Path('id') id: number
   ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const stageRepo = getRepository(Stage);
+    const stageRepo = getRepository(Stage);
 
-        const stage = await stageRepo.findOneOrFail({
-          relations:['application', 'services'],
-          where: {
-            id: id
-          }
-        })
-
-        if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
-        if(stage.status === StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
-        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.remove(stage.services);
-          await transactionalEntityManager.remove(stage);
-        })
-        stage.id = id;
-        resolve(stage);
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-        return;
+    const stage = await stageRepo.findOneOrFail({
+      relations:['application', 'services'],
+      where: {
+        id: id
       }
     })
+
+    if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
+    if(stage.status === StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
+    await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+      await transactionalEntityManager.remove(stage.services);
+      await transactionalEntityManager.remove(stage);
+    })
+    stage.id = id;
+    
+    return Promise.resolve(stage);
   }
 }

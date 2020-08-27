@@ -25,8 +25,7 @@ export class ApiMetaController {
     @Request() request: exRequest,
     @Body() dbmsParams: DbmsParams
   ): Promise<Meta> {
-    return new Promise(async function(resolve, reject) {
-      const metaRepo = getRepository(Meta);
+    const metaRepo = getRepository(Meta);
       const serviceRepo = getRepository(Service);
       const { serviceId, title, dbms, host, port, database, user, password, table } = dbmsParams;
       if(title.length == 0 
@@ -36,57 +35,53 @@ export class ApiMetaController {
         || database.length == 0 
         || user.length == 0 
         || table.length == 0) {
-        reject(new ApplicationError(400, "Need all params"));
+        throw new ApplicationError(400, "Need all params");
       }
-      try {
-        const service = await serviceRepo.findOneOrFail(serviceId);
-        const connectionInfo = {
-          dbms: dbms,
-          username: user,
-          password: password,
-          hostname: host,
-          port: port,
-          database: database,
-          tableNm: table,
-          title: title
-        }
 
-        let loadStrategy: MetaLoadStrategy;
-        switch(connectionInfo.dbms) {
-          case 'mysql':
-            loadStrategy = new MysqlMetaLoadStrategy();
-            break;
-          case 'cubrid':
-            loadStrategy = new CubridMetaLoadStrategy();
-            break;
-          default:
-            throw new Error("unexceptable dbms");
-        }
-        const metaLoader = new MetaLoader(loadStrategy);
-        const loaderResult = await metaLoader.loadMeta(connectionInfo);
-        const meta = loaderResult.meta;
-        const columns = loaderResult.columns;
-        
-        service.meta = meta;
-        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.save(meta);
-          await transactionalEntityManager.save(columns);
-          service.status = ServiceStatus.METALOADED;
-          await transactionalEntityManager.save(service);
-        });
-        const updatedMeta = await metaRepo.findOneOrFail({
-          relations: ["service", "columns"],
-          where: {
-            id: meta.id
-          }
-        });
-        resolve(updatedMeta);
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-        return;
+    const service = await serviceRepo.findOneOrFail(serviceId);
+    const connectionInfo = {
+      dbms: dbms,
+      username: user,
+      password: password,
+      hostname: host,
+      port: port,
+      database: database,
+      tableNm: table,
+      title: title
+    }
+
+    let loadStrategy: MetaLoadStrategy;
+    switch(connectionInfo.dbms) {
+      case 'mysql':
+        loadStrategy = new MysqlMetaLoadStrategy();
+        break;
+      case 'cubrid':
+        loadStrategy = new CubridMetaLoadStrategy();
+        break;
+      default:
+        throw new Error("unexceptable dbms");
+    }
+    const metaLoader = new MetaLoader(loadStrategy);
+    const loaderResult = await metaLoader.loadMeta(connectionInfo);
+    const meta = loaderResult.meta;
+    const columns = loaderResult.columns;
+    
+    service.meta = meta;
+    await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+      await transactionalEntityManager.save(meta);
+      await transactionalEntityManager.save(columns);
+      service.status = ServiceStatus.METALOADED;
+      await transactionalEntityManager.save(service);
+    });
+
+    const updatedMeta = await metaRepo.findOneOrFail({
+      relations: ["service", "columns"],
+      where: {
+        id: meta.id
       }
     });
+
+    return Promise.resolve(updatedMeta);
   }
 
   /**
@@ -101,67 +96,59 @@ export class ApiMetaController {
     @Body() params: FileParams
   ): Promise<any> {
     const serviceRepo = getRepository(Service);
-    const _this = this;
-    return new Promise(async function(resolve, reject) {
-      try {
-        const service = await serviceRepo.findOneOrFail(params.serviceId);
-        switch(params.dataType) {
-          case 'file':
-            const fileParam:MetaLoaderFileParam = {
-              title: params.title,
-              skip: params.skip,
-              sheet: params.sheet,
-              filePath: params.filePath,
-              originalFileName: params.originalFileName,
-              ext: params.ext
-            }
-            const loaderResult = await _this.loadMetaFromFile(fileParam)
-            const meta: Meta = loaderResult.meta;
-            const columns: MetaColumn[] = loaderResult.columns;
-            
-            service.meta = meta;
-            await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-              await transactionalEntityManager.save(meta);
-              await transactionalEntityManager.save(columns);
-              service.status = ServiceStatus.METALOADED;
-              await transactionalEntityManager.save(service);
-            });
-            const response = await serviceRepo.findOneOrFail({
-              relations: ["meta", "meta.columns"],
-              where: {
-                id: service.id
-              }
-            })
-            resolve(response);
-            break;
-          case 'file-url':
-            service.status = ServiceStatus.METASCHEDULED;
-            /**
-             * JobScheduler에 등록을 실패 하는 경우에도 Rollback
-             */
-            const newMeta = new Meta();
-            newMeta.remoteFilePath = params.url;
-            newMeta.dataType = params.dataType;
-            newMeta.service = service;
-            newMeta.extension = params.ext;
-            newMeta.title = params.title || "empty title";
-            
-            const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
-            await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-              await transactionalEntityManager.save(service);
-              await transactionalEntityManager.save(newMeta);
-              BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
-            });
-            resolve(service);
-            break;
-          default:
-            throw new Error("Unacceptable dataType");
-        }        
-      } catch (err) {
-        console.error(err);
-        reject(new ApplicationError(500, err.message));
-      }
-    })
+    const service = await serviceRepo.findOneOrFail(params.serviceId);
+    switch(params.dataType) {
+      case 'file':
+        const fileParam:MetaLoaderFileParam = {
+          title: params.title,
+          skip: params.skip,
+          sheet: params.sheet,
+          filePath: params.filePath,
+          originalFileName: params.originalFileName,
+          ext: params.ext
+        }
+        const loaderResult = await this.loadMetaFromFile(fileParam)
+        const meta: Meta = loaderResult.meta;
+        const columns: MetaColumn[] = loaderResult.columns;
+        
+        service.meta = meta;
+        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+          await transactionalEntityManager.save(meta);
+          await transactionalEntityManager.save(columns);
+          service.status = ServiceStatus.METALOADED;
+          await transactionalEntityManager.save(service);
+        });
+
+        const response = await serviceRepo.findOneOrFail({
+          relations: ["meta", "meta.columns"],
+          where: {
+            id: service.id
+          }
+        })
+        
+        return Promise.resolve(response);
+      case 'file-url':
+        service.status = ServiceStatus.METASCHEDULED;
+        /**
+         * JobScheduler에 등록을 실패 하는 경우에도 Rollback
+         */
+        const newMeta = new Meta();
+        newMeta.remoteFilePath = params.url;
+        newMeta.dataType = params.dataType;
+        newMeta.service = service;
+        newMeta.extension = params.ext;
+        newMeta.title = params.title || "empty title";
+        
+        const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
+        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+          await transactionalEntityManager.save(service);
+          await transactionalEntityManager.save(newMeta);
+          BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
+        });
+        return Promise.resolve(service);
+      default:
+        throw new Error("Unacceptable dataType");
+    }        
   }
 
   public async loadMetaFromFile(fileParam:MetaLoaderFileParam):Promise<any> {

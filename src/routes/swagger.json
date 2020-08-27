@@ -1235,7 +1235,9 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/Application"
+								}
 							}
 						}
 					}
@@ -1482,7 +1484,35 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"properties": {
+										"perPage": {
+											"type": "number",
+											"format": "double"
+										},
+										"page": {
+											"type": "number",
+											"format": "double"
+										},
+										"totalCount": {
+											"type": "number",
+											"format": "double"
+										},
+										"dbcs": {
+											"items": {
+												"$ref": "#/components/schemas/DatabaseConnection"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"perPage",
+										"page",
+										"totalCount",
+										"dbcs"
+									],
+									"type": "object"
+								}
 							}
 						}
 					}
@@ -1996,8 +2026,8 @@
 			"post": {
 				"operationId": "Refresh",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"201": {
+						"description": "success to refresh token",
 						"content": {
 							"application/json": {
 								"schema": {
