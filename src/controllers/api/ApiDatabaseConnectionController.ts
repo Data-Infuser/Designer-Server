@@ -26,9 +26,7 @@ export class ApiDatabaseConnectionController {
 
     const findOptions:FindManyOptions = {
       where: {
-        user: {
-          id: request.user.id
-        }
+        userId: request.user.id
       },
       skip: (page - 1) * perPage,
       take: perPage
@@ -57,9 +55,7 @@ export class ApiDatabaseConnectionController {
     const findOptions: FindOneOptions = {
       where: {
         id: connectionId,
-        user: {
-          id: request.user.id
-        }
+        userId: request.user.id
       }
     }
     const dbc = await dbcRepo.findOneOrFail(findOptions);
@@ -160,7 +156,7 @@ export class ApiDatabaseConnectionController {
     newConnection.username = user;
     newConnection.password = pwd ? pwd : "";
     newConnection.dbms = dbms;
-    newConnection.user = request.user;
+    newConnection.userId = request.user.id;
     await dbcRepo.save(newConnection);
 
     return Promise.resolve(newConnection);

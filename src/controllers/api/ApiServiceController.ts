@@ -1,7 +1,6 @@
 import { Request as exRequest } from "express";
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
 import passport from "passport";
-import { User } from "../../entity/manager/User";
 import { Tags, Route, Post, Security, Request, Body, Delete, Path, Put } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
@@ -30,7 +29,7 @@ export class ApiServiceController {
     newService.method = method;
     newService.entityName = entityName;
     newService.description = description;
-    newService.user = request.user;
+    newService.userId = request.user.id;
     await serviceRepo.save(newService);
     
     return Promise.resolve(newService);
@@ -74,12 +73,10 @@ export class ApiServiceController {
       relations: ["application", "meta"],
       where: {
         id: serviceId,
-        user: {
-          id: request.user.id
-        }
+        userId: request.user.id
       }
     })
-    
+
     const applicationId = service.application.id;
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
       if(service.meta) await transactionalEntityManager.remove(service.meta);

@@ -27,22 +27,6 @@ const models: TsoaRoute.Models = {
         "enums": ["mysql", "oracle", "mariadb", "postgres", "cubrid"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserInterface": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "username": { "dataType": "string", "required": true },
-            "token": { "dataType": "string", "required": true },
-            "refreshToken": { "dataType": "string", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "User": {
-        "dataType": "refAlias",
-        "type": { "ref": "UserInterface", "validators": {} },
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Service": {
         "dataType": "refObject",
         "properties": {
@@ -53,7 +37,7 @@ const models: TsoaRoute.Models = {
             "entityName": { "dataType": "string", "required": true },
             "tableName": { "dataType": "string", "required": true },
             "status": { "dataType": "string", "required": true },
-            "user": { "ref": "User", "required": true },
+            "userId": { "dataType": "double", "required": true },
             "application": { "ref": "Application", "required": true },
             "stage": { "ref": "Stage", "required": true },
             "stageId": { "dataType": "double", "required": true },
@@ -73,7 +57,6 @@ const models: TsoaRoute.Models = {
             "title": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
             "userId": { "dataType": "double", "required": true },
-            "user": { "ref": "User", "required": true },
             "services": { "dataType": "array", "array": { "ref": "Service" }, "required": true },
             "trafficConfigs": { "dataType": "array", "array": { "ref": "TrafficConfig" }, "required": true },
             "stages": { "dataType": "array", "array": { "ref": "Stage" }, "required": true },
@@ -132,7 +115,7 @@ const models: TsoaRoute.Models = {
             "skip": { "dataType": "double", "required": true },
             "sheet": { "dataType": "double", "required": true },
             "isActive": { "dataType": "boolean", "required": true },
-            "user": { "ref": "User", "required": true },
+            "userId": { "dataType": "double", "required": true },
             "service": { "ref": "Service", "required": true },
             "columns": { "dataType": "array", "array": { "ref": "MetaColumn" }, "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
@@ -332,7 +315,7 @@ const models: TsoaRoute.Models = {
             "username": { "dataType": "string", "required": true },
             "password": { "dataType": "string", "required": true },
             "dbms": { "ref": "AcceptableDbms", "required": true },
-            "user": { "ref": "User", "required": true },
+            "userId": { "dataType": "double", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },
@@ -378,7 +361,7 @@ const models: TsoaRoute.Models = {
     "InfuserUser": {
         "dataType": "refObject",
         "properties": {
-            "userId": { "dataType": "double", "required": true },
+            "id": { "dataType": "double", "required": true },
             "username": { "dataType": "string", "required": true },
             "token": { "dataType": "string", "required": true },
             "refreshToken": { "dataType": "string", "required": true },
@@ -1037,7 +1020,7 @@ export function RegisterRoutes(app: express.Express) {
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.get('/api/oauth/me',
-        authenticateMiddleware([{ "bearer": [] }]),
+        authenticateMiddleware([{ "jwt": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
                 request: { "in": "request", "name": "request", "required": true, "dataType": "object" },

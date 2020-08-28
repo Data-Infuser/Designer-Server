@@ -1,7 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
-import { User } from "./User";
 import { MetaColumn } from "./MetaColumn";
 import { Service } from "./Service";
 import { AcceptableDbms } from "./DatabaseConnection";
@@ -74,8 +73,8 @@ export class Meta {
   @Column({ nullable: false, default: false })
   isActive: boolean;
 
-  @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
-  user: User;
+  @Column()
+  userId: number;
 
   @OneToOne(type => Service, service => service.meta) // specify inverse side as a second parameter
   service: Service;

@@ -16,34 +16,6 @@
 				],
 				"type": "string"
 			},
-			"UserInterface": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"username": {
-						"type": "string"
-					},
-					"token": {
-						"type": "string"
-					},
-					"refreshToken": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"username",
-					"token",
-					"refreshToken"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"User": {
-				"$ref": "#/components/schemas/UserInterface"
-			},
 			"Service": {
 				"properties": {
 					"id": {
@@ -68,8 +40,9 @@
 					"status": {
 						"type": "string"
 					},
-					"user": {
-						"$ref": "#/components/schemas/User"
+					"userId": {
+						"type": "number",
+						"format": "double"
 					},
 					"application": {
 						"$ref": "#/components/schemas/Application"
@@ -107,7 +80,7 @@
 					"entityName",
 					"tableName",
 					"status",
-					"user",
+					"userId",
 					"application",
 					"stage",
 					"stageId",
@@ -137,9 +110,6 @@
 					"userId": {
 						"type": "number",
 						"format": "double"
-					},
-					"user": {
-						"$ref": "#/components/schemas/User"
 					},
 					"services": {
 						"items": {
@@ -174,7 +144,6 @@
 					"title",
 					"description",
 					"userId",
-					"user",
 					"services",
 					"trafficConfigs",
 					"stages",
@@ -325,8 +294,9 @@
 					"isActive": {
 						"type": "boolean"
 					},
-					"user": {
-						"$ref": "#/components/schemas/User"
+					"userId": {
+						"type": "number",
+						"format": "double"
 					},
 					"service": {
 						"$ref": "#/components/schemas/Service"
@@ -366,7 +336,7 @@
 					"skip",
 					"sheet",
 					"isActive",
-					"user",
+					"userId",
 					"service",
 					"columns",
 					"createdAt",
@@ -907,8 +877,9 @@
 					"dbms": {
 						"$ref": "#/components/schemas/AcceptableDbms"
 					},
-					"user": {
-						"$ref": "#/components/schemas/User"
+					"userId": {
+						"type": "number",
+						"format": "double"
 					},
 					"createdAt": {
 						"type": "string",
@@ -928,7 +899,7 @@
 					"username",
 					"password",
 					"dbms",
-					"user",
+					"userId",
 					"createdAt",
 					"updatedAt"
 				],
@@ -1019,7 +990,7 @@
 			},
 			"InfuserUser": {
 				"properties": {
-					"userId": {
+					"id": {
 						"type": "number",
 						"format": "double"
 					},
@@ -1038,7 +1009,7 @@
 					}
 				},
 				"required": [
-					"userId",
+					"id",
 					"username",
 					"token",
 					"refreshToken",
@@ -2096,7 +2067,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/User"
+									"$ref": "#/components/schemas/InfuserUser"
 								}
 							}
 						}
@@ -2129,7 +2100,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/User"
+									"$ref": "#/components/schemas/InfuserUser"
 								}
 							}
 						}
@@ -2140,7 +2111,7 @@
 				],
 				"security": [
 					{
-						"bearer": []
+						"jwt": []
 					}
 				],
 				"parameters": []

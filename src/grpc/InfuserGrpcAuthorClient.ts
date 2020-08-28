@@ -1,7 +1,7 @@
 import * as grpc from "grpc";
 import { LoginReq, AuthResult, AuthRes, RefreshTokenReq } from '../lib/infuser-protobuf/gen/proto/author/auth_pb';
 import { AuthServiceClient } from "../lib/infuser-protobuf/gen/proto/author/auth_grpc_pb";
-import ApplicationError from '../../build/src/ApplicationError';
+import ApplicationError from '../ApplicationError';
 import { resolve } from 'url';
 
 const property = require("../../property.json");

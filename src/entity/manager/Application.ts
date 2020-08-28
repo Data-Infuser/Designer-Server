@@ -1,6 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, BaseEntity, Unique} from "typeorm";
 import { Length, IsNotEmpty, NotContains } from "class-validator";
-import { User } from "./User";
 import { Service, ServiceStatus } from "./Service";
 import { TrafficConfig } from "./TrafficConfig";
 import { Stage, StageStatus } from './Stage';
@@ -25,9 +24,6 @@ export class Application {
 
   @Column()
   userId: number;
-
-  @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
-  user: User;
 
   @OneToMany(type => Service, service => service.application)
   services: Service[];

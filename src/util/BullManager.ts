@@ -82,7 +82,7 @@ class BullManager {
       try {    
         const job = await this.dataLoaderQueue.add({
           id: stage.id,
-          userId: stage.application.user.id
+          userId: stage.application.userId
         })
         resolve();
       } catch (err) {

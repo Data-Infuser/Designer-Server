@@ -28,9 +28,7 @@ export class ApiApplicationController {
 
     const findOptions:FindManyOptions = {
       where: {
-        user: {
-          id: request.user.id
-        }
+        userId: request.user.id
       },
       take: perPage,
       skip: (page - 1) * perPage
@@ -75,9 +73,7 @@ export class ApiApplicationController {
       relations: ["stages", "services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
       where: {
         id: applicationId,
-        user: {
-          id: request.user.id
-        }
+        userId: request.user.id
       }
     }
     const app = await appRepo.findOneOrFail(findOptions);
@@ -97,7 +93,7 @@ export class ApiApplicationController {
     newApplication.nameSpace = nameSpace;
     newApplication.title = title;
     newApplication.description = description;
-    newApplication.user = request.user;
+    newApplication.userId = request.user.id;
     await applicationRepo.save(newApplication);
 
     return Promise.resolve(newApplication);
@@ -111,13 +107,12 @@ export class ApiApplicationController {
   ): Promise<any> {
     const applicationRepo = getRepository(Application);
     const application = await applicationRepo.findOneOrFail({
-      relations: ["user"],
       where: {
         id
       }
     });
 
-    if(application.user.id !== request.user.id) {
+    if(application.userId !== request.user.id) {
       return Promise.reject(new ApplicationError(404, "Not Found"));
     }
 
@@ -135,12 +130,10 @@ export class ApiApplicationController {
     const applicationRepo = getRepository(Application);
     const stageRepo = getRepository(Stage);
     const application = await applicationRepo.findOneOrFail({
-      relations: ["user", "services", "services.stage"],
+      relations: ["services", "services.stage"],
       where: {
         id: id,
-        user: {
-          id: request.user.id
-        }
+        userId: request.user.id
       }
     });
     

@@ -1,6 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
-import { User } from "./User";
 
 export enum AcceptableDbms {
   MYSQL = "mysql",
@@ -42,8 +41,8 @@ export class DatabaseConnection {
   })
   dbms: AcceptableDbms;
 
-  @ManyToOne(type => User, user => user.metas, { nullable: true, onDelete: 'CASCADE' })
-  user: User;
+  @Column()
+  userId: number;
 
   @Column()
   @CreateDateColumn()

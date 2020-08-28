@@ -1,8 +1,7 @@
-import * as ProjectUser from '../entity/manager/User'; // <- User class
-import { Request } from 'express';
+import { InfuserUser } from '../controllers/api/AuthController';
 
 declare global {
   namespace Express {
-    export interface User extends ProjectUser.User { }
+    export interface User extends InfuserUser { }
   }
 }

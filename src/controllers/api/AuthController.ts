@@ -1,7 +1,5 @@
 import { Request as exRequest } from "express";
 import { getRepository } from "typeorm";
-import { User, UserInterface } from "../../entity/manager/User";
-import { generateTokens, refreshTokens } from '../../util/JwtManager';
 import { Route, Post, Body, Tags, SuccessResponse, Controller, Get, Security, Request } from "tsoa";
 import InfuserGrpcAuthorClient from "../../grpc/InfuserGrpcAuthorClient";
 import RedisManager from "../../util/RedisManager";
@@ -18,7 +16,7 @@ interface TokenParams {
 }
 
 export interface InfuserUser {
-  userId: number,
+  id: number,
   username: string,
   token: string,
   refreshToken: string,
@@ -39,7 +37,7 @@ export class AuthController extends Controller {
     const { username, password } = loginPrams;
     const authResponse = await InfuserGrpcAuthorClient.Instance.login(username, password);
     const infuserUser:InfuserUser = {
-      userId: 1,
+      id: 1,
       username: username,
       token: authResponse.jwt,
       refreshToken: authResponse.refreshToken,
@@ -62,7 +60,7 @@ export class AuthController extends Controller {
     const { refreshToken } = refreshTokenParams;
     const authResponse = await InfuserGrpcAuthorClient.Instance.refresh(refreshToken);
     const infuserUser:InfuserUser = {
-      userId: 1,
+      id: 1,
       username: "admin",
       token: authResponse.jwt,
       refreshToken: authResponse.refreshToken,
@@ -74,11 +72,11 @@ export class AuthController extends Controller {
   }
 
   @Get("/me")
-  @Security("bearer")
+  @Security("jwt")
   @SuccessResponse('200', 'success to refresh token')
   public async me(
     @Request() request: exRequest
-  ): Promise<User> {
+  ): Promise<InfuserUser> {
     return Promise.resolve(request.user);
   }
 }
