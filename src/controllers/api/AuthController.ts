@@ -37,15 +37,16 @@ export class AuthController extends Controller {
     @Body() loginPrams: LoginParams
   ): Promise<InfuserUser>{
     const { username, password } = loginPrams;
-    const response = await InfuserGrpcAuthorClient.Instance.login(username, password);
+    const authResponse = await InfuserGrpcAuthorClient.Instance.login(username, password);
     const infuserUser:InfuserUser = {
       userId: 1,
       username: username,
-      token: response.jwt,
-      refreshToken: response.refreshToken,
-      expireAt: response.expiresIn.seconds
+      token: authResponse.jwt,
+      refreshToken: authResponse.refreshToken,
+      expireAt: authResponse.expiresIn.seconds
     }
     await RedisManager.Instance.setUserToken(infuserUser);
+    this.setStatus(201);
     return Promise.resolve(infuserUser);
   }
 
@@ -57,11 +58,19 @@ export class AuthController extends Controller {
   @SuccessResponse('201', 'success to refresh token')
   public async refresh(
     @Body() refreshTokenParams: TokenParams
-  ): Promise<User> {
+  ): Promise<InfuserUser> {
     const { refreshToken } = refreshTokenParams;
-    const user = refreshTokens(refreshToken)
+    const authResponse = await InfuserGrpcAuthorClient.Instance.refresh(refreshToken);
+    const infuserUser:InfuserUser = {
+      userId: 1,
+      username: "admin",
+      token: authResponse.jwt,
+      refreshToken: authResponse.refreshToken,
+      expireAt: authResponse.expiresIn.seconds
+    }
+    await RedisManager.Instance.setUserToken(infuserUser);
     this.setStatus(201);
-    return Promise.resolve(user);
+    return Promise.resolve(infuserUser);
   }
 
   @Get("/me")

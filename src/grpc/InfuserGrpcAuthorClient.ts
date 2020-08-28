@@ -1,7 +1,8 @@
 import * as grpc from "grpc";
-import { LoginReq, AuthResult, AuthRes } from '../lib/infuser-protobuf/gen/proto/author/auth_pb';
+import { LoginReq, AuthResult, AuthRes, RefreshTokenReq } from '../lib/infuser-protobuf/gen/proto/author/auth_pb';
 import { AuthServiceClient } from "../lib/infuser-protobuf/gen/proto/author/auth_grpc_pb";
 import ApplicationError from '../../build/src/ApplicationError';
+import { resolve } from 'url';
 
 const property = require("../../property.json");
 
@@ -27,6 +28,21 @@ class InfuserGrpcAuthorClient {
       loginReq.setLoginId(username);
       loginReq.setPassword(password);
       this._authClient.login(loginReq, (err: grpc.ServiceError, response:AuthRes) => {
+        if(err) {
+          reject(new Error(err.message));
+        } else if(response.getCode() !== AuthResult.VALID) {
+          reject(new ApplicationError(401, response.getMsg()));
+        }
+        resolve(response.toObject());
+      })
+    })
+  }
+
+  public async refresh(refreshToken: string): Promise<AuthRes.AsObject> {
+    return new Promise( (resolve, reject) => {
+      const refreshReq: RefreshTokenReq = new RefreshTokenReq();
+      refreshReq.setRefreshToken(refreshToken);
+      this._authClient.refresh(refreshReq, (err: grpc.ServiceError, response: AuthRes) => {
         if(err) {
           reject(new Error(err.message));
         } else if(response.getCode() !== AuthResult.VALID) {
