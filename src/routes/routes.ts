@@ -16,10 +16,6 @@ import { ApiServiceController } from './../controllers/api/ApiServiceController'
 import { ApiStageController } from './../controllers/api/ApiStageController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/api/AuthController';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { RestApplicationController } from './../controllers/rest/RestApplicationController';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { RestServiceController } from './../controllers/rest/RestServiceController';
 import { expressAuthentication } from './../middlewares/authentication';
 import * as express from 'express';
 
@@ -343,6 +339,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DescTableResult": {
+        "dataType": "refObject",
+        "properties": {
+            "field": { "dataType": "string", "required": true },
+            "type": { "dataType": "string", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DatabaseConnectionCreateParams": {
         "dataType": "refObject",
         "properties": {
@@ -366,6 +371,18 @@ const models: TsoaRoute.Models = {
             "applicationId": { "dataType": "double" },
             "fileParams": { "ref": "FileParams" },
             "dbmsParams": { "ref": "DbmsParams" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "InfuserUser": {
+        "dataType": "refObject",
+        "properties": {
+            "userId": { "dataType": "double", "required": true },
+            "username": { "dataType": "string", "required": true },
+            "token": { "dataType": "string", "required": true },
+            "refreshToken": { "dataType": "string", "required": true },
+            "expireAt": { "dataType": "double", "required": true },
         },
         "additionalProperties": false,
     },
@@ -788,7 +805,6 @@ export function RegisterRoutes(app: express.Express) {
         authenticateMiddleware([{ "jwt": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
                 connectionId: { "in": "path", "name": "connectionId", "required": true, "dataType": "double" },
             };
 
@@ -1020,12 +1036,11 @@ export function RegisterRoutes(app: express.Express) {
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.get('/rest/applications',
+    app.get('/api/oauth/me',
+        authenticateMiddleware([{ "bearer": [] }]),
         function(request: any, response: any, next: any) {
             const args = {
-                page: { "in": "query", "name": "page", "dataType": "double" },
-                perPage: { "in": "query", "name": "perPage", "dataType": "double" },
-                nameSpace: { "in": "query", "name": "nameSpace", "dataType": "string" },
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1037,78 +1052,10 @@ export function RegisterRoutes(app: express.Express) {
                 return next(err);
             }
 
-            const controller = new RestApplicationController();
+            const controller = new AuthController();
 
 
-            const promise = controller.get.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.get('/rest/applications/:id',
-        function(request: any, response: any, next: any) {
-            const args = {
-                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new RestApplicationController();
-
-
-            const promise = controller.getDetail.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.get('/rest/services',
-        function(request: any, response: any, next: any) {
-            const args = {
-                page: { "in": "query", "name": "page", "dataType": "double" },
-                perPage: { "in": "query", "name": "perPage", "dataType": "double" },
-                entityName: { "in": "query", "name": "entityName", "dataType": "string" },
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new RestServiceController();
-
-
-            const promise = controller.get.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.get('/rest/services/:id',
-        function(request: any, response: any, next: any) {
-            const args = {
-                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new RestServiceController();
-
-
-            const promise = controller.getDetail.apply(controller, validatedArgs as any);
+            const promise = controller.me.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

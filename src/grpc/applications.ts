@@ -1,8 +1,6 @@
 import * as grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import { getRepository, FindManyOptions, Like } from 'typeorm';
-import { User } from "../entity/manager/User";
-import { application } from 'express';
 import { Application } from "../entity/manager/Application";
 import { ApplicationServiceService, IApplicationServiceServer } from '../lib/infuser-protobuf/gen/proto/designer/application_grpc_pb';
 import { ApplicationList as GApplicationList, ListApplicationRequest } from "../lib/infuser-protobuf/gen/proto/designer/application_pb";
@@ -45,7 +43,6 @@ class ApplicationServer implements IApplicationServiceServer {
         application.setCreatedAt(app.createdAt.toDateString());
         application.setDescription(app.description);
         application.setNameSpace(app.nameSpace);
-        application.setStatus(app.status);
         application.setTitle(app.title);
         application.setUpdatedAt(app.updatedAt.toDateString());
         application.setUserId(app.userId);

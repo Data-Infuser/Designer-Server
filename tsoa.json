@@ -12,7 +12,14 @@
           "scheme": "bearer",
           "bearerFormat": "JWT",
           "scopes": {}
-      }
+      },
+      "bearer": {
+        "type": "http",
+        "authorizationUrl": "http://swagger.io/api/oauth/dialog",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "scopes": {}
+    }
     },
     "specMerging": "recursive",
     "spec": {

@@ -935,6 +935,22 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DescTableResult": {
+				"properties": {
+					"field": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"field",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"DatabaseConnectionCreateParams": {
 				"properties": {
 					"title": {
@@ -1001,6 +1017,36 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"InfuserUser": {
+				"properties": {
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"token": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					},
+					"expireAt": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"userId",
+					"username",
+					"token",
+					"refreshToken",
+					"expireAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"LoginParams": {
 				"properties": {
 					"username": {
@@ -1032,6 +1078,13 @@
 		},
 		"securitySchemes": {
 			"jwt": {
+				"type": "http",
+				"authorizationUrl": "http://swagger.io/api/oauth/dialog",
+				"scheme": "bearer",
+				"bearerFormat": "JWT",
+				"scopes": {}
+			},
+			"bearer": {
 				"type": "http",
 				"authorizationUrl": "http://swagger.io/api/oauth/dialog",
 				"scheme": "bearer",
@@ -1589,7 +1642,9 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/DatabaseConnection"
+								}
 							}
 						}
 					}
@@ -1656,7 +1711,12 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
 							}
 						}
 					}
@@ -1692,7 +1752,12 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/DescTableResult"
+									},
+									"type": "array"
+								}
 							}
 						}
 					}
@@ -1997,7 +2062,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserInterface"
+									"$ref": "#/components/schemas/InfuserUser"
 								}
 							}
 						}
@@ -2055,158 +2120,30 @@
 				}
 			}
 		},
-		"/rest/applications": {
+		"/api/oauth/me": {
 			"get": {
-				"operationId": "Get",
+				"operationId": "Me",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "success to refresh token",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
 							}
 						}
 					}
 				},
 				"tags": [
-					"#Applications"
+					"Auth"
 				],
-				"security": [],
-				"parameters": [
+				"security": [
 					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "perPage",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "nameSpace",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
+						"bearer": []
 					}
-				]
-			}
-		},
-		"/rest/applications/{id}": {
-			"get": {
-				"operationId": "GetDetail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"#Applications"
 				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/rest/services": {
-			"get": {
-				"operationId": "Get",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"#Services"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "perPage",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "entityName",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/rest/services/{id}": {
-			"get": {
-				"operationId": "GetDetail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"#Services"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
+				"parameters": []
 			}
 		}
 	},

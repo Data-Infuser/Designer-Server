@@ -1,8 +1,12 @@
+import { Request as exRequest } from "express";
 import { getRepository } from "typeorm";
 import { User, UserInterface } from "../../entity/manager/User";
 import { generateTokens, refreshTokens } from '../../util/JwtManager';
-import { Route, Post, Body, Tags, SuccessResponse, Controller } from "tsoa";
-import ApplicationError from "../../ApplicationError";
+import { Route, Post, Body, Tags, SuccessResponse, Controller, Get, Security, Request } from "tsoa";
+import InfuserGrpcAuthorClient from "../../grpc/InfuserGrpcAuthorClient";
+import RedisManager from "../../util/RedisManager";
+
+const property = require("../../../property.json");
 
 interface LoginParams {
   username: string,
@@ -11,6 +15,14 @@ interface LoginParams {
 
 interface TokenParams {
   refreshToken: string
+}
+
+export interface InfuserUser {
+  userId: number,
+  username: string,
+  token: string,
+  refreshToken: string,
+  expireAt: number
 }
 @Route("/api/oauth")
 @Tags("Auth")
@@ -23,15 +35,18 @@ export class AuthController extends Controller {
   @Post("/login")
   public async login(
     @Body() loginPrams: LoginParams
-  ): Promise<UserInterface>{
+  ): Promise<InfuserUser>{
     const { username, password } = loginPrams;
-    const userRepo = getRepository(User);
-    let currentUser = await userRepo.findOne({username: username})
-    if (!currentUser || !currentUser.checkIfUnencryptedPasswordIsValid(password)) {
-      throw new ApplicationError(401, "Unauthurized User");
+    const response = await InfuserGrpcAuthorClient.Instance.login(username, password);
+    const infuserUser:InfuserUser = {
+      userId: 1,
+      username: username,
+      token: response.jwt,
+      refreshToken: response.refreshToken,
+      expireAt: response.expiresIn.seconds
     }
-    currentUser = generateTokens(currentUser);
-    return Promise.resolve(currentUser);
+    await RedisManager.Instance.setUserToken(infuserUser);
+    return Promise.resolve(infuserUser);
   }
 
   /**
@@ -47,6 +62,15 @@ export class AuthController extends Controller {
     const user = refreshTokens(refreshToken)
     this.setStatus(201);
     return Promise.resolve(user);
+  }
+
+  @Get("/me")
+  @Security("bearer")
+  @SuccessResponse('200', 'success to refresh token')
+  public async me(
+    @Request() request: exRequest
+  ): Promise<User> {
+    return Promise.resolve(request.user);
   }
 }
 

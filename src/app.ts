@@ -7,7 +7,6 @@ import bodyParser from "body-parser";
 import methodOverride from "method-override";
 import compileSass from "express-compile-sass";
 import path from "path";
-import setupPassport from "./config/passportConfig";
 import session from "express-session";
 import morgan from "morgan";
 import flash from "express-flash";
@@ -24,6 +23,7 @@ import swagger from './routes/swagger.json';
 import ormConfig from "./config/ormConfig";
 import { ValidateError } from "tsoa";
 import { TokenExpiredError } from "jsonwebtoken";
+import RedisManager from "./util/RedisManager";
 
 const property = require("../property.json")
 
@@ -70,14 +70,13 @@ export class Application {
     console.log("Start::Database connection")
     const conn = await createConnection(ormConfig.defaultConnection).catch(error => console.log(error));
     const datasetConn = await createConnection(ormConfig.datasetConnection).catch(error => console.log(error));
+    const redisClient = await RedisManager.Instance.connect();
+
     console.log("Success::Database connection")
-    setupPassport(this.app);
-    // await setupRoutes(this.app);
     RegisterRoutes(<express.Express>this.app);
     BullManager.setupBull(this.app);
 
     this.app.use("/api-docs", swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
-      
       return res.send(
         swaggerUi.generateHTML(swagger)
       );
@@ -94,8 +93,8 @@ export class Application {
       res: ExResponse,
       next: NextFunction
     ): ExResponse | void {
+      console.log(err);
       if (err instanceof ValidateError) {
-        console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
         return res.status(422).json({
           message: "Validation Failed",
           details: err?.fields,
@@ -103,16 +102,16 @@ export class Application {
       }
 
       if (err instanceof TokenExpiredError) {
-        res.status(401).json({
+        return res.status(401).json({
           message: "Token expired"
         })
       }
-      
-      if (err instanceof ApplicationError) {
-        res.status(err.statusCode).json(err);
-      }
 
       if (err instanceof Error) {
+        if(err.name === "ApplicationError") {
+          const applicationError = <ApplicationError> err;
+          return res.status(applicationError.statusCode).json(applicationError);
+        }
         return res.status(500).json({
           message: "Internal Server Error",
         });
