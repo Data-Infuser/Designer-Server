@@ -11,5 +11,15 @@
   "jobqueue-redis": {
     "host": "localhost",
     "port": 6379
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379
+  },
+  "grpc": {
+    "auth": {
+      "host": "13.125.199.14",
+      "port": 9090
+    }
   }
 }
