@@ -8,7 +8,7 @@ RUN npm install
 
 COPY ./build .
 
-EXPOSE 3000
+EXPOSE 9092
 
 CMD [ "node", "./src/index.js" ]
 

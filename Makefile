@@ -17,7 +17,6 @@ ifneq ($(OS),Windows_NT)
 	endif
 endif
 
-
 build:
 	tsc -p . && cp -r ./src/lib/infuser-protobuf ./build/src/lib
 
@@ -25,7 +24,7 @@ docker-build:
 	docker build --tag $(CONTAINER):$(VERSION) --build-arg=AUTHOR_ENV=$(ENV) .
 
 run-docker:
-	docker run --rm --detach $(NETWORK_OPTION) --name $(APP) $(CONTAINER):$(VERSION)
+	docker run --rm -v /home/ubuntu/designer-dist:/dist --detach $(NETWORK_OPTION) --name $(APP) $(CONTAINER):$(VERSION)
 
 docker-log:
 	docker logs --follow $(APP)
