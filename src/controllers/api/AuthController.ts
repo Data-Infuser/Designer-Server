@@ -3,6 +3,7 @@ import { getRepository } from "typeorm";
 import { Route, Post, Body, Tags, SuccessResponse, Controller, Get, Security, Request } from "tsoa";
 import InfuserGrpcAuthorClient from "../../grpc/InfuserGrpcAuthorClient";
 import RedisManager from "../../util/RedisManager";
+import jwt from 'jsonwebtoken';
 
 const property = require("../../../property.json");
 
@@ -17,10 +18,19 @@ interface TokenParams {
 
 export interface InfuserUser {
   id: number,
+  loginId: string,
   username: string,
   token: string,
   refreshToken: string,
   expireAt: number
+}
+
+interface jwtPayload {
+  id?: number,
+  loginId: string,
+  email: string,
+  username: string,
+  exp: number
 }
 @Route("/api/oauth")
 @Tags("Auth")
@@ -36,9 +46,11 @@ export class AuthController extends Controller {
   ): Promise<InfuserUser>{
     const { username, password } = loginPrams;
     const authResponse = await InfuserGrpcAuthorClient.Instance.login(username, password);
+    const userInfo:jwtPayload = <jwtPayload>jwt.decode(authResponse.jwt);
     const infuserUser:InfuserUser = {
-      id: 1,
-      username: username,
+      id: userInfo.id || 1,
+      loginId: userInfo.loginId,
+      username: userInfo.username,
       token: authResponse.jwt,
       refreshToken: authResponse.refreshToken,
       expireAt: authResponse.expiresIn.seconds
@@ -59,9 +71,11 @@ export class AuthController extends Controller {
   ): Promise<InfuserUser> {
     const { refreshToken } = refreshTokenParams;
     const authResponse = await InfuserGrpcAuthorClient.Instance.refresh(refreshToken);
+    const userInfo:jwtPayload = <jwtPayload>jwt.decode(authResponse.jwt);
     const infuserUser:InfuserUser = {
-      id: 1,
-      username: "admin",
+      id: userInfo.id || 1,
+      loginId: userInfo.loginId,
+      username: userInfo.username,
       token: authResponse.jwt,
       refreshToken: authResponse.refreshToken,
       expireAt: authResponse.expiresIn.seconds
