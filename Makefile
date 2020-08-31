@@ -32,9 +32,8 @@ docker-log:
 .PHONY: build docker run-docker docker-log
 
 stage:
-	git pull
 	sudo npm install
 	sudo make build
 	make docker-build
-	docker container stop $$(docker container ls -q --filter name=${APP}*)
+	-docker container stop $$(docker container ls -q --filter name=${APP}*)
 	make run-docker
