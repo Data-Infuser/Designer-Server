@@ -7,7 +7,8 @@
     "start": "tsoa spec-and-routes && set debug=* && ts-node-dev --debug --ignore-watch node_modules --respawn --transpile-only ./src/index.ts",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
-    "build": "tsc -p . && cp -r ./src/lib/infuser-protobuf ./build/src/lib"
+    "build": "tsc -p . && cp -r ./src/lib/infuser-protobuf ./build/src/lib",
+    "deploy-stage": "scp property-stage.json ubuntu@13.125.199.14:/home/ubuntu/designer-server/property.json && ssh ubuntu@13.125.199.14 'cd designer-server && git pull' && ssh ubuntu@13.125.199.14 'cd designer-server && make stage'"
   },
   "author": "",
   "license": "ISC",
