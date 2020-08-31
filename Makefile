@@ -33,7 +33,8 @@ docker-log:
 
 stage:
 	git pull
-	npm install
-	make build
+	sudo npm install
+	sudo make build
 	make docker-build
+	docker container stop $$(docker container ls -q --filter name=${CONTAINER}*)
 	make run-docker
