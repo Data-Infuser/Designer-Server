@@ -22,7 +22,7 @@ import setupApplications from "./grpc/applications";
 import swagger from './routes/swagger.json';
 import ormConfig from "./config/ormConfig";
 import { ValidateError } from "tsoa";
-import { TokenExpiredError } from "jsonwebtoken";
+import { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
 import RedisManager from "./util/RedisManager";
 
 const property = require("../property.json")
@@ -94,7 +94,7 @@ export class Application {
         });
       }
 
-      if (err instanceof TokenExpiredError) {
+      if (err instanceof JsonWebTokenError) {
         return res.status(401).json({
           message: "Token expired"
         })
