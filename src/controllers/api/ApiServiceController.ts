@@ -6,6 +6,7 @@ import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
 import { FileParams, DbmsParams } from './ApiMetaController';
+import fs from 'fs';
 
 @Route("/api/services")
 @Tags("Service")
@@ -77,10 +78,18 @@ export class ApiServiceController {
       }
     })
 
+    const filePath = service.meta && service.meta.dataType === 'file' ? service.meta.filePath : null;
+
     const applicationId = service.application.id;
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
       if(service.meta) await transactionalEntityManager.remove(service.meta);
       await transactionalEntityManager.remove(service);
+      if(filePath) {
+        fs.unlink(filePath, (err) => {
+          console.error(`${filePath} Unlink Failed`)
+          console.error(err);
+        });
+      }
     });
 
     return Promise.resolve({
