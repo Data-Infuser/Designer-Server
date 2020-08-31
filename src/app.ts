@@ -57,11 +57,15 @@ export class Application {
 
   setupDbAndServer = async () => {
     console.log("Start::Database connection")
+    console.log(ormConfig);
     const conn = await createConnection(ormConfig.defaultConnection).catch(error => console.log(error));
     const datasetConn = await createConnection(ormConfig.datasetConnection).catch(error => console.log(error));
-    const redisClient = await RedisManager.Instance.connect();
-
     console.log("Success::Database connection")
+
+    console.log("Start::Redis connection")
+    const redisClient = await RedisManager.Instance.connect();
+    console.log("Success::Redis connection")
+
     RegisterRoutes(<express.Express>this.app);
     BullManager.setupBull(this.app);
 
