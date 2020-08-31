@@ -30,3 +30,10 @@ docker-log:
 	docker logs --follow $(APP)
 
 .PHONY: build docker run-docker docker-log
+
+stage:
+	git pull
+	npm install
+	make build
+	make docker-build
+	make run-docker
