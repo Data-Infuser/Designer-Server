@@ -103,7 +103,9 @@ export class Application {
       if (err instanceof Error) {
         if(err.name === "ApplicationError") {
           const applicationError = <ApplicationError> err;
-          return res.status(applicationError.statusCode).json(applicationError);
+          return res.status(applicationError.statusCode).json({
+            code: applicationError.message
+          });
         }
         return res.status(500).json({
           message: "Internal Server Error",

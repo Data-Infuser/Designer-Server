@@ -131,19 +131,23 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
    * @returns AcceptableType
    */
   availableType(string) {
-    const tempNumn = Number(string);
-    if(!isNaN(tempNumn)) {
-      /**
-       * 숫자 타입인 경우 INTEGER와 DOUBLE 중 선택
-       */
-      return this.isInt(tempNumn) ? AcceptableType.INTEGER : AcceptableType.DOUBLE
-    }
+    try {
+      const tempNumn = Number(string);
+      if(!isNaN(tempNumn)) {
+        /**
+         * 숫자 타입인 경우 INTEGER와 DOUBLE 중 선택
+         */
+        return this.isInt(tempNumn) ? AcceptableType.INTEGER : AcceptableType.DOUBLE
+      }
 
-    if(moment(string).isValid()) {
-      return AcceptableType.DATE;
-    }
+      if(moment(string).isValid()) {
+        return AcceptableType.DATE;
+      }
 
-    return AcceptableType.VARCHAR;
+      return AcceptableType.VARCHAR;
+    } catch (err) {
+      return AcceptableType.VARCHAR;
+    }
   }
 
   /**

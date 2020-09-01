@@ -21,6 +21,12 @@ class InfuserGrpcAuthorClient {
     return this._instance;
   }
 
+  // VALID = 0;
+  // NOT_REGISTERED = -1;
+  // INVALID_PASSWORD = -2;
+  // WITHDRAWAL_USER = -3;
+  // INVALID_TOKEN = -4;
+  // INTERNAL_EXCEPTION = -9;
   public async login(username: string, password: string):Promise<AuthRes.AsObject>{
     return new Promise( (resolve, reject) => {
       const loginReq = new LoginReq();
@@ -30,7 +36,24 @@ class InfuserGrpcAuthorClient {
         if(err) {
           reject(new Error(err.message));
         } else if(response.getCode() !== AuthResult.VALID) {
-          reject(new ApplicationError(401, response.getMsg()));
+          let messageCode = "GLOBAL_0001";
+          switch(response.getCode()) {
+            case AuthResult.NOT_REGISTERED:
+              messageCode = "AUTH_0001";
+              break;
+            case AuthResult.INVALID_PASSWORD:
+              messageCode = "AUTH_0002";
+              break;
+            case AuthResult.WITHDRAWAL_USER:
+              messageCode = "AUTH_0003";
+              break;
+            case AuthResult.INVALID_TOKEN:
+              messageCode = "AUTH_0004";
+              break;
+            default:
+              break;
+          }
+          reject(new ApplicationError(401, messageCode));
         }
         resolve(response.toObject());
       })
