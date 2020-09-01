@@ -9,7 +9,7 @@ import { AcceptableType } from "../src/entity/manager/MetaColumn";
 
 var path = require('path');
 
-describe('Read xlsx', () => {
+describe('File Meta Load', () => {
   it('Test file exist', async () => {
     const filePaths = [path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx'), path.resolve(__dirname, 'filesForTest/폐기물.csv')]
     filePaths.forEach(filePath => {
@@ -55,7 +55,7 @@ describe('Read xlsx', () => {
   it('Csv type check', async() => {
     const testRecords = [
       [ '123', 'hello' , '1992-02-13', '0.123' ], //int
-      [ '0', '19920213', '1992,02,13', '0.999'], //varchar
+      [ '0', '19920213', '1992-02-13', '0.999'], //varchar
       [ '9999999','hello.231', '1992-02-13 19:00', '1.999' ] //date
     ]
     const types = new CsvMetaLoadStrategy().checkTypes(testRecords);
