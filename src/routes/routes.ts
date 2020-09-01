@@ -362,6 +362,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "id": { "dataType": "double", "required": true },
+            "loginId": { "dataType": "string", "required": true },
             "username": { "dataType": "string", "required": true },
             "token": { "dataType": "string", "required": true },
             "refreshToken": { "dataType": "string", "required": true },
@@ -383,6 +384,18 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "refreshToken": { "dataType": "string", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RegistParams": {
+        "dataType": "refObject",
+        "properties": {
+            "username": { "dataType": "string", "required": true },
+            "password": { "dataType": "string", "required": true },
+            "passwordConfirm": { "dataType": "string", "required": true },
+            "name": { "dataType": "string", "required": true },
+            "email": { "dataType": "string", "required": true },
         },
         "additionalProperties": false,
     },
@@ -1016,6 +1029,28 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.refresh.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/api/oauth/regist',
+        function(request: any, response: any, next: any) {
+            const args = {
+                registParams: { "in": "body", "name": "registParams", "required": true, "ref": "RegistParams" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new AuthController();
+
+
+            const promise = controller.regist.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

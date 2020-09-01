@@ -994,6 +994,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"loginId": {
+						"type": "string"
+					},
 					"username": {
 						"type": "string"
 					},
@@ -1010,6 +1013,7 @@
 				},
 				"required": [
 					"id",
+					"loginId",
 					"username",
 					"token",
 					"refreshToken",
@@ -1042,6 +1046,34 @@
 				},
 				"required": [
 					"refreshToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegistParams": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"passwordConfirm": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password",
+					"passwordConfirm",
+					"name",
+					"email"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2078,6 +2110,36 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/TokenParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/oauth/regist": {
+			"post": {
+				"operationId": "Regist",
+				"responses": {
+					"201": {
+						"description": "success to refresh token",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegistParams"
 							}
 						}
 					}
