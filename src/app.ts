@@ -32,13 +32,11 @@ export class Application {
   grpcServer;
   auth;
   constructor() {
-    console.log("Start::constructor")
     this.app = express();
     this.app.use(cors());
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
     this.app.use(methodOverride('_method'));
-    console.log("Start::Session")
     this.app.use(session({
       resave: true,
       saveUninitialized: true,
@@ -50,21 +48,16 @@ export class Application {
       res.locals.flashMessages = req.flash();
       next();
     });
-    console.log("Start::Morgan")
-    this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] :response-time ms"));
-    console.log("Success::constructor")
+    if (process.env.NODE_ENV !== 'test') {
+      this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] :response-time ms"));
+    }
   }
 
   setupDbAndServer = async () => {
-    console.log("Start::Database connection")
-    console.log(ormConfig);
-    const conn = await createConnection(ormConfig.defaultConnection).catch(error => console.log(error));
-    const datasetConn = await createConnection(ormConfig.datasetConnection).catch(error => console.log(error));
-    console.log("Success::Database connection")
+    const conn = await createConnection(ormConfig.defaultConnection)
+    const datasetConn = await createConnection(ormConfig.datasetConnection)
 
-    console.log("Start::Redis connection")
     const redisClient = await RedisManager.Instance.connect();
-    console.log("Success::Redis connection")
 
     RegisterRoutes(<express.Express>this.app);
     BullManager.setupBull(this.app);
@@ -86,7 +79,6 @@ export class Application {
       res: ExResponse,
       next: NextFunction
     ): ExResponse | void {
-      console.log(err);
       if (err instanceof ValidateError) {
         return res.status(422).json({
           message: "Validation Failed",
@@ -115,7 +107,7 @@ export class Application {
       next();
     });
 
-    this.startServer();
+    await this.startServer();
     this.setupGrpcServer();
   }
 
@@ -129,7 +121,6 @@ export class Application {
   startServer(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.app.listen(property.port, () => {
-        console.log("Server started on port: " + property.port);
         resolve(true);
       });
     });

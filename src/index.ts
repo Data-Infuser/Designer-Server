@@ -1,3 +1,5 @@
 import { Application } from './app';
 
-new Application().setupDbAndServer();
+const app = new Application().setupDbAndServer();
+
+export default app; // for test
