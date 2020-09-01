@@ -138,8 +138,8 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
          */
         return this.isInt(tempNumn) ? AcceptableType.INTEGER : AcceptableType.DOUBLE
       }
-
-      if(moment(string).isValid()) {
+      
+      if(moment(string, null, true).isValid()) {
         return AcceptableType.DATE;
       }
 
