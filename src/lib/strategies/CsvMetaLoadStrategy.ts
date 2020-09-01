@@ -8,7 +8,6 @@ import moment from 'moment';
 const parse = require('csv-parse/lib/sync')
 const iconv = require('iconv-lite');
 const jschardet = require('jschardet');
-const CsvParse = require('csv-parse')
 
 const MAX_LINE = 1000;
 
@@ -100,7 +99,7 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
    * @param records n x m의 csv records
    * @returns AcceptableType[]
    */
-  checkTypes(records):AcceptableType[] {
+  checkTypes(records:string[][]):AcceptableType[] {
     const types = []
     for(let i = 1; i < records.length; i++) {
       if(i === 1) {

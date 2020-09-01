@@ -5,6 +5,7 @@ import MetaLoadStrategy from '../src/lib/MetaLoadStrategy';
 import XlsxMetaLoadStrategy from '../src/lib/strategies/XlsxMetaLoadStrategy';
 import MetaLoaderFileParam from '../src/lib/interfaces/MetaLoaderFileParam';
 import CsvMetaLoadStrategy from '../src/lib/strategies/CsvMetaLoadStrategy';
+import { AcceptableType } from "../src/entity/manager/MetaColumn";
 
 var path = require('path');
 
@@ -50,4 +51,18 @@ describe('Read xlsx', () => {
     expect(result.meta.filePath).to.equal(path.resolve(__dirname, 'filesForTest/폐기물.csv'));
     expect(result.columns.length).to.equal(7);
   });
+
+  it('Csv type check', async() => {
+    const testRecords = [
+      [ '123', 'hello' , '1992-02-13', '0.123' ], //int
+      [ '0', '19920213', '1992,02,13', '0.999'], //varchar
+      [ '9999999','hello.231', '1992-02-13 19:00', '1.999' ] //date
+    ]
+    const types = new CsvMetaLoadStrategy().checkTypes(testRecords);
+    const expectedTypes = [AcceptableType.INTEGER, AcceptableType.VARCHAR, AcceptableType.DATE, AcceptableType.DOUBLE]
+    
+    for(let i = 0; i < types.length; i++) {
+      expect(types[i]).to.equal(expectedTypes[i]);
+    }
+  })
 });
