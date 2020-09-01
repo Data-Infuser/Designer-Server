@@ -13,13 +13,14 @@
       "esModuleInterop": true,
       "resolveJsonModule": true,
       "composite": true,
-      "types": ["node", "mocha"],
+      "types": ["node", "mocha", "chai"],
       "allowJs": false
    },
    "typeRoots": [
       "./@types",
       "./node_modules/@types",
-      "./src/@types"
+      "./src/@types",
+      "./src/@types/index.d.ts"
    ],
    "exclude": [
       "./test"
