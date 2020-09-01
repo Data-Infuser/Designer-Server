@@ -32,6 +32,14 @@ interface jwtPayload {
   username: string,
   exp: number
 }
+
+interface RegistParams {
+  username: string,
+  password: string,
+  passwordConfirm: string,
+  name: string,
+  email: string
+}
 @Route("/api/oauth")
 @Tags("Auth")
 export class AuthController extends Controller {
@@ -83,6 +91,17 @@ export class AuthController extends Controller {
     await RedisManager.Instance.setUserToken(infuserUser);
     this.setStatus(201);
     return Promise.resolve(infuserUser);
+  }
+
+  @Post("/regist")
+  @SuccessResponse('201', 'success to refresh token')
+  public async regist(
+    @Body() registParams: RegistParams
+  ): Promise<any> {
+    this.setStatus(201);
+    return Promise.resolve({
+      message: "success"
+    })
   }
 
   @Get("/me")
