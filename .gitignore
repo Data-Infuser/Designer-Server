@@ -8,6 +8,8 @@ tmp/
 temp/
 upload/*
 
+.nyc_output/
+
 ormconfig.json
 package-lock.json
 property.json
