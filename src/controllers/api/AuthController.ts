@@ -4,6 +4,7 @@ import { Route, Post, Body, Tags, SuccessResponse, Controller, Get, Security, Re
 import InfuserGrpcAuthorClient from "../../grpc/InfuserGrpcAuthorClient";
 import RedisManager from "../../util/RedisManager";
 import jwt from 'jsonwebtoken';
+import { UserReq } from '../../../build/src/lib/infuser-protobuf/gen/proto/author/user_pb';
 
 const property = require("../../../property.json");
 
@@ -33,7 +34,7 @@ interface jwtPayload {
   exp: number
 }
 
-interface RegistParams {
+export interface RegistParams {
   username: string,
   password: string,
   passwordConfirm: string,
@@ -98,10 +99,9 @@ export class AuthController extends Controller {
   public async regist(
     @Body() registParams: RegistParams
   ): Promise<any> {
+    const registResponse = await InfuserGrpcAuthorClient.Instance.regist(registParams);
     this.setStatus(201);
-    return Promise.resolve({
-      message: "success"
-    })
+    return Promise.resolve(registResponse)
   }
 
   @Get("/me")

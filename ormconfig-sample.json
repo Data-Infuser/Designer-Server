@@ -1,6 +1,6 @@
 [{
-   "type": "mysql",
-   "host": "localhost",
+   "type": "mariadb",
+   "host": "",
    "port": 3306,
    "username": "root",
    "password": "",
@@ -24,7 +24,7 @@
 },
 {
    "name": "dataset",
-   "type": "mysql",
+   "type": "mariadb",
    "host": "localhost",
    "port": 3306,
    "username": "root",
