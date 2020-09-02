@@ -10,11 +10,18 @@ process.env.NODE_ENV = 'test';
 chai.use(chaiHttp);
 describe('authApi', () => {
   let application;
+  let request;
+  
   before(async () => {
     application = new Application()
     await application.setupDbAndServer();
+    request = chai.request(application.app);
   })
   
+  after(async () => {
+    application.server.close();
+  })
+
   it('regist - duplicate_login_id', async () => {
     /**
      * duplicate user
@@ -57,7 +64,7 @@ describe('authApi', () => {
     chai.request(application.app)
     .post('/api/oauth/regist')
     .send({
-      username: "chunghyup",
+      username: "chunghyup-3",
       password: "admin2",
       passwordConfirm: "admin2",
       name: "asdrf392-0risa;dlof",

@@ -29,6 +29,7 @@ const property = require("../property.json")
 
 export class Application {
   app: express.Application;
+  server;
   grpcServer;
   auth;
   constructor() {
@@ -120,7 +121,7 @@ export class Application {
 
   startServer(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.app.listen(property.port, () => {
+      this.server = this.app.listen(property.port, () => {
         resolve(true);
       });
     });

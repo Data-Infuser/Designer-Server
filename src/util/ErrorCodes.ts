@@ -7,7 +7,7 @@ export const ERROR_CODE = {
         [AuthResult.NOT_REGISTERED]: "AUTH_0001",
         [AuthResult.INVALID_PASSWORD]: "AUTH_0002",
         [AuthResult.WITHDRAWAL_USER]: "AUTH_0003",
-        [AuthResult.INVALID_TOKEN]: "AUTH_0004"
+        [AuthResult.INVALID_TOKEN]: "AUTH_0004",
     },
     REGIST: {
         [UserRes.Code.DUPLICATE_LOGIN_ID]: "REGIST_0001",
