@@ -72,7 +72,11 @@ class RedisManager {
   }
 
   async setUserToken(infuserUser: InfuserUser) {
-    await this.set(infuserUser.token, JSON.stringify(infuserUser));
+    await this.set(infuserUser.token, JSON.stringify({
+      id: infuserUser.id,
+      loginId: infuserUser.loginId,
+      username: infuserUser.username
+    }));
     await this.expire(infuserUser.token, infuserUser.expireAt - Math.floor(Date.now() / 1000));
     return Promise.resolve();
   }
