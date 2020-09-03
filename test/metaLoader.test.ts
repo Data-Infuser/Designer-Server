@@ -31,8 +31,13 @@ describe('File Meta Load', () => {
     
 
     const result = await new MetaLoader(metaLoadStrategy).loadMeta(metaLoaderFileParam);
-    expect(result.meta.filePath).to.equal(path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx'));
-    expect(result.columns.length).to.equal(18);
+    expect(result).to.satisfy( result => {
+      if(result.meta.filePath === (path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx')) && result.columns.length === 18) {
+        return true;
+      } else {
+        return false;
+      }
+    })
   });
 
   it('Load meta from csv', async () => {
@@ -48,8 +53,13 @@ describe('File Meta Load', () => {
     
 
     const result = await new MetaLoader(metaLoadStrategy).loadMeta(metaLoaderFileParam);
-    expect(result.meta.filePath).to.equal(path.resolve(__dirname, 'filesForTest/폐기물.csv'));
-    expect(result.columns.length).to.equal(7);
+    expect(result).to.satisfy( result => {
+      if(result.meta.filePath === (path.resolve(__dirname, 'filesForTest/폐기물.csv')) && result.columns.length === 7) {
+        return true;
+      } else {
+        return false;
+      }
+    })
   });
 
   it('Csv type check', async() => {
@@ -61,8 +71,6 @@ describe('File Meta Load', () => {
     const types = new CsvMetaLoadStrategy().checkTypes(testRecords);
     const expectedTypes = [AcceptableType.INTEGER, AcceptableType.VARCHAR, AcceptableType.DATE, AcceptableType.DOUBLE]
     
-    for(let i = 0; i < types.length; i++) {
-      expect(types[i]).to.equal(expectedTypes[i]);
-    }
+    expect(types).to.eql(expectedTypes)
   })
 });

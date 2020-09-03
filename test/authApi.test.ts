@@ -36,8 +36,7 @@ describe('authApi', () => {
       email: "chunghyup@gamil.com"
     })
     .end((err, res) => {
-      expect(res).to.have.status(401);
-      expect(res.body.code).to.equal(ERROR_CODE.REGIST[UserRes.Code.DUPLICATE_LOGIN_ID]);
+      expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.REGIST[UserRes.Code.DUPLICATE_LOGIN_ID]);
     })
   });
 
@@ -55,8 +54,7 @@ describe('authApi', () => {
       email: "asd4129ufwadjs;f@gamil.com"
     })
     .end((err, res) => {
-      expect(res).to.have.status(401);
-      expect(res.body.code).to.equal(ERROR_CODE.REGIST[UserRes.Code.PASSWORD_NOT_MATCHED]);
+      expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.REGIST[UserRes.Code.PASSWORD_NOT_MATCHED]);
     })
   });
 
@@ -71,8 +69,43 @@ describe('authApi', () => {
       email: "chunghyup.oh@gmail.com"
     })
     .end((err, res) => {
-      expect(res).to.have.status(401);
-      expect(res.body.code).to.equal(ERROR_CODE.REGIST[UserRes.Code.DUPLICATE_EMAIL]);
+      expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.REGIST[UserRes.Code.DUPLICATE_EMAIL]);
+    })
+  })
+
+  it('login - NOT_REGISTERED', async () => {
+    chai.request(application.app)
+    .post('/api/oauth/login')
+    .send({
+      username: "39!@(#$!H3k1j2-(#!U",
+      password: "asdf"
+    })
+    .end((err, res) => {
+      expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.AUTH[AuthResult.NOT_REGISTERED]);
+    })
+  })
+
+  it('login - INVALID_PASSWORD', async () => {
+    chai.request(application.app)
+    .post('/api/oauth/login')
+    .send({
+      username: "admin",
+      password: "asdfasdf"
+    })
+    .end((err, res) => {
+      expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.AUTH[AuthResult.INVALID_PASSWORD]);
+    })
+  })
+
+  it('login - SUCCESS', async () => {
+    chai.request(application.app)
+    .post('/api/oauth/login')
+    .send({
+      username: "admin",
+      password: "admin"
+    })
+    .end((err, res) => {
+      expect(res).to.have.status(201).and.have.property('body').and.have.keys(['id', 'username', 'loginId', 'token', 'refreshToken', 'expireAt']);
     })
   })
 });
