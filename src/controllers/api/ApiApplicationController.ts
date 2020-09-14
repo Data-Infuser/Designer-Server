@@ -1,5 +1,5 @@
 import { getRepository, getManager, In, FindManyOptions, FindOneOptions } from "typeorm";
-import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete, Query } from "tsoa";
+import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete, Query, Controller } from "tsoa";
 import { Request as exRequest } from "express";
 import { Application } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
@@ -10,10 +10,11 @@ import BullManager from '../../util/BullManager';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 import { TrafficConfig } from "../../entity/manager/TrafficConfig";
 import { Stage } from "../../entity/manager/Stage";
+import ApplicationParams from "../../interfaces/requestParams/ApplicationParams";
 
 @Route("/api/applications")
 @Tags("Applications")
-export class ApiApplicationController {
+export class ApiApplicationController extends Controller {
 
   @Get("/")
   @Security("jwt")
@@ -95,7 +96,7 @@ export class ApiApplicationController {
     newApplication.description = description;
     newApplication.userId = request.user.id;
     await applicationRepo.save(newApplication);
-
+    this.setStatus(201);
     return Promise.resolve(newApplication);
   }
 
@@ -284,12 +285,6 @@ export class ApiApplicationController {
     return Promise.resolve(trafficConfigs);
   }
 
-}
-
-interface ApplicationParams {
-  nameSpace: string,
-  title: string,
-  description: string
 }
 
 interface ApplicationSaveParams {
