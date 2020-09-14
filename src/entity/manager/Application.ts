@@ -34,6 +34,9 @@ export class Application {
   @OneToMany(type => Stage, stage => stage.application)
   stages: Stage[];
 
+  @Column({default: 1})
+  private lastStageVersion: number = 0;
+
   @Column()
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
@@ -54,5 +57,10 @@ export class Application {
       element.status = ServiceStatus.SCHEDULED;
     });
     return newStage;
+  }
+
+  get lastVersion() {
+    this.lastStageVersion += 1;
+    return this.lastStageVersion;
   }
 }

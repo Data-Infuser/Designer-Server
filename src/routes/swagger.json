@@ -206,6 +206,10 @@
 					"application": {
 						"$ref": "#/components/schemas/Application"
 					},
+					"applicationId": {
+						"type": "number",
+						"format": "double"
+					},
 					"services": {
 						"items": {
 							"$ref": "#/components/schemas/Service"
@@ -228,6 +232,7 @@
 					"id",
 					"status",
 					"application",
+					"applicationId",
 					"services",
 					"name",
 					"createdAt",

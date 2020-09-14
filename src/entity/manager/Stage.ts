@@ -30,6 +30,9 @@ export class Stage {
   @ManyToOne(type => Application)
   application: Application;
 
+  @Column()
+  applicationId: number;
+
   @OneToMany(type => Service, service => service.stage)
   services: Service[];
 

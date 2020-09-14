@@ -103,12 +103,17 @@ export class ApiApplicationController extends Controller {
 
     newApplication.trafficConfigs = [dailyMaxTrafic, monthlyMaxTraffic];
 
+    const stage = new Stage();
+    stage.name = `v${newApplication.lastVersion}`;
+    newApplication.stages = [stage];
+    
     await getManager().transaction(async transactionEntityManager => {
       await transactionEntityManager.save(newApplication);
-      console.log(newApplication);
       dailyMaxTrafic.applicationId = newApplication.id;
       monthlyMaxTraffic.applicationId = newApplication.id;
+      stage.applicationId = newApplication.id;
       await transactionEntityManager.save(newApplication.trafficConfigs);
+      await transactionEntityManager.save(newApplication.stages);
     });
 
     this.setStatus(201);
