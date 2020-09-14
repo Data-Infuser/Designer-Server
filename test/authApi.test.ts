@@ -8,18 +8,18 @@ import { UserRes } from '../src/lib/infuser-protobuf/gen/proto/author/user_pb';
 process.env.NODE_ENV = 'test';
 
 chai.use(chaiHttp);
+export let application: Application;
+
+before(async () => {
+  application = new Application()
+  await application.setupDbAndServer();
+})
+
+after(async () => {
+  application.server.close();
+})
+
 describe('authApi', () => {
-  let application: Application;
-  
-  before(async () => {
-    application = new Application()
-    await application.setupDbAndServer();
-    application.app.on
-  })
-  
-  after(async () => {
-    application.server.close();
-  })
 
   it('regist - duplicate_login_id', async () => {
     /**
