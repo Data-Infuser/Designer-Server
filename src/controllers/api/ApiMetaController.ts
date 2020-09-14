@@ -27,7 +27,7 @@ export class ApiMetaController {
   ): Promise<Meta> {
     const metaRepo = getRepository(Meta);
       const serviceRepo = getRepository(Service);
-      const { serviceId, title, dbms, host, port, database, user, password, table } = dbmsParams;
+      const { title, dbms, host, port, database, user, password, table } = dbmsParams;
       if(title.length == 0 
         || dbms.length == 0 
         || host.length == 0 
@@ -38,7 +38,6 @@ export class ApiMetaController {
         throw new ApplicationError(400, "Need all params");
       }
 
-    const service = await serviceRepo.findOneOrFail(serviceId);
     const connectionInfo = {
       dbms: dbms,
       username: user,
@@ -66,12 +65,9 @@ export class ApiMetaController {
     const meta = loaderResult.meta;
     const columns = loaderResult.columns;
     
-    service.meta = meta;
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
       await transactionalEntityManager.save(meta);
       await transactionalEntityManager.save(columns);
-      service.status = ServiceStatus.METALOADED;
-      await transactionalEntityManager.save(service);
     });
 
     const updatedMeta = await metaRepo.findOneOrFail({
@@ -94,9 +90,8 @@ export class ApiMetaController {
   public async postFile(
     @Request() request: exRequest,
     @Body() params: FileParams
-  ): Promise<any> {
+  ): Promise<Meta> {
     const serviceRepo = getRepository(Service);
-    const service = await serviceRepo.findOneOrFail(params.serviceId);
     switch(params.dataType) {
       case 'file':
         const fileParam:MetaLoaderFileParam = {
@@ -111,41 +106,28 @@ export class ApiMetaController {
         const meta: Meta = loaderResult.meta;
         const columns: MetaColumn[] = loaderResult.columns;
         
-        service.meta = meta;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           await transactionalEntityManager.save(meta);
           await transactionalEntityManager.save(columns);
-          service.status = ServiceStatus.METALOADED;
-          await transactionalEntityManager.save(service);
         });
-
-        const response = await serviceRepo.findOneOrFail({
-          relations: ["meta", "meta.columns"],
-          where: {
-            id: service.id
-          }
-        })
         
-        return Promise.resolve(response);
+        return Promise.resolve(meta);
       case 'file-url':
-        service.status = ServiceStatus.METASCHEDULED;
         /**
          * JobScheduler에 등록을 실패 하는 경우에도 Rollback
          */
         const newMeta = new Meta();
         newMeta.remoteFilePath = params.url;
         newMeta.dataType = params.dataType;
-        newMeta.service = service;
         newMeta.extension = params.ext;
         newMeta.title = params.title || "empty title";
         
         const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.save(service);
           await transactionalEntityManager.save(newMeta);
-          BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
+          //BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
         });
-        return Promise.resolve(service);
+        return Promise.resolve(newMeta);
       default:
         throw new Error("Unacceptable dataType");
     }        
@@ -176,7 +158,6 @@ export class ApiMetaController {
 }
 
 export interface DbmsParams {
-  serviceId: number,
   title: string,
   dbms: string,
   host: string,
@@ -188,7 +169,6 @@ export interface DbmsParams {
 }
 
 export interface FileParams {
-  serviceId: number,
   dataType: string,
   ext: string,
   title: string,

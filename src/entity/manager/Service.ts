@@ -4,6 +4,7 @@ import { Meta } from "./Meta";
 import { ServiceColumn } from "./ServiceColumn";
 import { Application } from "./Application";
 import { Stage } from "./Stage";
+import { servicesVersion } from "typescript";
 
 export enum HttpMethod {
   GET = "get",
@@ -71,8 +72,7 @@ export class Service {
   @Column({nullable: true})
   stageId: number;
 
-  @OneToOne(type => Meta, {nullable: true, onDelete: "SET NULL"})
-  @JoinColumn()
+  @OneToOne(type => Meta, meta => meta.service, {nullable: true})
   meta: Meta;
 
   @OneToMany(type => ServiceColumn, sc => sc.service, {nullable: true})

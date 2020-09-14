@@ -9,13 +9,12 @@ process.env.NODE_ENV = 'test';
 
 chai.use(chaiHttp);
 describe('authApi', () => {
-  let application;
-  let request;
+  let application: Application;
   
   before(async () => {
     application = new Application()
     await application.setupDbAndServer();
-    request = chai.request(application.app);
+    application.app.on
   })
   
   after(async () => {

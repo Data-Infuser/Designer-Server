@@ -76,7 +76,7 @@ export class Meta {
   @Column()
   userId: number;
 
-  @OneToOne(type => Service, service => service.meta) // specify inverse side as a second parameter
+  @OneToOne(type => Service, service => service.meta, {nullable: true}) // specify inverse side as a second parameter
   service: Service;
 
   @OneToMany(type => MetaColumn, mc => mc.meta)
