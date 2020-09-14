@@ -49,16 +49,28 @@ export class Application {
       res.locals.flashMessages = req.flash();
       next();
     });
+    console.log(process.env.DESIGNER_DB_NAME);
     if (process.env.NODE_ENV !== 'test') {
       this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] :response-time ms"));
     }
   }
 
   setupDbAndServer = async () => {
-    const conn = await createConnection(ormConfig.defaultConnection)
-    const datasetConn = await createConnection(ormConfig.datasetConnection)
+    let connectionInfo = {
+      ...ormConfig.defaultConnection
+    }
 
-    const redisClient = await RedisManager.Instance.connect();
+    if(process.env.NODE_ENV === 'test') {
+      connectionInfo = ormConfig.defaultConnection = {
+        ...ormConfig.defaultConnection,
+        database: process.env.DESIGNER_DB_NAME
+      }
+    }
+    
+    await createConnection(connectionInfo)
+    await createConnection(ormConfig.datasetConnection)
+
+    await RedisManager.Instance.connect();
 
     RegisterRoutes(<express.Express>this.app);
     BullManager.setupBull(this.app);

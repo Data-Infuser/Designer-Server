@@ -6,6 +6,7 @@ import { AuthResult } from '../src/lib/infuser-protobuf/gen/proto/author/auth_pb
 import { UserRes } from '../src/lib/infuser-protobuf/gen/proto/author/user_pb';
 
 process.env.NODE_ENV = 'test';
+process.env.DESIGNER_DB_NAME = 'designer-test'
 
 chai.use(chaiHttp);
 export let application: Application;

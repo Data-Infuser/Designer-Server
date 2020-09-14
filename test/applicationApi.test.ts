@@ -28,4 +28,8 @@ describe('application Api', () => {
   it('application exist', async() => {
     should().exist(application.app);
   })
+
+  describe('POST /', () => {
+    
+  })
 });
