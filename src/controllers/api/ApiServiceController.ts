@@ -7,6 +7,7 @@ import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
 import { FileParams, DbmsParams } from './ApiMetaController';
 import fs from 'fs';
+import { Meta } from "../../entity/manager/Meta";
 
 @Route("/api/services")
 @Tags("Service")
@@ -20,17 +21,23 @@ export class ApiServiceController {
   ): Promise<Service> {
     const serviceRepo = getRepository(Service);
     const applicationRepo = getRepository(Application);
-    const { method, entityName, description, applicationId } = serviceParams;
-    if(method.length == 0 || entityName.length == 0 || description.length == 0 || !applicationId) {
+    const metaRepo = getRepository(Meta);
+    const { metaId, method, entityName, description } = serviceParams;
+    if(method.length == 0 || entityName.length == 0 || description.length == 0 || !metaId) {
       throw new ApplicationError(400, "Need all params");
     }
+
+    const meta = await metaRepo.findOneOrFail(metaId);
+
+
+    if(!meta) { throw new ApplicationError(404, "No Meta Found") }
     
     const newService = new Service();
-    newService.application = await applicationRepo.findOneOrFail(applicationId);
     newService.method = method;
     newService.entityName = entityName;
     newService.description = description;
     newService.userId = request.user.id;
+    newService.meta = meta;
     await serviceRepo.save(newService);
     
     return Promise.resolve(newService);
@@ -101,10 +108,10 @@ export class ApiServiceController {
 }
 
 interface ServiceParams {
+  metaId: number,
   method: string,
   entityName: string,
   description: string,
-  applicationId?: number,
   fileParams?: FileParams,
   dbmsParams?: DbmsParams
 }

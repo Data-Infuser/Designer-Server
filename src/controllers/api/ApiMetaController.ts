@@ -125,6 +125,9 @@ export class ApiMetaController {
         const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           await transactionalEntityManager.save(newMeta);
+          /**
+           * TODO: Jonqueue에서 사용하는 ServiceId 확인 후 스케쥴 등록 기능 수정 필요
+           */
           //BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
         });
         return Promise.resolve(newMeta);

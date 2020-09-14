@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn} from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { MetaColumn } from "./MetaColumn";
@@ -76,7 +76,8 @@ export class Meta {
   @Column()
   userId: number;
 
-  @OneToOne(type => Service, service => service.meta, {nullable: true}) // specify inverse side as a second parameter
+  @OneToOne(type => Service, {nullable: true, onDelete: "SET NULL"}) // specify inverse side as a second parameter
+  @JoinColumn()
   service: Service;
 
   @OneToMany(type => MetaColumn, mc => mc.meta)
