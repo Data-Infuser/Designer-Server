@@ -9,7 +9,7 @@ import { AcceptableType } from "../src/entity/manager/MetaColumn";
 
 var path = require('path');
 
-describe('File Meta Load', () => {
+describe('0-File Meta Load', () => {
   it('Test file exist', async () => {
     const filePaths = [path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx'), path.resolve(__dirname, 'filesForTest/폐기물.csv')]
     filePaths.forEach(filePath => {

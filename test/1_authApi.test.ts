@@ -4,23 +4,47 @@ import { Application } from '../src/app';
 import { ERROR_CODE } from '../src/util/ErrorCodes';
 import { AuthResult } from '../src/lib/infuser-protobuf/gen/proto/author/auth_pb';
 import { UserRes } from '../src/lib/infuser-protobuf/gen/proto/author/user_pb';
+import { getConnection } from 'typeorm';
 
 process.env.NODE_ENV = 'test';
 process.env.DESIGNER_DB_NAME = 'designer-test'
 
 chai.use(chaiHttp);
 export let application: Application;
+export let token;
 
 before(async () => {
   application = new Application()
   await application.setupDbAndServer();
 })
 
+/**
+ * 테스트 시작 전 기존 Test DB에 들어있는 데이터 삭제
+ */
+before((done) => {
+  const connection = getConnection().synchronize(true).then( el => {
+    done();
+  });
+})
+
 after(async () => {
   application.server.close();
 })
 
-describe('authApi', () => {
+before((done) => {
+  chai.request(application.app)
+  .post('/api/oauth/login')
+  .send({
+    username: "admin",
+    password: "admin"
+  })
+  .end((err, res) => {
+    token = res.body.token;
+    done();
+  })
+})
+
+describe('1-authApi', () => {
 
   it('regist - duplicate_login_id', async () => {
     /**

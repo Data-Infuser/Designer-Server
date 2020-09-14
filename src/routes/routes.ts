@@ -71,6 +71,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": { "dataType": "double", "required": true },
             "application": { "ref": "Application", "required": true },
+            "applicationId": { "dataType": "double", "required": true },
             "type": { "dataType": "string", "required": true },
             "maxCount": { "dataType": "double", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
@@ -185,7 +186,6 @@ const models: TsoaRoute.Models = {
     "DbmsParams": {
         "dataType": "refObject",
         "properties": {
-            "serviceId": { "dataType": "double", "required": true },
             "title": { "dataType": "string", "required": true },
             "dbms": { "dataType": "string", "required": true },
             "host": { "dataType": "string", "required": true },
@@ -201,7 +201,6 @@ const models: TsoaRoute.Models = {
     "FileParams": {
         "dataType": "refObject",
         "properties": {
-            "serviceId": { "dataType": "double", "required": true },
             "dataType": { "dataType": "string", "required": true },
             "ext": { "dataType": "string", "required": true },
             "title": { "dataType": "string", "required": true },
@@ -220,6 +219,8 @@ const models: TsoaRoute.Models = {
             "nameSpace": { "dataType": "string", "required": true },
             "title": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
+            "dailyMaxCount": { "dataType": "double", "required": true },
+            "monthlyMaxCount": { "dataType": "double", "required": true },
         },
         "additionalProperties": false,
     },
@@ -348,10 +349,10 @@ const models: TsoaRoute.Models = {
     "ServiceParams": {
         "dataType": "refObject",
         "properties": {
+            "metaId": { "dataType": "double", "required": true },
             "method": { "dataType": "string", "required": true },
             "entityName": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
-            "applicationId": { "dataType": "double" },
             "fileParams": { "ref": "FileParams" },
             "dbmsParams": { "ref": "DbmsParams" },
         },

@@ -66,7 +66,7 @@ export class Application {
         database: process.env.DESIGNER_DB_NAME
       }
     }
-    
+
     await createConnection(connectionInfo)
     await createConnection(ormConfig.datasetConnection)
 

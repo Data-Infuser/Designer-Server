@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "test": "TS_NODE_FILES=true mocha --exit -r ts-node/register ./test/*.test.ts",
-    "coverage": "nyc npm test",
+    "test": "tsoa spec-and-routes && TS_NODE_FILES=true mocha --exit -r ts-node/register ./test/*.test.ts",
+    "coverage": "tsoa spec-and-routes && nyc npm test",
     "start": "tsoa spec-and-routes && set debug=* && ts-node-dev --debug --ignore-watch node_modules --respawn --transpile-only ./src/index.ts",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",

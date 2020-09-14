@@ -8,7 +8,7 @@ import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
-import { TrafficConfig } from "../../entity/manager/TrafficConfig";
+import { TrafficConfig, TrafficConfigType } from "../../entity/manager/TrafficConfig";
 import { Stage } from "../../entity/manager/Stage";
 import ApplicationParams from "../../interfaces/requestParams/ApplicationParams";
 
@@ -71,7 +71,7 @@ export class ApiApplicationController extends Controller {
   ){
     const appRepo = getRepository(Application);
     const findOptions: FindOneOptions = {
-      relations: ["stages", "services", "services.meta", "services.meta.columns", "services.meta.columns.params"],
+      relations: ["stages", "services", "services.meta", "services.meta.columns", "services.meta.columns.params", "trafficConfigs"],
       where: {
         id: applicationId,
         userId: request.user.id
@@ -87,15 +87,30 @@ export class ApiApplicationController extends Controller {
     @Request() request: exRequest,
     @Body() applicationParams: ApplicationParams
   ): Promise<Application> {
-    const applicationRepo = getRepository(Application);
-    const { nameSpace, title, description } = applicationParams;
-    
     const newApplication = new Application();
-    newApplication.nameSpace = nameSpace;
-    newApplication.title = title;
-    newApplication.description = description;
+    newApplication.nameSpace = applicationParams.nameSpace;
+    newApplication.title = applicationParams.title;
+    newApplication.description = applicationParams.description;
     newApplication.userId = request.user.id;
-    await applicationRepo.save(newApplication);
+    
+    const dailyMaxTrafic = new TrafficConfig();
+    dailyMaxTrafic.maxCount = applicationParams.dailyMaxCount;
+    dailyMaxTrafic.type = TrafficConfigType.DAY;
+
+    const monthlyMaxTraffic = new TrafficConfig();
+    monthlyMaxTraffic.maxCount = applicationParams.monthlyMaxCount;
+    monthlyMaxTraffic.type = TrafficConfigType.MONTH;
+
+    newApplication.trafficConfigs = [dailyMaxTrafic, monthlyMaxTraffic];
+
+    await getManager().transaction(async transactionEntityManager => {
+      await transactionEntityManager.save(newApplication);
+      console.log(newApplication);
+      dailyMaxTrafic.applicationId = newApplication.id;
+      monthlyMaxTraffic.applicationId = newApplication.id;
+      await transactionEntityManager.save(newApplication.trafficConfigs);
+    });
+
     this.setStatus(201);
     return Promise.resolve(newApplication);
   }

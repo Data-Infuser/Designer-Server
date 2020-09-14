@@ -16,6 +16,9 @@ export class TrafficConfig {
   @ManyToOne(type => Application, app => app.trafficConfigs, { nullable: false, onDelete: 'CASCADE' })
   application: Application;
 
+  @Column()
+  applicationId: number;
+
   @Column({
     type: "enum",
     enum: TrafficConfigType,
