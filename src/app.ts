@@ -49,7 +49,7 @@ export class Application {
       res.locals.flashMessages = req.flash();
       next();
     });
-    console.log(process.env.DESIGNER_DB_NAME);
+
     if (process.env.NODE_ENV !== 'test') {
       this.app.use(morgan(":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] :response-time ms"));
     }
@@ -60,10 +60,10 @@ export class Application {
       ...ormConfig.defaultConnection
     }
 
-    if(process.env.NODE_ENV === 'test') {
+    if(process.env.NODE_ENV !== 'production') {
       connectionInfo = ormConfig.defaultConnection = {
         ...ormConfig.defaultConnection,
-        database: process.env.DESIGNER_DB_NAME
+        database: "designer-test"
       }
     }
 

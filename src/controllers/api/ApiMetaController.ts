@@ -3,7 +3,7 @@ import { getRepository, getManager } from "typeorm";
 import { Tags, Route, Post, Security, Request, Body, Controller } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
-import { Meta } from '../../entity/manager/Meta';
+import { Meta, MetaStatus } from '../../entity/manager/Meta';
 import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
 import MetaLoader from "../../lib/MetaLoader";
 import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
@@ -135,13 +135,14 @@ export class ApiMetaController extends Controller {
         
         newMeta.stageId = params.stageId;
         newMeta.userId = request.user.id;
+        newMeta.status = MetaStatus.DOWNLOAD_SCHEDULED;
         const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           await transactionalEntityManager.save(newMeta);
           /**
            * TODO: Jonqueue에서 사용하는 ServiceId 확인 후 스케쥴 등록 기능 수정 필요
            */
-          //BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
+          BullManager.Instance.setMetaLoaderSchedule(newMeta.id, params.url, fileName);
         });
         this.setStatus(201);
         return Promise.resolve(newMeta);

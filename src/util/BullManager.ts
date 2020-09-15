@@ -24,6 +24,9 @@ class BullManager {
         host: property["jobqueue-redis"].host
       }
     }
+    if(process.env.NODE_ENV !== "production") {
+      redisInfo.redis.host = "localhost"
+    }
     BullManager._instance.dataLoaderQueue = new Bull('dataLoader', redisInfo);
     BullManager._instance.metaLoaderQueue = new Bull('metaLoader', redisInfo);
 
@@ -91,11 +94,11 @@ class BullManager {
     }) 
   }
 
-  setMetaLoaderSchedule = async(serviceId: number, url: string, fileName: string): Promise<any> => {
+  setMetaLoaderSchedule = async(metaId: number, url: string, fileName: string): Promise<any> => {
     return new Promise(async (resolve, reject) => {
       try {    
         await this.metaLoaderQueue.add({
-          serviceId,
+          metaId,
           url,
           fileName
         })

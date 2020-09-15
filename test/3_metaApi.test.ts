@@ -3,6 +3,7 @@ import { token, application } from "./1_authApi.test";
 import DbmsParams from '../src/interfaces/requestParams/DbmsParams';
 import FileParams from '../src/interfaces/requestParams/FileParams';
 import ServiceParams from '../src/interfaces/requestParams/ServiceParams';
+import { MetaStatus } from '../src/entity/manager/Meta';
 
 describe('3-meta Api', () => {
   let applicationEntity;
@@ -75,6 +76,32 @@ describe('3-meta Api', () => {
         should().exist(res.body.originalFileName);
         should().exist(res.body.sheet);
         should().exist(res.body.skip);
+        done();
+      })
+    })
+
+    it('create new Meta with File-url info', (done) => {
+      const newMeta: FileParams = {
+        stageId: applicationEntity.stages[0].id,
+        dataType: "file-url",
+        ext: "csv",
+        title: "File test data",
+        skip: 0,
+        sheet: 0,
+        url: "https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv"
+      }
+      chai.request(application.app)
+      .post(`/api/metas/file`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(newMeta)
+      .end((err, res) => {
+        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["status", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stageId", "table", "title", "updatedAt", "userId"]);
+        should().exist(res.body.dataType);
+        should().exist(res.body.extension);
+        should().exist(res.body.remoteFilePath);
+        should().exist(res.body.sheet);
+        should().exist(res.body.skip);
+        expect(res.body.status).equal(MetaStatus.DOWNLOAD_SCHEDULED)
         done();
       })
     })
