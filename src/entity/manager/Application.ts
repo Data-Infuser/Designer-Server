@@ -1,6 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, BaseEntity, Unique} from "typeorm";
 import { Length, IsNotEmpty, NotContains } from "class-validator";
-import { Service, ServiceStatus } from "./Service";
 import { TrafficConfig } from "./TrafficConfig";
 import { Stage, StageStatus } from './Stage';
 

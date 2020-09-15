@@ -3,7 +3,7 @@ import bullBoard from 'bull-board';
 import Bull from 'bull';
 import { Application } from '../entity/manager/Application';
 import { getRepository, getManager } from 'typeorm';
-import { Service, ServiceStatus } from '../entity/manager/Service';
+import { Service } from '../entity/manager/Service';
 import MetaLoaderFileParam from '../lib/interfaces/MetaLoaderFileParam';
 import { ApiMetaController } from '../controllers/api/ApiMetaController';
 import { Stage } from '../entity/manager/Stage';
@@ -62,7 +62,7 @@ class BullManager {
             await transactionalEntityManager.remove(service.meta);
             await transactionalEntityManager.save(meta);
             await transactionalEntityManager.save(columns);
-            service.status = ServiceStatus.METALOADED;
+            //service.status = ServiceStatus.METALOADED;
             service.meta = meta;
             await transactionalEntityManager.save(service);
           });

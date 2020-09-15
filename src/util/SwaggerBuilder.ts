@@ -1,7 +1,6 @@
 import { getRepository } from "typeorm";
 import _ from "lodash";
 import { Service } from "../entity/manager/Service";
-import { ServiceColumn } from "../entity/manager/ServiceColumn";
 import { Application } from "../entity/manager/Application";
 
 const ApiResponseTemplate = require("./swagger_template/api_response.json");
@@ -91,11 +90,11 @@ export class SwaggerBuilder {
       "properties": {}
     };
 
-    _.forEach(service.columns, (col: ServiceColumn) => {
-      def.properties[col.columnName] = {
-        "type": "string"
-      }
-    });
+    // _.forEach(service.columns, (col: ServiceColumn) => {
+    //   def.properties[col.columnName] = {
+    //     "type": "string"
+    //   }
+    // });
 
     return def;
   }

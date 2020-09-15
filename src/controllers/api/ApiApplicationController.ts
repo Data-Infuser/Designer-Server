@@ -3,7 +3,7 @@ import { Route, Get, Tags, Security, Path, Request, Post, Body, Delete, Query, C
 import { Request as exRequest } from "express";
 import { Application } from "../../entity/manager/Application";
 import ApplicationError from "../../ApplicationError";
-import { Service, ServiceStatus } from '../../entity/manager/Service';
+import { Service } from '../../entity/manager/Service';
 import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import BullManager from '../../util/BullManager';

@@ -6,12 +6,28 @@ import { Service } from "./Service";
 import { AcceptableDbms } from "./DatabaseConnection";
 import { Stage } from "./Stage";
 
-
+export enum MetaStatus {
+  // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
+  DEFAULT = "default",
+  DOWNLOAD_SCHEDULED = "download-scheduled",
+  DOWNLOAD_DONE = "download-done",
+  METALOADED = "meta-loaded",
+  DATA_LOAD_SCHEDULED = "data_load_scheduled",
+  DATA_LOADED = "loaded",
+  FAILED = "failed" 
+}
 
 @Entity()
 export class Meta {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    type: "enum",
+    enum: MetaStatus,
+    default: MetaStatus.DEFAULT
+  })
+  status: string;
 
   @Column()
   @Length(1, 100)
@@ -70,9 +86,6 @@ export class Meta {
 
   @Column({ default: 0 })
   sheet: number;
-
-  @Column({ nullable: false, default: false })
-  isActive: boolean;
 
   @Column()
   userId: number;

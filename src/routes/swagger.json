@@ -22,6 +22,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"status": {
+						"type": "string"
+					},
 					"title": {
 						"type": "string"
 					},
@@ -76,9 +79,6 @@
 						"type": "number",
 						"format": "double"
 					},
-					"isActive": {
-						"type": "boolean"
-					},
 					"userId": {
 						"type": "number",
 						"format": "double"
@@ -110,6 +110,7 @@
 				},
 				"required": [
 					"id",
+					"status",
 					"title",
 					"dataType",
 					"originalFileName",
@@ -127,7 +128,6 @@
 					"rowCounts",
 					"skip",
 					"sheet",
-					"isActive",
 					"userId",
 					"service",
 					"stage",
@@ -154,21 +154,12 @@
 					"entityName": {
 						"type": "string"
 					},
-					"status": {
-						"type": "string"
-					},
 					"userId": {
 						"type": "number",
 						"format": "double"
 					},
 					"meta": {
 						"$ref": "#/components/schemas/Meta"
-					},
-					"columns": {
-						"items": {
-							"$ref": "#/components/schemas/ServiceColumn"
-						},
-						"type": "array"
 					},
 					"createdAt": {
 						"type": "string",
@@ -184,49 +175,8 @@
 					"method",
 					"description",
 					"entityName",
-					"status",
 					"userId",
 					"meta",
-					"columns",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ServiceColumn": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"columnName": {
-						"type": "string"
-					},
-					"type": {
-						"type": "string"
-					},
-					"hidden": {
-						"type": "boolean"
-					},
-					"service": {
-						"$ref": "#/components/schemas/Service"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"columnName",
-					"type",
-					"hidden",
-					"service",
 					"createdAt",
 					"updatedAt"
 				],

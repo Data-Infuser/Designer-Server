@@ -1,7 +1,7 @@
 import { Request as exRequest } from "express";
 import { getRepository, getManager } from "typeorm";
 import { Tags, Route, Post, Security, Request, Body, Controller } from "tsoa";
-import { Service, ServiceStatus } from '../../entity/manager/Service';
+import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta } from '../../entity/manager/Meta';
 import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";

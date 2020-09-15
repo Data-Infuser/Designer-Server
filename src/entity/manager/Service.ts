@@ -1,7 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn, Table, Db} from "typeorm";
 import { Length, NotContains } from "class-validator";
 import { Meta } from "./Meta";
-import { ServiceColumn } from "./ServiceColumn";
 import { Application } from "./Application";
 import { Stage } from "./Stage";
 import { servicesVersion } from "typescript";
@@ -14,16 +13,6 @@ export enum HttpMethod {
   DELETE = "delete"
 }
 
-export enum ServiceStatus {
-  // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
-  DEFAULT = "default",
-  METASCHEDULED = "meta-scheduled",
-  METADOWNLOADED = "meta-downloded",
-  METALOADED = "meta-loaded",
-  SCHEDULED = "scheduled",
-  LOADED = "loaded",
-  FAILED = "failed" 
-}
 @Entity()
 export class Service {
 
@@ -45,22 +34,12 @@ export class Service {
   @NotContains("-")
   entityName: string; //TODO: 생성시 unique 처리 필요.
 
-  @Column({
-    type: "enum",
-    enum: ServiceStatus,
-    default: ServiceStatus.DEFAULT
-  })
-  status: string;
-
   @Column()
   userId: number;
 
   @OneToOne(type => Meta, meta => meta.service, {nullable: true, onDelete: "SET NULL"})
   @JoinColumn()
   meta: Meta;
-
-  @OneToMany(type => ServiceColumn, sc => sc.service)
-  columns: ServiceColumn[];
 
   @Column()
   @CreateDateColumn()
