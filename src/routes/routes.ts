@@ -32,6 +32,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": { "dataType": "double", "required": true },
             "status": { "dataType": "string", "required": true },
+            "samples": { "dataType": "string" },
             "title": { "dataType": "string", "required": true },
             "dataType": { "dataType": "string", "required": true },
             "originalFileName": { "dataType": "string", "required": true },

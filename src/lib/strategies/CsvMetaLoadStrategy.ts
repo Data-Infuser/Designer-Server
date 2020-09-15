@@ -66,6 +66,7 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
           meta.skip = skip;
           meta.sheet = sheet;
           meta.encoding = encoding;
+          meta.samples = this.getSampleData(records);
           
           const types = this.checkTypes(records);
 
@@ -156,6 +157,18 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
    */
   isInt(n) {
     return n % 1 === 0;
+  }
+
+  /**
+   * 전체 Record를 받아 최대 5개의 sampleData를 JSON String으로 return
+   */
+  getSampleData(records) {
+    let sampleDatas = []
+    let end = records.length > 6 ? 6 : records.length;
+    for(let i = 1; i < end; i++) {
+      sampleDatas.push(records[i])
+    }
+    return JSON.stringify({items:sampleDatas});
   }
 }
 

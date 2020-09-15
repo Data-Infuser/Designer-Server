@@ -29,6 +29,9 @@ export class Meta {
   })
   status: string;
 
+  @Column({type: "text"})
+  samples: string = JSON.stringify({items:[]});
+
   @Column()
   @Length(1, 100)
   title: string;

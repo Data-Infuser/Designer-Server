@@ -25,6 +25,9 @@
 					"status": {
 						"type": "string"
 					},
+					"samples": {
+						"type": "string"
+					},
 					"title": {
 						"type": "string"
 					},

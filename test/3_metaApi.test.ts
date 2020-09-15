@@ -42,7 +42,7 @@ describe('3-meta Api', () => {
       .set('Authorization', `Bearer ${token}`)
       .send(newMeta)
       .end((err, res) => {
-        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["status", "columns", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stage", "stageId", "table", "title", "updatedAt", "userId"]);
+        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["samples", "status", "columns", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stage", "stageId", "table", "title", "updatedAt", "userId"]);
         should().exist(res.body.dbms);
         should().exist(res.body.host);
         should().exist(res.body.port);
@@ -68,7 +68,7 @@ describe('3-meta Api', () => {
       .set('Authorization', `Bearer ${token}`)
       .send(newMeta)
       .end((err, res) => {
-        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["status", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stageId", "table", "title", "updatedAt", "userId"]);
+        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["samples", "status", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stageId", "table", "title", "updatedAt", "userId"]);
         should().exist(res.body.dataType);
         should().exist(res.body.encoding);
         should().exist(res.body.extension);
@@ -76,6 +76,7 @@ describe('3-meta Api', () => {
         should().exist(res.body.originalFileName);
         should().exist(res.body.sheet);
         should().exist(res.body.skip);
+        should().exist(res.body.samples);
         done();
       })
     })
@@ -95,7 +96,7 @@ describe('3-meta Api', () => {
       .set('Authorization', `Bearer ${token}`)
       .send(newMeta)
       .end((err, res) => {
-        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["status", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stageId", "table", "title", "updatedAt", "userId"]);
+        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["samples", "status", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stageId", "table", "title", "updatedAt", "userId"]);
         should().exist(res.body.dataType);
         should().exist(res.body.extension);
         should().exist(res.body.remoteFilePath);
