@@ -56,6 +56,9 @@ export class MetaColumn {
   @Column({ default: false })
   isSearchable: boolean;
 
+  @Column({ default: false })
+  isNullable: boolean;
+
   @ManyToOne(type => Meta, meta => meta.columns, { nullable: true, onDelete: 'CASCADE' })
   meta: Meta;
 

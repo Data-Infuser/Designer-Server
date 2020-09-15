@@ -373,6 +373,9 @@
 					"isSearchable": {
 						"type": "boolean"
 					},
+					"isNullable": {
+						"type": "boolean"
+					},
 					"meta": {
 						"$ref": "#/components/schemas/Meta"
 					},
@@ -401,6 +404,7 @@
 					"order",
 					"isHidden",
 					"isSearchable",
+					"isNullable",
 					"meta",
 					"params",
 					"createdAt",

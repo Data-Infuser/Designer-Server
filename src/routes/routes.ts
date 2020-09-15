@@ -137,6 +137,7 @@ const models: TsoaRoute.Models = {
             "order": { "dataType": "double", "required": true },
             "isHidden": { "dataType": "boolean", "required": true },
             "isSearchable": { "dataType": "boolean", "required": true },
+            "isNullable": { "dataType": "boolean", "required": true },
             "meta": { "ref": "Meta", "required": true },
             "params": { "dataType": "array", "array": { "ref": "MetaParam" }, "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
