@@ -1,6 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany} from "typeorm";
 import { Application } from "./Application";
 import { Service } from './Service';
+import { Meta } from "./Meta";
 
 export enum StageStatus {
   // 설정중, 데이터 스케줄링 등록, 데이터 로드 완료, 배포
@@ -33,8 +34,8 @@ export class Stage {
   @Column()
   applicationId: number;
 
-  @OneToMany(type => Service, service => service.stage)
-  services: Service[];
+  @OneToMany(type => Meta, meta => meta.stage)
+  metas: Meta[];
 
   @Column()
   name: string;

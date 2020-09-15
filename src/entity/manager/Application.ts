@@ -25,9 +25,6 @@ export class Application {
   @Column()
   userId: number;
 
-  @OneToMany(type => Service, service => service.application)
-  services: Service[];
-
   @OneToMany(type => TrafficConfig, trafficConfig => trafficConfig.application)
   trafficConfigs: TrafficConfig[];
 
@@ -44,20 +41,6 @@ export class Application {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
-
-  createStage(name) {
-    if(!this.services || this.services.length === 0) throw new Error("Service가 존재하지 않습니다.");
-    console.log(this.services);
-    const newStage = new Stage();
-    newStage.name = name;
-    newStage.application = this;
-    newStage.status = StageStatus.SCHEDULED;
-    newStage.services = this.services.filter(el => el.stage === null || el.stage === undefined);
-    newStage.services.forEach(element => {
-      element.status = ServiceStatus.SCHEDULED;
-    });
-    return newStage;
-  }
 
   get lastVersion() {
     this.lastStageVersion += 1;

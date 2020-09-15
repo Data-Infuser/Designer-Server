@@ -27,6 +27,39 @@ const models: TsoaRoute.Models = {
         "enums": ["mysql", "oracle", "mariadb", "postgres", "cubrid"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Meta": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "title": { "dataType": "string", "required": true },
+            "dataType": { "dataType": "string", "required": true },
+            "originalFileName": { "dataType": "string", "required": true },
+            "remoteFilePath": { "dataType": "string", "required": true },
+            "filePath": { "dataType": "string", "required": true },
+            "encoding": { "dataType": "string", "required": true },
+            "extension": { "dataType": "string", "required": true },
+            "host": { "dataType": "string", "required": true },
+            "port": { "dataType": "string", "required": true },
+            "db": { "dataType": "string", "required": true },
+            "dbUser": { "dataType": "string", "required": true },
+            "pwd": { "dataType": "string", "required": true },
+            "table": { "dataType": "string", "required": true },
+            "dbms": { "ref": "AcceptableDbms", "required": true },
+            "rowCounts": { "dataType": "double", "required": true },
+            "skip": { "dataType": "double", "required": true },
+            "sheet": { "dataType": "double", "required": true },
+            "isActive": { "dataType": "boolean", "required": true },
+            "userId": { "dataType": "double", "required": true },
+            "service": { "ref": "Service", "required": true },
+            "stage": { "ref": "Stage", "required": true },
+            "stageId": { "dataType": "double", "required": true },
+            "columns": { "dataType": "array", "array": { "ref": "MetaColumn" }, "required": true },
+            "createdAt": { "dataType": "datetime", "required": true },
+            "updatedAt": { "dataType": "datetime", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Service": {
         "dataType": "refObject",
         "properties": {
@@ -38,11 +71,22 @@ const models: TsoaRoute.Models = {
             "tableName": { "dataType": "string", "required": true },
             "status": { "dataType": "string", "required": true },
             "userId": { "dataType": "double", "required": true },
-            "application": { "ref": "Application", "required": true },
-            "stage": { "ref": "Stage", "required": true },
-            "stageId": { "dataType": "double", "required": true },
             "meta": { "ref": "Meta", "required": true },
             "columns": { "dataType": "array", "array": { "ref": "ServiceColumn" }, "required": true },
+            "createdAt": { "dataType": "datetime", "required": true },
+            "updatedAt": { "dataType": "datetime", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ServiceColumn": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "columnName": { "dataType": "string", "required": true },
+            "type": { "dataType": "string", "required": true },
+            "hidden": { "dataType": "boolean", "required": true },
+            "service": { "ref": "Service", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },
@@ -57,7 +101,6 @@ const models: TsoaRoute.Models = {
             "title": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
             "userId": { "dataType": "double", "required": true },
-            "services": { "dataType": "array", "array": { "ref": "Service" }, "required": true },
             "trafficConfigs": { "dataType": "array", "array": { "ref": "TrafficConfig" }, "required": true },
             "stages": { "dataType": "array", "array": { "ref": "Stage" }, "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
@@ -87,53 +130,8 @@ const models: TsoaRoute.Models = {
             "status": { "dataType": "string", "required": true },
             "application": { "ref": "Application", "required": true },
             "applicationId": { "dataType": "double", "required": true },
-            "services": { "dataType": "array", "array": { "ref": "Service" }, "required": true },
+            "metas": { "dataType": "array", "array": { "ref": "Meta" }, "required": true },
             "name": { "dataType": "string", "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Meta": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "title": { "dataType": "string", "required": true },
-            "dataType": { "dataType": "string", "required": true },
-            "originalFileName": { "dataType": "string", "required": true },
-            "remoteFilePath": { "dataType": "string", "required": true },
-            "filePath": { "dataType": "string", "required": true },
-            "encoding": { "dataType": "string", "required": true },
-            "extension": { "dataType": "string", "required": true },
-            "host": { "dataType": "string", "required": true },
-            "port": { "dataType": "string", "required": true },
-            "db": { "dataType": "string", "required": true },
-            "dbUser": { "dataType": "string", "required": true },
-            "pwd": { "dataType": "string", "required": true },
-            "table": { "dataType": "string", "required": true },
-            "dbms": { "ref": "AcceptableDbms", "required": true },
-            "rowCounts": { "dataType": "double", "required": true },
-            "skip": { "dataType": "double", "required": true },
-            "sheet": { "dataType": "double", "required": true },
-            "isActive": { "dataType": "boolean", "required": true },
-            "userId": { "dataType": "double", "required": true },
-            "service": { "ref": "Service", "required": true },
-            "columns": { "dataType": "array", "array": { "ref": "MetaColumn" }, "required": true },
-            "createdAt": { "dataType": "datetime", "required": true },
-            "updatedAt": { "dataType": "datetime", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ServiceColumn": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "columnName": { "dataType": "string", "required": true },
-            "type": { "dataType": "string", "required": true },
-            "hidden": { "dataType": "boolean", "required": true },
-            "service": { "ref": "Service", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },
@@ -187,6 +185,7 @@ const models: TsoaRoute.Models = {
     "DbmsParams": {
         "dataType": "refObject",
         "properties": {
+            "stageId": { "dataType": "double", "required": true },
             "title": { "dataType": "string", "required": true },
             "dbms": { "dataType": "string", "required": true },
             "host": { "dataType": "string", "required": true },
@@ -222,14 +221,6 @@ const models: TsoaRoute.Models = {
             "description": { "dataType": "string", "required": true },
             "dailyMaxCount": { "dataType": "double", "required": true },
             "monthlyMaxCount": { "dataType": "double", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "StageParams": {
-        "dataType": "refObject",
-        "properties": {
-            "name": { "dataType": "string", "required": true },
         },
         "additionalProperties": false,
     },
@@ -576,31 +567,6 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.delete.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/api/applications/:id/stages',
-        authenticateMiddleware([{ "jwt": [] }]),
-        function(request: any, response: any, next: any) {
-            const args = {
-                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
-                stageParams: { "in": "body", "name": "stageParams", "required": true, "ref": "StageParams" },
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new ApiApplicationController();
-
-
-            const promise = controller.postStage.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -963,30 +929,6 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.undeploy.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.delete('/api/stages/:id',
-        authenticateMiddleware([{ "jwt": [] }]),
-        function(request: any, response: any, next: any) {
-            const args = {
-                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
-                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new ApiStageController();
-
-
-            const promise = controller.delete.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

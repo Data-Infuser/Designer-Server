@@ -16,231 +16,6 @@
 				],
 				"type": "string"
 			},
-			"Service": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"title": {
-						"type": "string"
-					},
-					"method": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"entityName": {
-						"type": "string"
-					},
-					"tableName": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "number",
-						"format": "double"
-					},
-					"application": {
-						"$ref": "#/components/schemas/Application"
-					},
-					"stage": {
-						"$ref": "#/components/schemas/Stage"
-					},
-					"stageId": {
-						"type": "number",
-						"format": "double"
-					},
-					"meta": {
-						"$ref": "#/components/schemas/Meta"
-					},
-					"columns": {
-						"items": {
-							"$ref": "#/components/schemas/ServiceColumn"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"title",
-					"method",
-					"description",
-					"entityName",
-					"tableName",
-					"status",
-					"userId",
-					"application",
-					"stage",
-					"stageId",
-					"meta",
-					"columns",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Application": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"nameSpace": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "number",
-						"format": "double"
-					},
-					"services": {
-						"items": {
-							"$ref": "#/components/schemas/Service"
-						},
-						"type": "array"
-					},
-					"trafficConfigs": {
-						"items": {
-							"$ref": "#/components/schemas/TrafficConfig"
-						},
-						"type": "array"
-					},
-					"stages": {
-						"items": {
-							"$ref": "#/components/schemas/Stage"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"nameSpace",
-					"title",
-					"description",
-					"userId",
-					"services",
-					"trafficConfigs",
-					"stages",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"TrafficConfig": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"application": {
-						"$ref": "#/components/schemas/Application"
-					},
-					"applicationId": {
-						"type": "number",
-						"format": "double"
-					},
-					"type": {
-						"type": "string"
-					},
-					"maxCount": {
-						"type": "number",
-						"format": "double"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"application",
-					"applicationId",
-					"type",
-					"maxCount",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Stage": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"status": {
-						"type": "string"
-					},
-					"application": {
-						"$ref": "#/components/schemas/Application"
-					},
-					"applicationId": {
-						"type": "number",
-						"format": "double"
-					},
-					"services": {
-						"items": {
-							"$ref": "#/components/schemas/Service"
-						},
-						"type": "array"
-					},
-					"name": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"status",
-					"application",
-					"applicationId",
-					"services",
-					"name",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"Meta": {
 				"properties": {
 					"id": {
@@ -311,6 +86,13 @@
 					"service": {
 						"$ref": "#/components/schemas/Service"
 					},
+					"stage": {
+						"$ref": "#/components/schemas/Stage"
+					},
+					"stageId": {
+						"type": "number",
+						"format": "double"
+					},
 					"columns": {
 						"items": {
 							"$ref": "#/components/schemas/MetaColumn"
@@ -348,6 +130,71 @@
 					"isActive",
 					"userId",
 					"service",
+					"stage",
+					"stageId",
+					"columns",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Service": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"method": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"entityName": {
+						"type": "string"
+					},
+					"tableName": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"meta": {
+						"$ref": "#/components/schemas/Meta"
+					},
+					"columns": {
+						"items": {
+							"$ref": "#/components/schemas/ServiceColumn"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"method",
+					"description",
+					"entityName",
+					"tableName",
+					"status",
+					"userId",
+					"meta",
 					"columns",
 					"createdAt",
 					"updatedAt"
@@ -388,6 +235,148 @@
 					"type",
 					"hidden",
 					"service",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Application": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nameSpace": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"trafficConfigs": {
+						"items": {
+							"$ref": "#/components/schemas/TrafficConfig"
+						},
+						"type": "array"
+					},
+					"stages": {
+						"items": {
+							"$ref": "#/components/schemas/Stage"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"nameSpace",
+					"title",
+					"description",
+					"userId",
+					"trafficConfigs",
+					"stages",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TrafficConfig": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"application": {
+						"$ref": "#/components/schemas/Application"
+					},
+					"applicationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"type": "string"
+					},
+					"maxCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"application",
+					"applicationId",
+					"type",
+					"maxCount",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Stage": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string"
+					},
+					"application": {
+						"$ref": "#/components/schemas/Application"
+					},
+					"applicationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"metas": {
+						"items": {
+							"$ref": "#/components/schemas/Meta"
+						},
+						"type": "array"
+					},
+					"name": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"status",
+					"application",
+					"applicationId",
+					"metas",
+					"name",
 					"createdAt",
 					"updatedAt"
 				],
@@ -531,6 +520,10 @@
 			},
 			"DbmsParams": {
 				"properties": {
+					"stageId": {
+						"type": "number",
+						"format": "double"
+					},
 					"title": {
 						"type": "string"
 					},
@@ -557,6 +550,7 @@
 					}
 				},
 				"required": [
+					"stageId",
 					"title",
 					"dbms",
 					"host",
@@ -634,18 +628,6 @@
 					"description",
 					"dailyMaxCount",
 					"monthlyMaxCount"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"StageParams": {
-				"properties": {
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1359,50 +1341,6 @@
 				]
 			}
 		},
-		"/api/applications/{id}/stages": {
-			"post": {
-				"operationId": "PostStage",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/StageParams"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/api/applications/{id}/save": {
 			"post": {
 				"operationId": "Save",
@@ -2003,40 +1941,6 @@
 								"schema": {
 									"$ref": "#/components/schemas/Stage"
 								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Stage"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/stages/{id}": {
-			"delete": {
-				"operationId": "Delete",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
 							}
 						}
 					}

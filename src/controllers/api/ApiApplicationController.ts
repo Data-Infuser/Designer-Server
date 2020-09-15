@@ -71,7 +71,7 @@ export class ApiApplicationController extends Controller {
   ){
     const appRepo = getRepository(Application);
     const findOptions: FindOneOptions = {
-      relations: ["stages", "services", "services.meta", "services.meta.columns", "services.meta.columns.params", "trafficConfigs"],
+      relations: ["stages", "trafficConfigs"],
       where: {
         id: applicationId,
         userId: request.user.id
@@ -141,45 +141,45 @@ export class ApiApplicationController extends Controller {
     return Promise.resolve();
   }
 
-  @Post("/{id}/stages")
-  @Security("jwt")
-  public async postStage(
-    @Request() request: exRequest,
-    @Path("id") id: number,
-    @Body() stageParams: StageParams
-  ): Promise<any> {
-    const applicationRepo = getRepository(Application);
-    const stageRepo = getRepository(Stage);
-    const application = await applicationRepo.findOneOrFail({
-      relations: ["services", "services.stage"],
-      where: {
-        id: id,
-        userId: request.user.id
-      }
-    });
+  // @Post("/{id}/stages")
+  // @Security("jwt")
+  // public async postStage(
+  //   @Request() request: exRequest,
+  //   @Path("id") id: number,
+  //   @Body() stageParams: StageParams
+  // ): Promise<any> {
+  //   const applicationRepo = getRepository(Application);
+  //   const stageRepo = getRepository(Stage);
+  //   const application = await applicationRepo.findOneOrFail({
+  //     relations: ["services", "services.stage"],
+  //     where: {
+  //       id: id,
+  //       userId: request.user.id
+  //     }
+  //   });
     
-    const newStage:Stage = application.createStage(stageParams.name);
+  //   const newStage:Stage = application.createStage(stageParams.name);
 
-    if(!await BullManager.Instance.dataLoaderQueue.isReady()) {
-      return Promise.reject(new ApplicationError(401, "Job Queue가 준비되지 않았습니다."));
-    }
+  //   if(!await BullManager.Instance.dataLoaderQueue.isReady()) {
+  //     return Promise.reject(new ApplicationError(401, "Job Queue가 준비되지 않았습니다."));
+  //   }
 
-    await getManager().transaction(async transactionEntityManager => {
-      await transactionEntityManager.save(newStage);
-      newStage.services.forEach(el => {
-        el.stage = newStage
-      });
-      await transactionEntityManager.save(newStage.services);
-      BullManager.Instance.setDataLoaderSchedule(newStage);
-    });
+  //   await getManager().transaction(async transactionEntityManager => {
+  //     await transactionEntityManager.save(newStage);
+  //     newStage.services.forEach(el => {
+  //       el.stage = newStage
+  //     });
+  //     await transactionEntityManager.save(newStage.services);
+  //     BullManager.Instance.setDataLoaderSchedule(newStage);
+  //   });
     
-    return Promise.resolve(await stageRepo.findOneOrFail({
-      relations: ["services", "application"],
-      where: {
-        id: newStage.id
-      }
-    }));
-  }
+  //   return Promise.resolve(await stageRepo.findOneOrFail({
+  //     relations: ["services", "application"],
+  //     where: {
+  //       id: newStage.id
+  //     }
+  //   }));
+  // }
 
   @Post("/{id}/save")
   @Security("jwt")

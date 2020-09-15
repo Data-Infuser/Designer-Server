@@ -58,44 +58,44 @@ export class ApiStageController {
     return Promise.resolve(stage);
   }
 
-  @Delete('/{id}')
-  @Security('jwt')
-  public async delete(
-    @Request() request: exRequest,
-    @Path('id') id: number
-  ): Promise<any> {
-    const stageRepo = getRepository(Stage);
+  // @Delete('/{id}')
+  // @Security('jwt')
+  // public async delete(
+  //   @Request() request: exRequest,
+  //   @Path('id') id: number
+  // ): Promise<any> {
+  //   const stageRepo = getRepository(Stage);
 
-    const stage = await stageRepo.findOneOrFail({
-      relations:['application', 'services', 'services.meta'],
-      where: {
-        id: id
-      }
-    })
+  //   const stage = await stageRepo.findOneOrFail({
+  //     relations:['application', 'services', 'services.meta'],
+  //     where: {
+  //       id: id
+  //     }
+  //   })
 
-    const files = []
-    stage.services.forEach(service => {
-      if(service.meta && service.meta.dataType === "file") {
-        files.push(service.meta.filePath);
-      }
-    });
+  //   const files = []
+  //   stage.services.forEach(service => {
+  //     if(service.meta && service.meta.dataType === "file") {
+  //       files.push(service.meta.filePath);
+  //     }
+  //   });
 
-    if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
-    if(stage.status === StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
-    await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-      await transactionalEntityManager.remove(stage.services);
-      await transactionalEntityManager.remove(stage);
-      if(files.length > 0) {
-        files.forEach(file => {
-          fs.unlink(file, (err) => {
-            console.error(`${file} Unlink Failed`)
-            console.error(err);
-          })
-        })
-      }
-    })
-    stage.id = id;
+  //   if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
+  //   if(stage.status === StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
+  //   await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+  //     await transactionalEntityManager.remove(stage.services);
+  //     await transactionalEntityManager.remove(stage);
+  //     if(files.length > 0) {
+  //       files.forEach(file => {
+  //         fs.unlink(file, (err) => {
+  //           console.error(`${file} Unlink Failed`)
+  //           console.error(err);
+  //         })
+  //       })
+  //     }
+  //   })
+  //   stage.id = id;
     
-    return Promise.resolve(stage);
-  }
+  //   return Promise.resolve(stage);
+  // }
 }

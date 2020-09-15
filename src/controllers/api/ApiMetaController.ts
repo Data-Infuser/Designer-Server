@@ -1,6 +1,6 @@
 import { Request as exRequest } from "express";
 import { getRepository, getManager } from "typeorm";
-import { Tags, Route, Post, Security, Request, Body } from "tsoa";
+import { Tags, Route, Post, Security, Request, Body, Controller } from "tsoa";
 import { Service, ServiceStatus } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta } from '../../entity/manager/Meta';
@@ -13,11 +13,15 @@ import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
 import BullManager from '../../util/BullManager';
 import MetaLoaderFileParam from "../../lib/interfaces/MetaLoaderFileParam";
 import { MetaColumn } from "../../entity/manager/MetaColumn";
+import DbmsParams from "../../interfaces/requestParams/DbmsParams";
+import FileParams from "../../interfaces/requestParams/FileParams";
+import { Application } from "../../entity/manager/Application";
+import { Stage } from "../../entity/manager/Stage";
 
 const property = require("../../../property.json")
 @Route("/api/metas")
 @Tags("Meta")
-export class ApiMetaController {
+export class ApiMetaController extends Controller {
 
   @Post("/dbms")
   @Security("jwt")
@@ -26,17 +30,20 @@ export class ApiMetaController {
     @Body() dbmsParams: DbmsParams
   ): Promise<Meta> {
     const metaRepo = getRepository(Meta);
-      const serviceRepo = getRepository(Service);
-      const { title, dbms, host, port, database, user, password, table } = dbmsParams;
-      if(title.length == 0 
-        || dbms.length == 0 
-        || host.length == 0 
-        || port.length == 0 
-        || database.length == 0 
-        || user.length == 0 
-        || table.length == 0) {
-        throw new ApplicationError(400, "Need all params");
-      }
+    const stageRepo = getRepository(Stage);
+    const { title, dbms, host, port, database, user, password, table, stageId } = dbmsParams;
+    if(title.length == 0 
+      || dbms.length == 0 
+      || host.length == 0 
+      || port.length == 0 
+      || database.length == 0 
+      || user.length == 0 
+      || table.length == 0) {
+      throw new ApplicationError(400, "Need all params");
+    }
+
+    const stage = await stageRepo.findOne(stageId);
+    if(!stage) {throw new ApplicationError(404, "Entity Not Found")}
 
     const connectionInfo = {
       dbms: dbms,
@@ -62,8 +69,10 @@ export class ApiMetaController {
     }
     const metaLoader = new MetaLoader(loadStrategy);
     const loaderResult = await metaLoader.loadMeta(connectionInfo);
-    const meta = loaderResult.meta;
+    const meta: Meta = loaderResult.meta;
     const columns = loaderResult.columns;
+
+    meta.stageId = stage.id;
     
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
       await transactionalEntityManager.save(meta);
@@ -71,12 +80,12 @@ export class ApiMetaController {
     });
 
     const updatedMeta = await metaRepo.findOneOrFail({
-      relations: ["service", "columns"],
+      relations: ["stage", "columns"],
       where: {
         id: meta.id
       }
     });
-
+    this.setStatus(201);
     return Promise.resolve(updatedMeta);
   }
 
@@ -158,26 +167,4 @@ export class ApiMetaController {
       }
     })
   }
-}
-
-export interface DbmsParams {
-  title: string,
-  dbms: string,
-  host: string,
-  port: string,
-  database: string,
-  user: string,
-  password:string,
-  table: string
-}
-
-export interface FileParams {
-  dataType: string,
-  ext: string,
-  title: string,
-  skip: number,
-  sheet: number,
-  filePath?: string,
-  originalFileName?: string,
-  url?: string
 }

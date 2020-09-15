@@ -28,14 +28,14 @@ export class SwaggerBuilder {
 
       try {
 
-        application.services.forEach((api) => {
-          let def = SwaggerBuilder.buildDef(api);
-          let modelTemplate = _.cloneDeep(ApiResponseTemplate);
-          modelTemplate.properties.datas.items['$ref'] = `#/definitions/${api.tableName}_model`;
-          doc.definitions[api.tableName+'_model'] = def;
-          doc.definitions[api.tableName+'_api'] = modelTemplate;
-          doc.paths[`/api/dataset/${api.tableName}`] = SwaggerBuilder.buildPath(api);
-        });
+        // application.services.forEach((api) => {
+        //   let def = SwaggerBuilder.buildDef(api);
+        //   let modelTemplate = _.cloneDeep(ApiResponseTemplate);
+        //   modelTemplate.properties.datas.items['$ref'] = `#/definitions/${api.tableName}_model`;
+        //   doc.definitions[api.tableName+'_model'] = def;
+        //   doc.definitions[api.tableName+'_api'] = modelTemplate;
+        //   doc.paths[`/api/dataset/${api.tableName}`] = SwaggerBuilder.buildPath(api);
+        // });
         resolve(doc);
       } catch(err) {
         console.log(err);

@@ -63,19 +63,10 @@ export class Service {
   @Column()
   userId: number;
 
-  @ManyToOne(type => Application, app => app.services, { nullable: false, onDelete: 'CASCADE' })
-  application: Application;
-
-  @ManyToOne(type => Stage, stage => stage.services, { nullable: true, onDelete: 'SET NULL' })
-  stage: Stage;
-
-  @Column({nullable: true})
-  stageId: number;
-
-  @OneToOne(type => Meta, meta => meta.service, {nullable: true})
+  @OneToOne(type => Meta, meta => meta.service)
   meta: Meta;
 
-  @OneToMany(type => ServiceColumn, sc => sc.service, {nullable: true})
+  @OneToMany(type => ServiceColumn, sc => sc.service)
   columns: ServiceColumn[];
 
   @Column()
@@ -88,9 +79,5 @@ export class Service {
 
   get endpoint(): string {
     return `/${this.entityName}`;
-  }
-
-  get fullUrl(): string {
-    return `/api/${this.application.nameSpace}/${this.entityName}`
   }
 }

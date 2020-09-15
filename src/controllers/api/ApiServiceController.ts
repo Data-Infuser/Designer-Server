@@ -5,9 +5,10 @@ import { Tags, Route, Post, Security, Request, Body, Delete, Path, Put } from "t
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
-import { FileParams, DbmsParams } from './ApiMetaController';
 import fs from 'fs';
 import { Meta } from "../../entity/manager/Meta";
+import DbmsParams from "../../interfaces/requestParams/DbmsParams";
+import FileParams from "../../interfaces/requestParams/FileParams";
 
 @Route("/api/services")
 @Tags("Service")
@@ -87,7 +88,6 @@ export class ApiServiceController {
 
     const filePath = service.meta && service.meta.dataType === 'file' ? service.meta.filePath : null;
 
-    const applicationId = service.application.id;
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
       if(service.meta) await transactionalEntityManager.remove(service.meta);
       await transactionalEntityManager.remove(service);
@@ -101,8 +101,7 @@ export class ApiServiceController {
 
     return Promise.resolve({
       message: "delete success",
-      serviceId: serviceId,
-      applicationId: applicationId
+      serviceId: serviceId
     })      
   }
 }

@@ -58,7 +58,7 @@ describe('2-application Api', () => {
       .get('/api/applications/1')
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
-        expect(res).to.have.status(200).and.have.property('body').and.have.keys(['id', 'nameSpace', 'title', 'description', 'createdAt', 'updatedAt', 'userId', 'services', 'stages', 'lastStageVersion', 'trafficConfigs']);
+        expect(res).to.have.status(200).and.have.property('body').and.have.keys(['id', 'nameSpace', 'title', 'description', 'createdAt', 'updatedAt', 'userId', 'stages', 'lastStageVersion', 'trafficConfigs']);
         done();
       })
     })

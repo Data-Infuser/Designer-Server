@@ -4,6 +4,7 @@ import * as bcrypt from "bcryptjs";
 import { MetaColumn } from "./MetaColumn";
 import { Service } from "./Service";
 import { AcceptableDbms } from "./DatabaseConnection";
+import { Stage } from "./Stage";
 
 
 
@@ -76,9 +77,15 @@ export class Meta {
   @Column()
   userId: number;
 
-  @OneToOne(type => Service, {nullable: true, onDelete: "SET NULL"}) // specify inverse side as a second parameter
+  @OneToOne(type => Service, service => service.meta, {nullable: true, onDelete: "SET NULL"}) // specify inverse side as a second parameter
   @JoinColumn()
   service: Service;
+
+  @ManyToOne(type => Stage, stage => stage.metas, { nullable: false, onDelete: 'CASCADE' })
+  stage: Stage;
+
+  @Column()
+  stageId: number;
 
   @OneToMany(type => MetaColumn, mc => mc.meta)
   columns: MetaColumn[];

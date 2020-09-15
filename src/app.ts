@@ -92,17 +92,18 @@ export class Application {
       res: ExResponse,
       next: NextFunction
     ): ExResponse | void {
+      if (err instanceof JsonWebTokenError) {
+        return res.status(401).json({
+          message: "Token expired"
+        })
+      }
+      // console.log(err)
+
       if (err instanceof ValidateError) {
         return res.status(422).json({
           message: "Validation Failed",
           details: err?.fields,
         });
-      }
-
-      if (err instanceof JsonWebTokenError) {
-        return res.status(401).json({
-          message: "Token expired"
-        })
       }
 
       if (err instanceof Error) {
