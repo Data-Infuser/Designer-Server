@@ -93,7 +93,7 @@ describe('3-meta Api', () => {
       .set('Authorization', `Bearer ${token}`)
       .send(newService)
       .end((err, res) => {
-        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["method", "entityName", "description", "userId", "meta", "id", "title", "status", "createdAt", "updatedAt"]);;
+        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["method", "entityName", "description", "userId", "meta", "id", "status", "createdAt", "updatedAt"]);;
         expect(res.body.meta.id).to.equal(metaId);
         done();
       });

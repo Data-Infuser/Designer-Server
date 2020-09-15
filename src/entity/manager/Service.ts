@@ -30,10 +30,6 @@ export class Service {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({default: "타이틀이 입력되지 않았습니다."})
-  @Length(1, 100)
-  title: string;
-
   @Column({
     type: "enum",
     enum: HttpMethod,

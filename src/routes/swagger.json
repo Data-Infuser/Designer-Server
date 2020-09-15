@@ -145,9 +145,6 @@
 						"type": "number",
 						"format": "double"
 					},
-					"title": {
-						"type": "string"
-					},
 					"method": {
 						"type": "string"
 					},
@@ -184,7 +181,6 @@
 				},
 				"required": [
 					"id",
-					"title",
 					"method",
 					"description",
 					"entityName",
