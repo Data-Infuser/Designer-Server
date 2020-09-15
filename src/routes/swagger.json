@@ -565,6 +565,10 @@
 			},
 			"FileParams": {
 				"properties": {
+					"stageId": {
+						"type": "number",
+						"format": "double"
+					},
 					"dataType": {
 						"type": "string"
 					},
@@ -593,6 +597,7 @@
 					}
 				},
 				"required": [
+					"stageId",
 					"dataType",
 					"ext",
 					"title",

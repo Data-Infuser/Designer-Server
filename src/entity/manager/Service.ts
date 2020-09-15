@@ -63,7 +63,8 @@ export class Service {
   @Column()
   userId: number;
 
-  @OneToOne(type => Meta, meta => meta.service)
+  @OneToOne(type => Meta, meta => meta.service, {nullable: true, onDelete: "SET NULL"})
+  @JoinColumn()
   meta: Meta;
 
   @OneToMany(type => ServiceColumn, sc => sc.service)

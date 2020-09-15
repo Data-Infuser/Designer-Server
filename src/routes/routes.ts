@@ -201,6 +201,7 @@ const models: TsoaRoute.Models = {
     "FileParams": {
         "dataType": "refObject",
         "properties": {
+            "stageId": { "dataType": "double", "required": true },
             "dataType": { "dataType": "string", "required": true },
             "ext": { "dataType": "string", "required": true },
             "title": { "dataType": "string", "required": true },

@@ -77,8 +77,7 @@ export class Meta {
   @Column()
   userId: number;
 
-  @OneToOne(type => Service, service => service.meta, {nullable: true, onDelete: "SET NULL"}) // specify inverse side as a second parameter
-  @JoinColumn()
+  @OneToOne(type => Service, service => service.meta) // specify inverse side as a second parameter
   service: Service;
 
   @ManyToOne(type => Stage, stage => stage.metas, { nullable: false, onDelete: 'CASCADE' })

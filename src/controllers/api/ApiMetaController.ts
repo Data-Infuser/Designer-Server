@@ -73,7 +73,7 @@ export class ApiMetaController extends Controller {
     const columns = loaderResult.columns;
 
     meta.stageId = stage.id;
-    
+    meta.userId = request.user.id;
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
       await transactionalEntityManager.save(meta);
       await transactionalEntityManager.save(columns);
@@ -115,11 +115,13 @@ export class ApiMetaController extends Controller {
         const meta: Meta = loaderResult.meta;
         const columns: MetaColumn[] = loaderResult.columns;
         
+        meta.stageId = params.stageId;
+        meta.userId = request.user.id;
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           await transactionalEntityManager.save(meta);
           await transactionalEntityManager.save(columns);
         });
-        
+        this.setStatus(201);
         return Promise.resolve(meta);
       case 'file-url':
         /**
@@ -131,6 +133,8 @@ export class ApiMetaController extends Controller {
         newMeta.extension = params.ext;
         newMeta.title = params.title || "empty title";
         
+        newMeta.stageId = params.stageId;
+        newMeta.userId = request.user.id;
         const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
         await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
           await transactionalEntityManager.save(newMeta);
@@ -139,6 +143,7 @@ export class ApiMetaController extends Controller {
            */
           //BullManager.Instance.setMetaLoaderSchedule(params.serviceId, params.url, fileName);
         });
+        this.setStatus(201);
         return Promise.resolve(newMeta);
       default:
         throw new Error("Unacceptable dataType");

@@ -1,4 +1,5 @@
 export default interface FileParams {
+  stageId: number,
   dataType: string,
   ext: string,
   title: string,
