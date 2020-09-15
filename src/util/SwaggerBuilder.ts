@@ -67,16 +67,16 @@ export class SwaggerBuilder {
           });
         }
 
-        services.forEach((service) => {
-          let def = SwaggerBuilder.buildDef(service);
-          let modelTemplate = _.cloneDeep(ApiResponseTemplate);
-          modelTemplate.properties.datas.items['$ref'] = `#/definitions/${service.tableName}_model`;
+        // services.forEach((service) => {
+        //   let def = SwaggerBuilder.buildDef(service);
+        //   let modelTemplate = _.cloneDeep(ApiResponseTemplate);
+        //   modelTemplate.properties.datas.items['$ref'] = `#/definitions/${service.tableName}_model`;
 
-          doc.definitions[service.tableName+'_model'] = def;
-          doc.definitions[service.tableName+'_api'] = modelTemplate;
+        //   doc.definitions[service.tableName+'_model'] = def;
+        //   doc.definitions[service.tableName+'_api'] = modelTemplate;
 
-          doc.paths[`/api/dataset/${service.tableName}`] = SwaggerBuilder.buildPath(service);
-        });
+        //   doc.paths[`/api/dataset/${service.tableName}`] = SwaggerBuilder.buildPath(service);
+        // });
         resolve(doc);
       } catch(err) {
         console.log(err);
@@ -105,7 +105,7 @@ export class SwaggerBuilder {
 
     pathTemplate["get"].tags.push(service.entityName);
     pathTemplate["get"].description = service.description;
-    pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${service.tableName}_api`;
+    // pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${service.tableName}_api`;
     service.meta.columns.forEach((column) => {
       column.params.forEach((param) => {
         const json:any = {

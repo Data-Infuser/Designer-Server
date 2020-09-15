@@ -68,7 +68,6 @@ const models: TsoaRoute.Models = {
             "method": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
             "entityName": { "dataType": "string", "required": true },
-            "tableName": { "dataType": "string", "required": true },
             "status": { "dataType": "string", "required": true },
             "userId": { "dataType": "double", "required": true },
             "meta": { "ref": "Meta", "required": true },

@@ -157,9 +157,6 @@
 					"entityName": {
 						"type": "string"
 					},
-					"tableName": {
-						"type": "string"
-					},
 					"status": {
 						"type": "string"
 					},
@@ -191,7 +188,6 @@
 					"method",
 					"description",
 					"entityName",
-					"tableName",
 					"status",
 					"userId",
 					"meta",

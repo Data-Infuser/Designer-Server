@@ -1,18 +1,17 @@
 import { Request as exRequest } from "express";
 import { getRepository, getConnection, getManager, ConnectionOptions } from "typeorm";
 import passport from "passport";
-import { Tags, Route, Post, Security, Request, Body, Delete, Path, Put } from "tsoa";
+import { Tags, Route, Post, Security, Request, Body, Delete, Path, Put, Controller } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Application } from "../../entity/manager/Application";
 import fs from 'fs';
 import { Meta } from "../../entity/manager/Meta";
-import DbmsParams from "../../interfaces/requestParams/DbmsParams";
-import FileParams from "../../interfaces/requestParams/FileParams";
+import ServiceParams from "../../interfaces/requestParams/ServiceParams";
 
 @Route("/api/services")
 @Tags("Service")
-export class ApiServiceController {
+export class ApiServiceController extends Controller{
 
   @Post("/")
   @Security("jwt")
@@ -21,7 +20,6 @@ export class ApiServiceController {
     @Body() serviceParams: ServiceParams
   ): Promise<Service> {
     const serviceRepo = getRepository(Service);
-    const applicationRepo = getRepository(Application);
     const metaRepo = getRepository(Meta);
     const { metaId, method, entityName, description } = serviceParams;
     if(method.length == 0 || entityName.length == 0 || description.length == 0 || !metaId) {
@@ -29,7 +27,6 @@ export class ApiServiceController {
     }
 
     const meta = await metaRepo.findOneOrFail(metaId);
-
 
     if(!meta) { throw new ApplicationError(404, "No Meta Found") }
     
@@ -39,7 +36,10 @@ export class ApiServiceController {
     newService.description = description;
     newService.userId = request.user.id;
     newService.meta = meta;
+
     await serviceRepo.save(newService);
+
+    this.setStatus(201);
     
     return Promise.resolve(newService);
   }
@@ -104,13 +104,4 @@ export class ApiServiceController {
       serviceId: serviceId
     })      
   }
-}
-
-interface ServiceParams {
-  metaId: number,
-  method: string,
-  entityName: string,
-  description: string,
-  fileParams?: FileParams,
-  dbmsParams?: DbmsParams
 }

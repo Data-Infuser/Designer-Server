@@ -49,10 +49,6 @@ export class Service {
   @NotContains("-")
   entityName: string; //TODO: 생성시 unique 처리 필요.
 
-  @Column({nullable: true})
-  @Length(1, 100)
-  tableName: string;
-
   @Column({
     type: "enum",
     enum: ServiceStatus,
