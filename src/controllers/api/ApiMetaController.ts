@@ -1,6 +1,6 @@
 import { Request as exRequest } from "express";
 import { getRepository, getManager } from "typeorm";
-import { Tags, Route, Post, Security, Request, Body, Controller } from "tsoa";
+import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta, MetaStatus } from '../../entity/manager/Meta';
@@ -22,6 +22,28 @@ const property = require("../../../property.json")
 @Route("/api/metas")
 @Tags("Meta")
 export class ApiMetaController extends Controller {
+
+  @Get("/{metaId}")
+  @Security("jwt")
+  public async get(
+    @Path() metaId: number,
+    @Request() request: exRequest
+  ): Promise<Meta> {
+    const metaRepo = getRepository(Meta);
+
+    const meta = await metaRepo.findOne({
+      where: {
+        id: metaId,
+        userId: request.user.id
+      }
+    })
+
+    if(!meta) {
+      throw new ApplicationError(404, "Meta Not Fount");
+    }
+
+    return Promise.resolve(meta);
+  }
 
   @Post("/dbms")
   @Security("jwt")

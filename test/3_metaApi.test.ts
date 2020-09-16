@@ -7,7 +7,7 @@ import { MetaStatus } from '../src/entity/manager/Meta';
 
 describe('3-meta Api', () => {
   let applicationEntity;
-
+  let fileUrlMeta;
   before((done) => {
     chai.request(application.app)
     .get('/api/applications/1')
@@ -48,6 +48,7 @@ describe('3-meta Api', () => {
         should().exist(res.body.port);
         should().exist(res.body.pwd);
         should().exist(res.body.table);
+        expect(res.body.status).equal(MetaStatus.METALOADED)
         done();
       })
     })
@@ -77,6 +78,7 @@ describe('3-meta Api', () => {
         should().exist(res.body.sheet);
         should().exist(res.body.skip);
         should().exist(res.body.samples);
+        expect(res.body.status).equal(MetaStatus.METALOADED)
         done();
       })
     })
@@ -96,6 +98,7 @@ describe('3-meta Api', () => {
       .set('Authorization', `Bearer ${token}`)
       .send(newMeta)
       .end((err, res) => {
+        fileUrlMeta = res.body;
         expect(res).to.have.status(201).and.have.property('body').and.have.keys(["samples", "status", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stageId", "table", "title", "updatedAt", "userId"]);
         should().exist(res.body.dataType);
         should().exist(res.body.extension);
@@ -103,6 +106,37 @@ describe('3-meta Api', () => {
         should().exist(res.body.sheet);
         should().exist(res.body.skip);
         expect(res.body.status).equal(MetaStatus.DOWNLOAD_SCHEDULED)
+        setTimeout(() => {
+          done();
+        }, 1000)
+      })
+    })
+
+    
+    
+
+  })
+
+  describe('GET /{id}', () => {
+
+    it('File-url Meta Should be loaded', (done) => {
+      chai.request(application.app)
+      .get(`/api/metas/${fileUrlMeta.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200).and.have.property('body').and.have.property('status').to.satisfy((status) => {
+          return status == MetaStatus.DOWNLOAD_DONE || status == MetaStatus.METALOADED
+        })
+        done();
+      })
+    })
+
+    it('Sholud return 404 Error', (done) => {
+      chai.request(application.app)
+      .get(`/api/metas/100`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
         done();
       })
     })

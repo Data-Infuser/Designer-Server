@@ -3,6 +3,7 @@ import { Service } from "../entity/manager/Service";
 import MetaLoaderDbConnection from "./interfaces/MetaLoaderDbConnection";
 import MetaLoaderFileParam from "./interfaces/MetaLoaderFileParam";
 import DescTableResult from "./interfaces/DescTableResult";
+import { MetaStatus } from "../entity/manager/Meta";
 
 class MetaLoader {
   private metaLoadStrategy;
@@ -14,7 +15,9 @@ class MetaLoader {
   public async loadMeta(info:MetaLoaderDbConnection|MetaLoaderFileParam):Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        resolve(await this.metaLoadStrategy.loadMeta(info));
+        const loadResult = await this.metaLoadStrategy.loadMeta(info)
+        loadResult.meta.status = MetaStatus.METALOADED;
+        resolve(loadResult);
       } catch (err) {
         console.error(err);
         reject(err);

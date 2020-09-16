@@ -1046,6 +1046,42 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/api/metas/{metaId}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Meta"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "metaId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/metas/dbms": {
 			"post": {
 				"operationId": "PostDbms",
