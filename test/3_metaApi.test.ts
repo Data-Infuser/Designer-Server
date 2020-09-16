@@ -5,6 +5,8 @@ import FileParams from '../src/interfaces/requestParams/FileParams';
 import ServiceParams from '../src/interfaces/requestParams/ServiceParams';
 import { MetaStatus } from '../src/entity/manager/Meta';
 
+export let metas = [];
+
 describe('3-meta Api', () => {
   let applicationEntity;
   let fileUrlMeta;
@@ -49,6 +51,7 @@ describe('3-meta Api', () => {
         should().exist(res.body.pwd);
         should().exist(res.body.table);
         expect(res.body.status).equal(MetaStatus.METALOADED)
+        metas.push(res.body);
         done();
       })
     })
@@ -79,6 +82,7 @@ describe('3-meta Api', () => {
         should().exist(res.body.skip);
         should().exist(res.body.samples);
         expect(res.body.status).equal(MetaStatus.METALOADED)
+        metas.push(res.body);
         done();
       })
     })
@@ -108,7 +112,7 @@ describe('3-meta Api', () => {
         expect(res.body.status).equal(MetaStatus.DOWNLOAD_SCHEDULED)
         setTimeout(() => {
           done();
-        }, 1000)
+        }, 1500)
       })
     })
 
@@ -127,6 +131,7 @@ describe('3-meta Api', () => {
         expect(res).to.have.status(200).and.have.property('body').and.have.property('status').to.satisfy((status) => {
           return status == MetaStatus.DOWNLOAD_DONE || status == MetaStatus.METALOADED
         })
+        metas.push(res.body);
         done();
       })
     })

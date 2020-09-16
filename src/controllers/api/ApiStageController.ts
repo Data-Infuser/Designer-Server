@@ -1,4 +1,4 @@
-import { Route, Tags, Security, Request, Post, Path, Delete } from "tsoa";
+import { Route, Tags, Security, Request, Post, Path, Delete, Get, Controller } from "tsoa";
 import { Request as exRequest } from "express";
 import ApplicationError from "../../ApplicationError";
 import { Stage, StageStatus } from "../../entity/manager/Stage";
@@ -6,10 +6,78 @@ import { getRepository, getManager } from 'typeorm';
 import { Service } from '../../entity/manager/Service';
 import fs from 'fs';
 import ts from "typescript";
+import { request } from "http";
+import { MetaStatus } from "../../entity/manager/Meta";
+import BullManager from "../../util/BullManager";
+import { getConnection } from 'typeorm';
 
 @Route('/api/stages')
 @Tags('Stage')
-export class ApiStageController {
+export class ApiStageController extends Controller {
+  
+  @Get('/{stageId}')
+  @Security('jwt')
+  public async get(
+    @Path('stageId') stageId: number,
+    @Request() request: exRequest
+  ): Promise<Stage> {
+    const stageRepo = getRepository(Stage);
+
+    const stage = await stageRepo.findOne({
+      relations: ["metas", "metas.service"],
+      where: {
+        id: stageId
+      }
+    })
+
+    if(!stage) {
+      throw new ApplicationError(404, "Stage Not Found");
+    }
+
+    return stage;
+  }
+
+  @Post('/{stageId}/load-data')
+  @Security('jwt')
+  public async loadData(
+    @Request() request: exRequest,
+    @Path('stageId') stageId: number
+  ): Promise<Stage> {
+    const stageRepo = getRepository(Stage);
+
+    const stage = await stageRepo.findOne({
+      relations: ["metas", "metas.service", "application"],
+      where: {
+        id: stageId
+      }
+    })
+
+    if(!stage) {
+      throw new ApplicationError(404, "Stage Not Found");
+    } else if(!stage.metas.every( meta => meta.status === MetaStatus.METALOADED)) {
+      throw new ApplicationError(400, "Meta should be loaded before load data");
+    } else if(!stage.metas.every( meta => meta.service !== null)) {
+      throw new ApplicationError(400, "All metas should have service before load data");
+    }
+
+    stage.status = StageStatus.SCHEDULED;
+
+    const queryRunner = getConnection().createQueryRunner();
+    try {
+      await queryRunner.startTransaction();
+      await queryRunner.manager.save(stage);
+      BullManager.Instance.setDataLoaderSchedule(stage);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new ApplicationError(500, err.message);
+    } finally {
+      await queryRunner.release();
+    }
+
+    this.setStatus(201);
+    return Promise.resolve(stage);
+  }
   
   @Post('/{id}/deploy')
   @Security('jwt')
