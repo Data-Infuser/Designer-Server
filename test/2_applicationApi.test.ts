@@ -5,12 +5,14 @@ import { TrafficConfigType } from '../src/entity/manager/TrafficConfig';
 
 describe('2-application Api', () => {
 
-  it('token exist', async () => {
+  it('token exist', (done) => {
     should().exist(token);
+    done();
   });
 
-  it('application exist', async() => {
+  it('application exist', (done) => {
     should().exist(application.app);
+    done();
   })
 
   describe('POST /', () => {

@@ -13,9 +13,9 @@ chai.use(chaiHttp);
 export let application: Application;
 export let token;
 
-before(async () => {
+before((done) => {
   application = new Application()
-  await application.setupDbAndServer();
+  application.setupDbAndServer().then(() => done()).catch((err) => console.error(err));
 })
 
 /**
@@ -46,7 +46,7 @@ before((done) => {
 
 describe('1-authApi', () => {
 
-  it('regist - duplicate_login_id', async () => {
+  it('regist - duplicate_login_id', (done) => {
     /**
      * duplicate user
      */
@@ -61,10 +61,11 @@ describe('1-authApi', () => {
     })
     .end((err, res) => {
       expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.REGIST[UserRes.Code.DUPLICATE_LOGIN_ID]);
+      done();
     })
   });
 
-  it('regist - password_not_matched', async () => {
+  it('regist - password_not_matched', (done) => {
     /**
      * password not match
      */
@@ -79,10 +80,11 @@ describe('1-authApi', () => {
     })
     .end((err, res) => {
       expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.REGIST[UserRes.Code.PASSWORD_NOT_MATCHED]);
+      done()
     })
   });
 
-  it('regist - duplicate_email', async () => {
+  it('regist - duplicate_email', (done) => {
     chai.request(application.app)
     .post('/api/oauth/regist')
     .send({
@@ -94,10 +96,11 @@ describe('1-authApi', () => {
     })
     .end((err, res) => {
       expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.REGIST[UserRes.Code.DUPLICATE_EMAIL]);
+      done();
     })
   })
 
-  it('login - NOT_REGISTERED', async () => {
+  it('login - NOT_REGISTERED', (done) => {
     chai.request(application.app)
     .post('/api/oauth/login')
     .send({
@@ -106,10 +109,11 @@ describe('1-authApi', () => {
     })
     .end((err, res) => {
       expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.AUTH[AuthResult.NOT_REGISTERED]);
+      done();
     })
   })
 
-  it('login - INVALID_PASSWORD', async () => {
+  it('login - INVALID_PASSWORD', (done) => {
     chai.request(application.app)
     .post('/api/oauth/login')
     .send({
@@ -118,10 +122,11 @@ describe('1-authApi', () => {
     })
     .end((err, res) => {
       expect(res).to.have.status(401).and.have.property('body').and.have.property('code').to.equal(ERROR_CODE.AUTH[AuthResult.INVALID_PASSWORD]);
+      done();
     })
   })
 
-  it('login - SUCCESS', async () => {
+  it('login - SUCCESS', (done) => {
     chai.request(application.app)
     .post('/api/oauth/login')
     .send({
@@ -130,6 +135,7 @@ describe('1-authApi', () => {
     })
     .end((err, res) => {
       expect(res).to.have.status(201).and.have.property('body').and.have.keys(['id', 'username', 'loginId', 'token', 'refreshToken', 'expireAt']);
+      done();
     })
   })
 });

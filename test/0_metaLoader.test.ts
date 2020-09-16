@@ -10,15 +10,16 @@ import { AcceptableType } from "../src/entity/manager/MetaColumn";
 var path = require('path');
 
 describe('0-File Meta Load', () => {
-  it('Test file exist', async () => {
+  it('Test file exist', (done) => {
     const filePaths = [path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx'), path.resolve(__dirname, 'filesForTest/폐기물.csv')]
     filePaths.forEach(filePath => {
       const result = fs.existsSync(filePath)
       expect(result).to.equal(true);
     })
+    done();
   });
 
-  it('Load meta from xlsx', async () => {
+  it('Load meta from xlsx', (done) => {
     const metaLoadStrategy = new XlsxMetaLoadStrategy()
     let metaLoaderFileParam:MetaLoaderFileParam = {
       ext: 'xlsx',
@@ -30,17 +31,20 @@ describe('0-File Meta Load', () => {
     };
     
 
-    const result = await new MetaLoader(metaLoadStrategy).loadMeta(metaLoaderFileParam);
-    expect(result).to.satisfy( result => {
-      if(result.meta.filePath === (path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx')) && result.columns.length === 18) {
-        return true;
-      } else {
-        return false;
-      }
-    })
+    new MetaLoader(metaLoadStrategy).loadMeta(metaLoaderFileParam).then((result) => {
+      expect(result).to.satisfy( result => {
+        if(result.meta.filePath === (path.resolve(__dirname, 'filesForTest/그늘막설치현황.xlsx')) && result.columns.length === 18) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      done();
+    });
+    
   });
 
-  it('Load meta from csv', async () => {
+  it('Load meta from csv', (done) => {
     const metaLoadStrategy = new CsvMetaLoadStrategy()
     let metaLoaderFileParam:MetaLoaderFileParam = {
       ext: 'csv',
@@ -52,17 +56,20 @@ describe('0-File Meta Load', () => {
     };
     
 
-    const result = await new MetaLoader(metaLoadStrategy).loadMeta(metaLoaderFileParam);
-    expect(result).to.satisfy( result => {
-      if(result.meta.filePath === (path.resolve(__dirname, 'filesForTest/폐기물.csv')) && result.columns.length === 7) {
-        return true;
-      } else {
-        return false;
-      }
-    })
+    new MetaLoader(metaLoadStrategy).loadMeta(metaLoaderFileParam).then((result) => {
+      expect(result).to.satisfy( result => {
+        if(result.meta.filePath === (path.resolve(__dirname, 'filesForTest/폐기물.csv')) && result.columns.length === 7) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      done();
+    });
+    
   });
 
-  it('Csv type check', async() => {
+  it('Csv type check', (done) => {
     const testRecords = [
       [ '123', 'hello' , '1992-02-13', '0.123' ], //int
       [ '0', '19920213', '1992-02-13', '0.999'], //varchar
@@ -72,5 +79,6 @@ describe('0-File Meta Load', () => {
     const expectedTypes = [AcceptableType.INTEGER, AcceptableType.VARCHAR, AcceptableType.DATE, AcceptableType.DOUBLE]
     
     expect(types).to.eql(expectedTypes)
+    done();
   })
 });

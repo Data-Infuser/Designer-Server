@@ -1,12 +1,9 @@
 import chai, { expect, should } from 'chai';
 import { token, application } from "./1_authApi.test";
-import DbmsParams from '../src/interfaces/requestParams/DbmsParams';
-import FileParams from '../src/interfaces/requestParams/FileParams';
 import ServiceParams from '../src/interfaces/requestParams/ServiceParams';
-import { MetaStatus, Meta } from '../src/entity/manager/Meta';
+import { MetaStatus } from '../src/entity/manager/Meta';
 import { metas } from './3_metaApi.test';
 import { Stage, StageStatus } from '../src/entity/manager/Stage';
-import { getRepository } from 'typeorm';
 
 describe('5-stage Api', () => {
   it('token exist', (done) => {
@@ -45,7 +42,7 @@ describe('5-stage Api', () => {
     
 
     describe('... save sample data ...', () => {
-
+      let stage: Stage;
       before((done) => {
         const newService: ServiceParams = {
           metaId: metas[2].id,
@@ -71,12 +68,36 @@ describe('5-stage Api', () => {
         .set('Authorization', `Bearer ${token}`)
         .end((err, res) => {
           expect(res).to.have.status(201);
+          stage = res.body;
           done();
         });
       })
-    })
 
-    
+      it('Data loaded stage shoud have data-load-scheduled metas', (done) => {
+        const haveScheduledMeta = stage.metas.every( meta => meta.status === MetaStatus.DATA_LOAD_SCHEDULED)
+        expect(haveScheduledMeta).to.true;
+        done();
+      })
+
+      it('should wait til Data loaded', (done) => {
+        setTimeout(() => {
+          done();
+        }, 4500)
+      }).timeout(5000);
+
+      it('Should have return 200 and loaded', (done) => {
+        chai.request(application.app)
+        .get('/api/stages/1')
+        .set('Authorization', `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          stage = res.body;
+          expect(stage.status).to.equal(StageStatus.LOADED);
+          done();
+        });
+      })
+      
+    })
 
   })
 });

@@ -61,11 +61,14 @@ export class ApiStageController extends Controller {
     }
 
     stage.status = StageStatus.SCHEDULED;
-
+    stage.metas.forEach( meta => {
+      meta.status = MetaStatus.DATA_LOAD_SCHEDULED;
+    })
     const queryRunner = getConnection().createQueryRunner();
     try {
       await queryRunner.startTransaction();
       await queryRunner.manager.save(stage);
+      await queryRunner.manager.save(stage.metas);
       BullManager.Instance.setDataLoaderSchedule(stage);
       await queryRunner.commitTransaction();
     } catch (err) {
