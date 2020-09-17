@@ -4,6 +4,7 @@ import DbmsParams from '../src/interfaces/requestParams/DbmsParams';
 import FileParams from '../src/interfaces/requestParams/FileParams';
 import ServiceParams from '../src/interfaces/requestParams/ServiceParams';
 import { MetaStatus } from '../src/entity/manager/Meta';
+import { Column } from 'typeorm';
 
 export let metas = [];
 
@@ -121,8 +122,8 @@ describe('3-meta Api', () => {
 
   })
 
+  let metaEntity;
   describe('GET /{id}', () => {
-
     it('File-url Meta Should be loaded', (done) => {
       chai.request(application.app)
       .get(`/api/metas/${fileUrlMeta.id}`)
@@ -131,6 +132,7 @@ describe('3-meta Api', () => {
         expect(res).to.have.status(200).and.have.property('body').and.have.property('status').to.satisfy((status) => {
           return status == MetaStatus.DOWNLOAD_DONE || status == MetaStatus.METALOADED
         })
+        metaEntity = res.body
         metas.push(res.body);
         done();
       })
@@ -146,5 +148,27 @@ describe('3-meta Api', () => {
       })
     })
 
+  })
+
+  describe('PUT /{metaId}/columns', () => {
+
+    it('Shoud meta column updated', (done) => {
+      metaEntity.columns.forEach(column => {
+        column.columnName = `${column.id}-column-${column.originalColumnName}`
+        column.size = 100;
+        column.isSearchable = true;
+        column.isNullable = true;
+      });
+      chai.request(application.app)
+      .put(`/api/metas/${metaEntity.id}/columns`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        columns: metaEntity.columns
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        done();
+      })
+    })
   })
 });

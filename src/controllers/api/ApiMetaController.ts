@@ -1,6 +1,6 @@
 import { Request as exRequest } from "express";
 import { getRepository, getManager } from "typeorm";
-import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path } from "tsoa";
+import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta, MetaStatus } from '../../entity/manager/Meta';
@@ -12,7 +12,7 @@ import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy"
 import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
 import BullManager from '../../util/BullManager';
 import MetaLoaderFileParam from "../../lib/interfaces/MetaLoaderFileParam";
-import { MetaColumn } from "../../entity/manager/MetaColumn";
+import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import DbmsParams from "../../interfaces/requestParams/DbmsParams";
 import FileParams from "../../interfaces/requestParams/FileParams";
 import { Application } from "../../entity/manager/Application";
@@ -32,6 +32,7 @@ export class ApiMetaController extends Controller {
     const metaRepo = getRepository(Meta);
 
     const meta = await metaRepo.findOne({
+      relations: ["columns"],
       where: {
         id: metaId,
         userId: request.user.id
@@ -195,4 +196,38 @@ export class ApiMetaController extends Controller {
       }
     })
   }
+
+  @Put('/{metaId}/columns')
+  @Security('jwt')
+  public async putColumns(
+    @Request() request: exRequest,
+    @Body() metaColumnsParam: MetaColumnsParam,
+    @Path('metaId') metaId: number,
+  ) {
+    const metaColumnRepo = getRepository(MetaColumn);
+    await metaColumnRepo.save(metaColumnsParam.columns)
+    const meta = getRepository(Meta).findOne({
+      relations: ["columns"],
+      where: {
+        id: metaId
+      }
+    });
+    this.setStatus(201);
+    return Promise.resolve(meta);
+  }
+  
+}
+
+interface MetaColumnsParam {
+  columns: MetaColumnParam[]
+}
+
+interface MetaColumnParam {
+  id: number,
+  columnName: string,
+  type: AcceptableType,
+  size: number,
+  isSearchable: boolean,
+  isNullable: boolean,
+  dateFormat?: string
 }

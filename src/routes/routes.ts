@@ -140,7 +140,9 @@ const models: TsoaRoute.Models = {
             "isHidden": { "dataType": "boolean", "required": true },
             "isSearchable": { "dataType": "boolean", "required": true },
             "isNullable": { "dataType": "boolean", "required": true },
+            "dateFormat": { "dataType": "string", "required": true },
             "meta": { "ref": "Meta", "required": true },
+            "metaId": { "dataType": "double", "required": true },
             "params": { "dataType": "array", "array": { "ref": "MetaParam" }, "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
@@ -195,6 +197,28 @@ const models: TsoaRoute.Models = {
             "filePath": { "dataType": "string" },
             "originalFileName": { "dataType": "string" },
             "url": { "dataType": "string" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaColumnParam": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double", "required": true },
+            "columnName": { "dataType": "string", "required": true },
+            "type": { "ref": "AcceptableType", "required": true },
+            "size": { "dataType": "double", "required": true },
+            "isSearchable": { "dataType": "boolean", "required": true },
+            "isNullable": { "dataType": "boolean", "required": true },
+            "dateFormat": { "dataType": "string" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaColumnsParam": {
+        "dataType": "refObject",
+        "properties": {
+            "columns": { "dataType": "array", "array": { "ref": "MetaColumnParam" }, "required": true },
         },
         "additionalProperties": false,
     },
@@ -469,6 +493,31 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.postFile.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.put('/api/metas/:metaId/columns',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                metaColumnsParam: { "in": "body", "name": "metaColumnsParam", "required": true, "ref": "MetaColumnsParam" },
+                metaId: { "in": "path", "name": "metaId", "required": true, "dataType": "double" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiMetaController();
+
+
+            const promise = controller.putColumns.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

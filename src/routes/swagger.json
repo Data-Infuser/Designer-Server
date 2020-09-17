@@ -384,8 +384,15 @@
 					"isNullable": {
 						"type": "boolean"
 					},
+					"dateFormat": {
+						"type": "string"
+					},
 					"meta": {
 						"$ref": "#/components/schemas/Meta"
+					},
+					"metaId": {
+						"type": "number",
+						"format": "double"
 					},
 					"params": {
 						"items": {
@@ -413,7 +420,9 @@
 					"isHidden",
 					"isSearchable",
 					"isNullable",
+					"dateFormat",
 					"meta",
+					"metaId",
 					"params",
 					"createdAt",
 					"updatedAt"
@@ -557,6 +566,58 @@
 					"title",
 					"skip",
 					"sheet"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MetaColumnParam": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"columnName": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/AcceptableType"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					},
+					"isSearchable": {
+						"type": "boolean"
+					},
+					"isNullable": {
+						"type": "boolean"
+					},
+					"dateFormat": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"columnName",
+					"type",
+					"size",
+					"isSearchable",
+					"isNullable"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MetaColumnsParam": {
+				"properties": {
+					"columns": {
+						"items": {
+							"$ref": "#/components/schemas/MetaColumnParam"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"columns"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1183,6 +1244,52 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/FileParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/metas/{metaId}/columns": {
+			"put": {
+				"operationId": "PutColumns",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Meta"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "metaId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MetaColumnsParam"
 							}
 						}
 					}

@@ -59,8 +59,14 @@ export class MetaColumn {
   @Column({ default: false })
   isNullable: boolean;
 
+  @Column({ default: "" })
+  dateFormat: string;
+
   @ManyToOne(type => Meta, meta => meta.columns, { nullable: true, onDelete: 'CASCADE' })
   meta: Meta;
+
+  @Column()
+  metaId: number;
 
   @OneToMany(type => MetaParam, mp => mp.metaColumn)
   params: MetaParam[];
