@@ -12,7 +12,7 @@ describe('5-stage Api', () => {
   });
 
   describe('Get /', () => {
-    
+    let stageEntity;
     it('should have at least one stage and pagination info', (done) => {
       chai.request(application.app)
       .get('/api/stages')
@@ -20,8 +20,14 @@ describe('5-stage Api', () => {
       .end((err, res) => {
         if(err) console.log(err);
         expect(res).to.have.status(200).and.have.property('body').and.have.keys(["items", "page", "perPage", "totalCount"]);
+        stageEntity = res.body;
         done();
       })
+    })
+
+    it('item shoud have metas', (done) => {
+      expect(stageEntity.items[0]).to.have.keys(["applicationId", "createdAt", "id", "metas", "name", "status", "updatedAt", "userId"]);
+      done();
     })
 
     it('should have NO stage', (done) => {

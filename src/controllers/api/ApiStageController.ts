@@ -24,7 +24,8 @@ export class ApiStageController extends Controller {
     @Query('perPage') perPage?: number
   ): Promise<Pagination<Stage>>{
     const pagination = new Pagination(Stage, getConnection());
-    await pagination.findBySearchPrams(page, perPage, request.user.id);
+    const relations = ["metas"];
+    await pagination.findBySearchParams(relations, page, perPage, request.user.id);
     return Promise.resolve(pagination);
   }
 
