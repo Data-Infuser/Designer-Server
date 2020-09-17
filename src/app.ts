@@ -5,8 +5,6 @@ import express, {
 } from "express";
 import bodyParser from "body-parser";
 import methodOverride from "method-override";
-import compileSass from "express-compile-sass";
-import path from "path";
 import session from "express-session";
 import morgan from "morgan";
 import flash from "express-flash";
@@ -97,7 +95,7 @@ export class Application {
           message: "Token expired"
         })
       }
-      // console.log(err)
+      console.log(err)
 
       if (err instanceof ValidateError) {
         return res.status(422).json({

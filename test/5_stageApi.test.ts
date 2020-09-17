@@ -26,7 +26,7 @@ describe('5-stage Api', () => {
     })
 
     it('item shoud have metas', (done) => {
-      expect(stageEntity.items[0]).to.have.keys(["applicationId", "createdAt", "id", "metas", "name", "status", "updatedAt", "userId"]);
+      expect(stageEntity.items[0]).to.have.keys(["applicationId", "createdAt", "id", "metas", "name", "status", "updatedAt", "userId", "application"]);
       done();
     })
 
