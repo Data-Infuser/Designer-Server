@@ -1,4 +1,4 @@
-import { Route, Tags, Security, Request, Post, Path, Delete, Get, Controller } from "tsoa";
+import { Route, Tags, Security, Request, Post, Path, Delete, Get, Controller, Query } from "tsoa";
 import { Request as exRequest } from "express";
 import ApplicationError from "../../ApplicationError";
 import { Stage, StageStatus } from "../../entity/manager/Stage";
@@ -10,14 +10,27 @@ import { request } from "http";
 import { MetaStatus } from "../../entity/manager/Meta";
 import BullManager from "../../util/BullManager";
 import { getConnection } from 'typeorm';
+import Pagination from '../../util/Pagination';
 
 @Route('/api/stages')
 @Tags('Stage')
 export class ApiStageController extends Controller {
   
-  @Get('/{stageId}')
+  @Get('/')
   @Security('jwt')
   public async get(
+    @Request() request: exRequest,
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number
+  ): Promise<Pagination<Stage>>{
+    const pagination = new Pagination(Stage, getConnection());
+    await pagination.findBySearchPrams(page, perPage, request.user.id);
+    return Promise.resolve(pagination);
+  }
+
+  @Get('/{stageId}')
+  @Security('jwt')
+  public async getStageById(
     @Path('stageId') stageId: number,
     @Request() request: exRequest
   ): Promise<Stage> {

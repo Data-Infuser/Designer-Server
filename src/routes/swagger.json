@@ -940,6 +940,36 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Pagination_Stage_": {
+				"properties": {
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/Stage"
+						},
+						"type": "array",
+						"default": []
+					},
+					"page": {
+						"type": "number",
+						"format": "double",
+						"default": 1
+					},
+					"perPage": {
+						"type": "number",
+						"format": "double",
+						"default": 10
+					},
+					"totalCount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"totalCount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"InfuserUser": {
 				"properties": {
 					"id": {
@@ -1889,9 +1919,54 @@
 				]
 			}
 		},
-		"/api/stages/{stageId}": {
+		"/api/stages": {
 			"get": {
 				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Pagination_Stage_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Stage"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "perPage",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/stages/{stageId}": {
+			"get": {
+				"operationId": "GetStageById",
 				"responses": {
 					"200": {
 						"description": "Ok",
