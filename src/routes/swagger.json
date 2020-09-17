@@ -306,6 +306,10 @@
 					"name": {
 						"type": "string"
 					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -322,6 +326,7 @@
 					"applicationId",
 					"metas",
 					"name",
+					"userId",
 					"createdAt",
 					"updatedAt"
 				],

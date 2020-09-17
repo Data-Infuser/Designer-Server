@@ -105,6 +105,7 @@ export class ApiApplicationController extends Controller {
 
     const stage = new Stage();
     stage.name = `v${newApplication.lastVersion}`;
+    stage.userId = request.user.id;
     newApplication.stages = [stage];
     
     await getManager().transaction(async transactionEntityManager => {

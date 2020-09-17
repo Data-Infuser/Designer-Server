@@ -115,6 +115,7 @@ const models: TsoaRoute.Models = {
             "applicationId": { "dataType": "double", "required": true },
             "metas": { "dataType": "array", "array": { "ref": "Meta" }, "required": true },
             "name": { "dataType": "string", "required": true },
+            "userId": { "dataType": "double", "required": true },
             "createdAt": { "dataType": "datetime", "required": true },
             "updatedAt": { "dataType": "datetime", "required": true },
         },

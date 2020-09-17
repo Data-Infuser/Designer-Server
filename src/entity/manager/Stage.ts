@@ -40,6 +40,9 @@ export class Stage {
   @Column()
   name: string;
 
+  @Column()
+  userId: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
