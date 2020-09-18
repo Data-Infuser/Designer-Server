@@ -63,12 +63,18 @@ export class ApiApplicationController extends Controller {
     return Promise.resolve(doc);
   }
 
+  /**
+   * id를 사용하여 Appplication을 반환합니다.</br>
+   * Stages와 trafficConfigs를 포함합니다.
+   * @param applicationId 
+   * @param request 
+   */
   @Get("/{applicationId}")
   @Security("jwt")
   public async getDetail(
     @Path() applicationId: number,
     @Request() request: exRequest
-  ){
+  ): Promise<Application>{
     const appRepo = getRepository(Application);
     const findOptions: FindOneOptions = {
       relations: ["stages", "trafficConfigs"],
@@ -81,6 +87,12 @@ export class ApiApplicationController extends Controller {
     return Promise.resolve(app);
   }
 
+  /**
+   * Application을 생성합니다 </br>
+   * Application을 생성하며 default stage(v1)를 함께 생성합니다.
+   * @param request 
+   * @param applicationParams 
+   */
   @Post("/")
   @Security("jwt")
   public async put(
@@ -141,115 +153,6 @@ export class ApiApplicationController extends Controller {
     await applicationRepo.remove(application);
     return Promise.resolve();
   }
-
-  // @Post("/{id}/stages")
-  // @Security("jwt")
-  // public async postStage(
-  //   @Request() request: exRequest,
-  //   @Path("id") id: number,
-  //   @Body() stageParams: StageParams
-  // ): Promise<any> {
-  //   const applicationRepo = getRepository(Application);
-  //   const stageRepo = getRepository(Stage);
-  //   const application = await applicationRepo.findOneOrFail({
-  //     relations: ["services", "services.stage"],
-  //     where: {
-  //       id: id,
-  //       userId: request.user.id
-  //     }
-  //   });
-    
-  //   const newStage:Stage = application.createStage(stageParams.name);
-
-  //   if(!await BullManager.Instance.dataLoaderQueue.isReady()) {
-  //     return Promise.reject(new ApplicationError(401, "Job Queue가 준비되지 않았습니다."));
-  //   }
-
-  //   await getManager().transaction(async transactionEntityManager => {
-  //     await transactionEntityManager.save(newStage);
-  //     newStage.services.forEach(el => {
-  //       el.stage = newStage
-  //     });
-  //     await transactionEntityManager.save(newStage.services);
-  //     BullManager.Instance.setDataLoaderSchedule(newStage);
-  //   });
-    
-  //   return Promise.resolve(await stageRepo.findOneOrFail({
-  //     relations: ["services", "application"],
-  //     where: {
-  //       id: newStage.id
-  //     }
-  //   }));
-  // }
-
-  @Post("/{id}/save")
-  @Security("jwt")
-  public async save(
-    @Path("id") id: number,
-    @Body() applicationSavePrams: ApplicationSaveParams
-  ): Promise<Application> {
-    const applicationRepo = getRepository(Application);
-      const serviceRepo = getRepository(Service);
-      const metaParamRepo = getRepository(MetaParam);
-      let paramsForDelete:MetaParam[] = [];
-      const newPrams: MetaParam[] = []
-
-      //application
-      const application = await applicationRepo.findOneOrFail({
-        relations: ['stages'],
-        where: {
-          id: id
-        }
-      })
-
-      application.description = applicationSavePrams.description;
-      application.nameSpace = applicationSavePrams.nameSpace;
-      application.title = applicationSavePrams.title;
-      //services
-      const serviceIds = applicationSavePrams.services.map((params) => params.id);
-      const services = await serviceRepo.findByIds(serviceIds, {
-        relations: ["meta", "meta.columns", "meta.columns.params"]
-      });
-
-      for(const service of services) {
-        if(!service.meta) continue;
-        const modifiedService = applicationSavePrams.services.find(el => el.id === service.id);
-        const metaColumns = service.meta.columns
-        for(const column of metaColumns) {
-          let modifiedColumn = modifiedService.meta.columns.find(columnParam => columnParam.id === column.id);
-          column.isHidden = modifiedColumn.isHidden;
-          column.isSearchable = modifiedColumn.isSearchable;
-          column.columnName = modifiedColumn.columnName;
-          column.type = modifiedColumn.type;
-          column.size = Number(modifiedColumn.size);
-          if(applicationSavePrams.params[column.id]) {
-            paramsForDelete = paramsForDelete.concat(column.params);
-            const params = applicationSavePrams.params[column.id]
-            for(const param of params) {
-              const newParam = new MetaParam();
-              newParam.operator = param.operator;
-              newParam.description = param.description;
-              newParam.isRequired = param.isRequired;
-              newParam.metaColumn = column;
-              newPrams.push(newParam);
-            }
-          }
-        }
-      }
-      await getManager().transaction(async transactionEntityManager => {
-        await transactionEntityManager.save(application);
-        await transactionEntityManager.save(services);
-        for(const service of services) {
-          if(!service.meta) continue;
-          await transactionEntityManager.save(service.meta.columns);
-        }
-        await metaParamRepo.remove(paramsForDelete);
-        await transactionEntityManager.save(newPrams);
-      })
-
-      return Promise.resolve(application);
-  }
-
 
   @Get("/{id}/traffic-configs")
   @Security("jwt")

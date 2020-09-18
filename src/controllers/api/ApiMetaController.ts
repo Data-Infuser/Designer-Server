@@ -23,6 +23,12 @@ const property = require("../../../property.json")
 @Tags("Meta")
 export class ApiMetaController extends Controller {
 
+  /**
+   * meta의 id를 사용하여 meta의 상세 정보를 불러 올 수 있습니다.
+   * meta의 Columns 정보를 포함합니다.
+   * @param metaId 
+   * @param request 
+   */
   @Get("/{metaId}")
   @Security("jwt")
   public async get(
@@ -46,6 +52,12 @@ export class ApiMetaController extends Controller {
     return Promise.resolve(meta);
   }
 
+  /**
+   * database 연결 정보를 이용하여 DB 데이터를 불러오기 위한 Meta 를 등록합니다.
+   * 
+   * @param request 
+   * @param dbmsParams Meta title과 DB 연결 정보, stageId</br> 지원 dbms: "mysql"|"cubrid"
+   */
   @Post("/dbms")
   @Security("jwt")
   public async postDbms(
@@ -113,9 +125,11 @@ export class ApiMetaController extends Controller {
   }
 
   /**
-   * 
+   * File 정보를 이용하여 Meta를 등록합니다.</br></br>
+   * dataType이 'file'인 경우 Meta가 바로 등록이 됩니다.</br>
+   * dataType이 'file-url'인 경우 meta-download-scheduled 상태와 함께 등록이 되고, 이후 Scheduler가 파일 다운로드를 완료한 이후 상태값이 변경됩니다.
    * @param request 
-   * @param fileParam 
+   * @param fileParam dataType은 'file' 또는 'file-url'이 허용됩니다.
    */
   @Post("/file")
   @Security("jwt")
@@ -197,6 +211,13 @@ export class ApiMetaController extends Controller {
     })
   }
 
+  /**
+   * Meta의 Columns 정보를 수정 할 수 있습니다.
+   * 
+   * @param request
+   * @param metaColumnsParam 변경된 Meta.columns를 { columns: [] } 형식
+   * @param metaId Columns의 Parent meta id
+   */
   @Put('/{metaId}/columns')
   @Security('jwt')
   public async putColumns(

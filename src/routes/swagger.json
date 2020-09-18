@@ -652,199 +652,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"MetaColumnSaveParams": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"columnName": {
-						"type": "string"
-					},
-					"isHidden": {
-						"type": "boolean"
-					},
-					"isSearchable": {
-						"type": "boolean"
-					},
-					"size": {
-						"anyOf": [
-							{
-								"type": "number",
-								"format": "double"
-							},
-							{
-								"type": "string"
-							},
-							{
-								"type": "number",
-								"enum": [
-									null
-								],
-								"nullable": true
-							}
-						]
-					},
-					"type": {
-						"$ref": "#/components/schemas/AcceptableType"
-					},
-					"order": {
-						"type": "number",
-						"format": "double"
-					},
-					"originalColumnName": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"columnName",
-					"isHidden",
-					"isSearchable",
-					"type",
-					"order",
-					"originalColumnName"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MetaSaveParams": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"title": {
-						"type": "string"
-					},
-					"dataType": {
-						"type": "string"
-					},
-					"columns": {
-						"items": {
-							"$ref": "#/components/schemas/MetaColumnSaveParams"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"id",
-					"title",
-					"dataType",
-					"columns"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ServiceSaveParams": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"title": {
-						"type": "string"
-					},
-					"method": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"entityName": {
-						"type": "string"
-					},
-					"meta": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/MetaSaveParams"
-							},
-							{
-								"type": "number",
-								"enum": [
-									null
-								],
-								"nullable": true
-							}
-						]
-					}
-				},
-				"required": [
-					"id",
-					"title",
-					"method",
-					"description",
-					"entityName"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MetaParamSaveParams": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"description": {
-						"type": "string"
-					},
-					"isRequired": {
-						"type": "boolean"
-					},
-					"operator": {
-						"$ref": "#/components/schemas/ParamOperatorType"
-					}
-				},
-				"required": [
-					"isRequired",
-					"operator"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApplicationSaveParams": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"nameSpace": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"services": {
-						"items": {
-							"$ref": "#/components/schemas/ServiceSaveParams"
-						},
-						"type": "array"
-					},
-					"params": {
-						"properties": {},
-						"additionalProperties": {
-							"items": {
-								"$ref": "#/components/schemas/MetaParamSaveParams"
-							},
-							"type": "array"
-						},
-						"type": "object"
-					}
-				},
-				"required": [
-					"id",
-					"nameSpace",
-					"title",
-					"description",
-					"services",
-					"params"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"TrafficConfigParam": {
 				"properties": {
 					"type": {
@@ -1157,6 +964,7 @@
 						}
 					}
 				},
+				"description": "meta의 id를 사용하여 meta의 상세 정보를 불러 올 수 있습니다.\nmeta의 Columns 정보를 포함합니다.",
 				"tags": [
 					"Meta"
 				],
@@ -1193,6 +1001,7 @@
 						}
 					}
 				},
+				"description": "database 연결 정보를 이용하여 DB 데이터를 불러오기 위한 Meta 를 등록합니다.",
 				"tags": [
 					"Meta"
 				],
@@ -1203,6 +1012,7 @@
 				],
 				"parameters": [],
 				"requestBody": {
+					"description": "Meta title과 DB 연결 정보, stageId</br> 지원 dbms: \"mysql\"|\"cubrid\"",
 					"required": true,
 					"content": {
 						"application/json": {
@@ -1229,6 +1039,7 @@
 						}
 					}
 				},
+				"description": "File 정보를 이용하여 Meta를 등록합니다.</br></br>\ndataType이 'file'인 경우 Meta가 바로 등록이 됩니다.</br>\ndataType이 'file-url'인 경우 meta-download-scheduled 상태와 함께 등록이 되고, 이후 Scheduler가 파일 다운로드를 완료한 이후 상태값이 변경됩니다.",
 				"tags": [
 					"Meta"
 				],
@@ -1265,6 +1076,7 @@
 						}
 					}
 				},
+				"description": "Meta의 Columns 정보를 수정 할 수 있습니다.",
 				"tags": [
 					"Meta"
 				],
@@ -1275,6 +1087,7 @@
 				],
 				"parameters": [
 					{
+						"description": "Columns의 Parent meta id",
 						"in": "path",
 						"name": "metaId",
 						"required": true,
@@ -1285,6 +1098,7 @@
 					}
 				],
 				"requestBody": {
+					"description": "변경된 Meta.columns를 { columns: [] } 형식",
 					"required": true,
 					"content": {
 						"application/json": {
@@ -1352,6 +1166,7 @@
 						}
 					}
 				},
+				"description": "Application을 생성합니다 </br>\nApplication을 생성하며 default stage(v1)를 함께 생성합니다.",
 				"tags": [
 					"Applications"
 				],
@@ -1418,6 +1233,7 @@
 						}
 					}
 				},
+				"description": "id를 사용하여 Appplication을 반환합니다.</br>\nStages와 trafficConfigs를 포함합니다.",
 				"tags": [
 					"Applications"
 				],
@@ -1471,52 +1287,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/api/applications/{id}/save": {
-			"post": {
-				"operationId": "Save",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Application"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ApplicationSaveParams"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/api/applications/{id}/traffic-configs": {

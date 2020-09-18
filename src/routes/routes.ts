@@ -235,69 +235,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MetaColumnSaveParams": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "columnName": { "dataType": "string", "required": true },
-            "isHidden": { "dataType": "boolean", "required": true },
-            "isSearchable": { "dataType": "boolean", "required": true },
-            "size": { "dataType": "union", "subSchemas": [{ "dataType": "double" }, { "dataType": "string" }, { "dataType": "enum", "enums": [null] }] },
-            "type": { "ref": "AcceptableType", "required": true },
-            "order": { "dataType": "double", "required": true },
-            "originalColumnName": { "dataType": "string", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MetaSaveParams": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "title": { "dataType": "string", "required": true },
-            "dataType": { "dataType": "string", "required": true },
-            "columns": { "dataType": "array", "array": { "ref": "MetaColumnSaveParams" }, "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ServiceSaveParams": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "title": { "dataType": "string", "required": true },
-            "method": { "dataType": "string", "required": true },
-            "description": { "dataType": "string", "required": true },
-            "entityName": { "dataType": "string", "required": true },
-            "meta": { "dataType": "union", "subSchemas": [{ "ref": "MetaSaveParams" }, { "dataType": "enum", "enums": [null] }] },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MetaParamSaveParams": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double" },
-            "description": { "dataType": "string" },
-            "isRequired": { "dataType": "boolean", "required": true },
-            "operator": { "ref": "ParamOperatorType", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ApplicationSaveParams": {
-        "dataType": "refObject",
-        "properties": {
-            "id": { "dataType": "double", "required": true },
-            "nameSpace": { "dataType": "string", "required": true },
-            "title": { "dataType": "string", "required": true },
-            "description": { "dataType": "string", "required": true },
-            "services": { "dataType": "array", "array": { "ref": "ServiceSaveParams" }, "required": true },
-            "params": { "dataType": "nestedObjectLiteral", "nestedProperties": {}, "additionalProperties": { "dataType": "array", "array": { "ref": "MetaParamSaveParams" } }, "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TrafficConfigParam": {
         "dataType": "refObject",
         "properties": {
@@ -637,30 +574,6 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.delete.apply(controller, validatedArgs as any);
-            promiseHandler(controller, promise, response, next);
-        });
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    app.post('/api/applications/:id/save',
-        authenticateMiddleware([{ "jwt": [] }]),
-        function(request: any, response: any, next: any) {
-            const args = {
-                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
-                applicationSavePrams: { "in": "body", "name": "applicationSavePrams", "required": true, "ref": "ApplicationSaveParams" },
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request, response);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new ApiApplicationController();
-
-
-            const promise = controller.save.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
