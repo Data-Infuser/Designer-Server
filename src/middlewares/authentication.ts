@@ -31,7 +31,7 @@ export function expressAuthentication(
         const token = tokens[1]
         const user = await RedisManager.Instance.getUser(token);
         if(user) { resolve(user); }
-        else { reject(); }
+        else { reject(new ApplicationError(401,"No user")) }
       } catch (err) {
         reject(err);
       }

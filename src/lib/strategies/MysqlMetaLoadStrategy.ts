@@ -146,7 +146,12 @@ class MysqlMetaLoadStrategy implements DbmsMetaLoadStrategy {
         });
         return;
       } catch (err) {
-        await getConnection("connectionForMeta").close();
+        try {
+          await getConnection("connectionForMeta").close();
+        } catch(err) {
+          reject(err);
+          return;
+        }
         reject(err);
         return;
       }

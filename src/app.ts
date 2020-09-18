@@ -113,10 +113,11 @@ export class Application {
             code: applicationError.message
           });
         }
-        return res.status(500).json({
-          message: "Internal Server Error",
-        });
       }
+
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
 
       next();
     });
