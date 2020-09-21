@@ -279,7 +279,7 @@ export class ApiMetaController extends Controller {
     }
     
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-      if(updateMetaParam.columns) { await metaColumnRepo.save(updateMetaParam.columns) };
+      if(updateMetaParam.columns) { await transactionalEntityManager.save(MetaColumn, updateMetaParam.columns) };
       if(updateMetaParam.service) { await transactionalEntityManager.save(service) };
     });
     
