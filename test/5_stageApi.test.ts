@@ -52,7 +52,7 @@ describe('5-stage Api', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         if(err) console.log(err);
-        expect(res).to.have.status(200).and.have.property('body').and.have.keys(["metas", "id", "status", "applicationId", "name", "createdAt", "updatedAt", "userId"]);
+        expect(res).to.have.status(200).and.have.property('body').and.have.keys(["metas", "id", "status", "applicationId", "name", "createdAt", "updatedAt", "userId", "application"]);
         done();
       })
     })

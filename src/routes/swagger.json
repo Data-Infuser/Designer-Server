@@ -622,6 +622,52 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ServiceParams": {
+				"description": "metaId는 post /services 에서 사용",
+				"properties": {
+					"metaId": {
+						"type": "number",
+						"format": "double"
+					},
+					"method": {
+						"type": "string"
+					},
+					"entityName": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"fileParams": {
+						"$ref": "#/components/schemas/FileParams"
+					},
+					"dbmsParams": {
+						"$ref": "#/components/schemas/DbmsParams"
+					}
+				},
+				"required": [
+					"method",
+					"entityName",
+					"description"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateMetaParam": {
+				"properties": {
+					"columns": {
+						"items": {
+							"$ref": "#/components/schemas/MetaColumnParam"
+						},
+						"type": "array"
+					},
+					"service": {
+						"$ref": "#/components/schemas/ServiceParams"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ApplicationParams": {
 				"properties": {
 					"nameSpace": {
@@ -773,37 +819,6 @@
 					"user",
 					"pwd",
 					"dbms"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ServiceParams": {
-				"properties": {
-					"metaId": {
-						"type": "number",
-						"format": "double"
-					},
-					"method": {
-						"type": "string"
-					},
-					"entityName": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"fileParams": {
-						"$ref": "#/components/schemas/FileParams"
-					},
-					"dbmsParams": {
-						"$ref": "#/components/schemas/DbmsParams"
-					}
-				},
-				"required": [
-					"metaId",
-					"method",
-					"entityName",
-					"description"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -984,6 +999,53 @@
 						}
 					}
 				]
+			},
+			"put": {
+				"operationId": "PutMeta",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Meta"
+								}
+							}
+						}
+					}
+				},
+				"description": "Meta의 Columns 정보를 수정 할 수 있습니다.",
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Columns의 Parent meta id",
+						"in": "path",
+						"name": "metaId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "변경된 Meta.columns를 { columns: [] } 형식",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateMetaParam"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/metas/dbms": {
@@ -1108,6 +1170,35 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/metas/{metaId}/service": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "metaId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/api/applications": {

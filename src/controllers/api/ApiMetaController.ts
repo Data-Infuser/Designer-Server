@@ -1,6 +1,6 @@
 import { Request as exRequest } from "express";
 import { getRepository, getManager } from "typeorm";
-import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put } from "tsoa";
+import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put, Delete } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta, MetaStatus } from '../../entity/manager/Meta';
@@ -17,6 +17,7 @@ import DbmsParams from "../../interfaces/requestParams/DbmsParams";
 import FileParams from "../../interfaces/requestParams/FileParams";
 import { Application } from "../../entity/manager/Application";
 import { Stage } from "../../entity/manager/Stage";
+import ServiceParams from '../../interfaces/requestParams/ServiceParams';
 
 const property = require("../../../property.json")
 @Route("/api/metas")
@@ -227,7 +228,7 @@ export class ApiMetaController extends Controller {
   ) {
     const metaColumnRepo = getRepository(MetaColumn);
     await metaColumnRepo.save(metaColumnsParam.columns)
-    const meta = getRepository(Meta).findOne({
+    const meta = await getRepository(Meta).findOne({
       relations: ["columns"],
       where: {
         id: metaId
@@ -236,7 +237,81 @@ export class ApiMetaController extends Controller {
     this.setStatus(201);
     return Promise.resolve(meta);
   }
+
+  /**
+   * Meta의 Columns 정보를 수정 할 수 있습니다.
+   * 
+   * @param request
+   * @param updateMetaParam 변경된 Meta.columns를 { columns: [] } 형식
+   * @param metaId Columns의 Parent meta id
+   */
+  @Put('/{metaId}')
+  @Security('jwt')
+  public async putMeta(
+    @Request() request: exRequest,
+    @Body() updateMetaParam: UpdateMetaParam,
+    @Path('metaId') metaId: number,
+  ) {
+    const metaColumnRepo = getRepository(MetaColumn);
+
+    const meta = await getRepository(Meta).findOne({
+      relations: ["columns", "service"],
+      where: {
+        id: metaId,
+        userId: request.user.id
+      }
+    });
+
+    if(!meta) { throw new ApplicationError(404, "meta not found") }
+
+    let service:Service;
+    if(updateMetaParam.service) {
+      if(!meta.service) {
+        service = new Service();
+        service.meta = meta;
+      } else {
+        service = meta.service
+      }
   
+      service.entityName = updateMetaParam.service.entityName;
+      service.description = updateMetaParam.service.description;
+      service.method = updateMetaParam.service.method;
+    }
+    
+    await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
+      if(updateMetaParam.columns) { await metaColumnRepo.save(updateMetaParam.columns) };
+      if(updateMetaParam.service) { await transactionalEntityManager.save(service) };
+    });
+    
+    this.setStatus(201);
+    return Promise.resolve(meta);
+  }
+
+  @Delete('/{metaId}/service')
+  @Security('jwt')
+  public async delete(
+    @Request() request: exRequest,
+    @Path('metaId') metaId: number,
+  ) {
+    const meta = await getRepository(Meta).findOne({
+      relations: ["service"],
+      where: {
+        id: metaId,
+        userId: request.user.id
+      }
+    });
+
+    if(!meta || !meta.service) { throw new ApplicationError(404, "meta not found") }
+
+    await getRepository(Service).delete(meta.service.id);
+    this.setStatus(201);
+    return Promise.resolve();
+  }
+}
+
+interface UpdateMetaParam {
+  columns?: MetaColumnParam[],
+  service?: ServiceParams
 }
 
 interface MetaColumnsParam {

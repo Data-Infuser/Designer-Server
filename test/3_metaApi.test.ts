@@ -171,4 +171,43 @@ describe('3-meta Api', () => {
       })
     })
   })
+
+  describe('PUT /{metaId}', () => {
+    it('Shoud meta column & service updated', (done) => {
+      metaEntity.columns.forEach(column => {
+        column.columnName = `${column.id}-column-${column.originalColumnName}-test2`
+        column.size = 100;
+        column.isSearchable = true;
+        column.isNullable = true;
+      });
+      const service = {
+        method: 'GET',
+        entityName: 'test-service',
+        description: '테스트를 위한 서비스입니다.\n서비스가 생성되어야 합니다.',
+      }
+      chai.request(application.app)
+      .put(`/api/metas/${metaEntity.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        service: service,
+        columns: metaEntity.columns
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        done();
+      })
+    })
+  })
+
+  describe('DELETE /{metaId}/service', () => {
+    it('Meta should have null service', (done) => {
+      chai.request(application.app)
+      .delete(`/api/metas/${metaEntity.id}/service`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        done();
+      })
+    })
+  })
 });

@@ -38,7 +38,7 @@ export class ApiStageController extends Controller {
     const stageRepo = getRepository(Stage);
 
     const stage = await stageRepo.findOne({
-      relations: ["metas", "metas.service"],
+      relations: ["metas", "metas.service", "application"],
       where: {
         id: stageId
       }

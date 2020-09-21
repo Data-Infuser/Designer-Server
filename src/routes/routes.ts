@@ -223,6 +223,28 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ServiceParams": {
+        "dataType": "refObject",
+        "properties": {
+            "metaId": { "dataType": "double" },
+            "method": { "dataType": "string", "required": true },
+            "entityName": { "dataType": "string", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "fileParams": { "ref": "FileParams" },
+            "dbmsParams": { "ref": "DbmsParams" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UpdateMetaParam": {
+        "dataType": "refObject",
+        "properties": {
+            "columns": { "dataType": "array", "array": { "ref": "MetaColumnParam" } },
+            "service": { "ref": "ServiceParams" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ApplicationParams": {
         "dataType": "refObject",
         "properties": {
@@ -281,19 +303,6 @@ const models: TsoaRoute.Models = {
             "user": { "dataType": "string", "required": true },
             "pwd": { "dataType": "string", "required": true },
             "dbms": { "ref": "AcceptableDbms", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ServiceParams": {
-        "dataType": "refObject",
-        "properties": {
-            "metaId": { "dataType": "double", "required": true },
-            "method": { "dataType": "string", "required": true },
-            "entityName": { "dataType": "string", "required": true },
-            "description": { "dataType": "string", "required": true },
-            "fileParams": { "ref": "FileParams" },
-            "dbmsParams": { "ref": "DbmsParams" },
         },
         "additionalProperties": false,
     },
@@ -455,6 +464,55 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.putColumns.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.put('/api/metas/:metaId',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                updateMetaParam: { "in": "body", "name": "updateMetaParam", "required": true, "ref": "UpdateMetaParam" },
+                metaId: { "in": "path", "name": "metaId", "required": true, "dataType": "double" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiMetaController();
+
+
+            const promise = controller.putMeta.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.delete('/api/metas/:metaId/service',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                metaId: { "in": "path", "name": "metaId", "required": true, "dataType": "double" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiMetaController();
+
+
+            const promise = controller.delete.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
