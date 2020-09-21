@@ -39,7 +39,7 @@ export class ApiMetaController extends Controller {
     const metaRepo = getRepository(Meta);
 
     const meta = await metaRepo.findOne({
-      relations: ["columns"],
+      relations: ["columns", "service"],
       where: {
         id: metaId,
         userId: request.user.id

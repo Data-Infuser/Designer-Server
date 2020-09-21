@@ -8,7 +8,5 @@ export default interface ServiceParams {
   metaId?: number,
   method: string,
   entityName: string,
-  description: string,
-  fileParams?: FileParams,
-  dbmsParams?: DbmsParams
+  description: string
 }

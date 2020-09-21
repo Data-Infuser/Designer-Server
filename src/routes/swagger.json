@@ -151,6 +151,9 @@
 					"method": {
 						"type": "string"
 					},
+					"title": {
+						"type": "string"
+					},
 					"description": {
 						"type": "string"
 					},
@@ -176,6 +179,7 @@
 				"required": [
 					"id",
 					"method",
+					"title",
 					"description",
 					"entityName",
 					"userId",

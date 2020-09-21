@@ -25,7 +25,10 @@ export class Service {
     default: HttpMethod.GET
   })
   method: string;
-
+  
+  @Column()
+  title: string;
+  
   @Column({type: "text"})
   description: string;
 
