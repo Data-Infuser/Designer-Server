@@ -36,7 +36,8 @@ class XlsxMetaLoadStrategy implements MetaLoadStrategy {
         meta.extension = ext;
         meta.skip = skip;
         meta.sheet = sheet;
-        
+        meta.samples = this.getSampleData(worksheet, skip);
+
         let columns = []
         for(let i = 1; i < header.length; i++) {
           const col = header[i];
@@ -58,6 +59,17 @@ class XlsxMetaLoadStrategy implements MetaLoadStrategy {
         return;
       }
     });
+  }
+
+  /**
+   * 전체 Record를 받아 최대 5개의 sampleData를 JSON String으로 return
+   */
+  getSampleData(worksheet, skip) {
+    const sampleDatas = [];
+    for(let i = 2; i < 7; i++) {
+      sampleDatas.push(worksheet.getRow(skip + i).values.slice(1));
+    }
+    return JSON.stringify({items:sampleDatas});
   }
 }
 

@@ -57,12 +57,12 @@ describe('3-meta Api', () => {
       })
     })
 
-    it('create new Meta with File info', (done) => {
+    it('create new Meta with CSV File info', (done) => {
       const newMeta: FileParams = {
         stageId: applicationEntity.stages[0].id,
         dataType: "file",
         ext: "csv",
-        title: "File test data",
+        title: "CSV File test data",
         skip: 0,
         sheet: 0,
         filePath: "./test/filesForTest/폐기물.csv",
@@ -83,6 +83,37 @@ describe('3-meta Api', () => {
         should().exist(res.body.skip);
         should().exist(res.body.samples);
         expect(res.body.status).equal(MetaStatus.METALOADED)
+        metas.push(res.body);
+        done();
+      })
+    })
+
+    it('create new Meta with XLSX File info', (done) => {
+      const newMeta: FileParams = {
+        stageId: applicationEntity.stages[0].id,
+        dataType: "file",
+        ext: "xlsx",
+        title: "XLSX File test data",
+        skip: 0,
+        sheet: 0,
+        filePath: "./test/filesForTest/그늘막설치현황.xlsx",
+        originalFileName: "그늘막설치현황.xlsx"
+      }
+      chai.request(application.app)
+      .post(`/api/metas/file`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(newMeta)
+      .end((err, res) => {
+        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["samples", "status", "createdAt", "dataType", "db", "dbUser", "dbms", "encoding", "extension", "filePath", "host", "id", "originalFileName", "port", "pwd", "remoteFilePath", "rowCounts", "sheet", "skip", "stageId", "table", "title", "updatedAt", "userId"]);
+        should().exist(res.body.dataType);
+        should().exist(res.body.extension);
+        should().exist(res.body.filePath);
+        should().exist(res.body.originalFileName);
+        should().exist(res.body.sheet);
+        should().exist(res.body.skip);
+        should().exist(res.body.samples);
+        expect(res.body.status).equal(MetaStatus.METALOADED)
+        console.log(res.body);
         metas.push(res.body);
         done();
       })

@@ -1007,6 +1007,7 @@
 						}
 					}
 				},
+				"description": "meta의 목록",
 				"tags": [
 					"Meta"
 				],

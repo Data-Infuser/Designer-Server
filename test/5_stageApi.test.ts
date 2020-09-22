@@ -76,7 +76,7 @@ describe('5-stage Api', () => {
       let stage: Stage;
       before((done) => {
         const newService: ServiceParams = {
-          metaId: metas[2].id,
+          metaId: metas[3].id,
           method: "GET",
           entityName: "test-service",
           description: "테스트를 위한 service 입니다."
@@ -88,7 +88,7 @@ describe('5-stage Api', () => {
         .send(newService)
         .end((err, res) => {
           expect(res).to.have.status(201).and.have.property('body').and.have.keys(["method", "entityName", "description", "userId", "meta", "id", "createdAt", "updatedAt"]);;
-          expect(res.body.meta.id).to.equal(metas[2].id);
+          expect(res.body.meta.id).to.equal(metas[3].id);
           done();
         });
       })

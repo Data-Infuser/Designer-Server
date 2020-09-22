@@ -9,7 +9,6 @@ export default class DataLoaderHelper {
       const apiUrl = `${property.dataLoaderUrl}/db-info/tables/${dataLoaderDbmsParams.tableNm}/columns`
       try {
         const response = await axios(apiUrl, {params: dataLoaderDbmsParams});
-        console.log(response);
         resolve(response.data);
       } catch (err) {
         reject(err);

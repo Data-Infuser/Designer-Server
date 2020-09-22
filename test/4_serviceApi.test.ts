@@ -49,5 +49,24 @@ describe('4-service Api', () => {
       });
     })
     
+    it('Create service2', (done) => {
+      const newService: ServiceParams = {
+        metaId: metas[2].id,
+        method: "GET",
+        entityName: "test-service",
+        description: "테스트를 위한 service 입니다."
+      }
+
+      chai.request(application.app)
+      .post(`/api/services`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(newService)
+      .end((err, res) => {
+        expect(res).to.have.status(201).and.have.property('body').and.have.keys(["method", "entityName", "description", "userId", "meta", "id", "createdAt", "updatedAt"]);;
+        expect(res.body.meta.id).to.equal(metas[2].id);
+        done();
+      });
+    })
+    
   })
 });
