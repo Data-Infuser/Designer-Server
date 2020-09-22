@@ -25,6 +25,12 @@ const property = require("../../../property.json")
 @Tags("Meta")
 export class ApiMetaController extends Controller {
 
+  /**
+   * meta의 목록
+   * @param request 
+   * @param page 
+   * @param perPage 
+   */
   @Get("/")
   @Security("jwt")
   public async getIndex(
@@ -37,6 +43,7 @@ export class ApiMetaController extends Controller {
     await pagination.findBySearchParams(relations, page, perPage, request.user.id);
     return Promise.resolve(pagination);
   }
+
   /**
    * meta의 id를 사용하여 meta의 상세 정보를 불러 올 수 있습니다.
    * meta의 Columns 정보를 포함합니다.
