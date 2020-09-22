@@ -123,6 +123,7 @@ class MysqlMetaLoadStrategy implements DbmsMetaLoadStrategy {
         meta.dbUser = username;
         meta.pwd = password;
         meta.table = tableNm;
+        meta.samples = await this.getSampleData(manager, tableNm);
 
         let columns = []
         for(let i = 0; i < tableInfo.length; i++) {
@@ -177,6 +178,27 @@ class MysqlMetaLoadStrategy implements DbmsMetaLoadStrategy {
       size: size
     }
   }
+
+  getSampleData(manager, tableNm): Promise<string> {
+    return new Promise( async (resolve, reject) => {
+      try {
+        const sampleDatas = []
+        const rows = await manager.query(`SELECT * from \`${tableNm}\` limit 5;`);
+        for(let row of rows) {
+          const keys = Object.keys(row);
+          const sampleRow = [];
+          for(let key of keys) {
+            sampleRow.push(row[key]);
+          }
+          sampleDatas.push(sampleRow);
+        }
+        resolve(JSON.stringify({items:sampleDatas}));
+      } catch (err) {
+        reject(err);
+      }
+    })
+  }
+    
 }
 
 export default MysqlMetaLoadStrategy;

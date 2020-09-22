@@ -113,7 +113,6 @@ describe('3-meta Api', () => {
         should().exist(res.body.skip);
         should().exist(res.body.samples);
         expect(res.body.status).equal(MetaStatus.METALOADED)
-        console.log(res.body);
         metas.push(res.body);
         done();
       })
