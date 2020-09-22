@@ -485,6 +485,36 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Pagination_Meta_": {
+				"properties": {
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/Meta"
+						},
+						"type": "array",
+						"default": []
+					},
+					"page": {
+						"type": "number",
+						"format": "double",
+						"default": 1
+					},
+					"perPage": {
+						"type": "number",
+						"format": "double",
+						"default": 10
+					},
+					"totalCount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"totalCount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"DbmsParams": {
 				"properties": {
 					"stageId": {
@@ -641,12 +671,6 @@
 					},
 					"description": {
 						"type": "string"
-					},
-					"fileParams": {
-						"$ref": "#/components/schemas/FileParams"
-					},
-					"dbmsParams": {
-						"$ref": "#/components/schemas/DbmsParams"
 					}
 				},
 				"required": [
@@ -968,6 +992,51 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/api/metas": {
+			"get": {
+				"operationId": "GetIndex",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Pagination_Meta_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Meta"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "perPage",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/metas/{metaId}": {
 			"get": {
 				"operationId": "Get",

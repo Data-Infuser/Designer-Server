@@ -210,4 +210,32 @@ describe('3-meta Api', () => {
       })
     })
   })
+
+  
+  describe('Get /', () => {
+    it('should have at least one stage and pagination info', (done) => {
+      chai.request(application.app)
+      .get('/api/metas')
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        if(err) console.log(err);
+        expect(res).to.have.status(200).and.have.property('body').and.have.keys(["items", "page", "perPage", "totalCount"]);
+        done();
+      })
+    })
+
+    it('should have NO stage', (done) => {
+      chai.request(application.app)
+      .get('/api/metas?page=100')
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        if(err) console.log(err);
+        expect(res).to.have.status(200).and.have.property('body').and.have.keys(["items", "page", "perPage", "totalCount"]);
+        expect(res.body.items.length).to.equal(0);
+        done();
+      })
+    })
+
+  })
+
 });

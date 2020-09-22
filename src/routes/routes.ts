@@ -170,6 +170,17 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pagination_Meta_": {
+        "dataType": "refObject",
+        "properties": {
+            "items": { "dataType": "array", "array": { "ref": "Meta" }, "default": [] },
+            "page": { "dataType": "double", "default": 1 },
+            "perPage": { "dataType": "double", "default": 10 },
+            "totalCount": { "dataType": "double", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DbmsParams": {
         "dataType": "refObject",
         "properties": {
@@ -231,8 +242,6 @@ const models: TsoaRoute.Models = {
             "method": { "dataType": "string", "required": true },
             "entityName": { "dataType": "string", "required": true },
             "description": { "dataType": "string", "required": true },
-            "fileParams": { "ref": "FileParams" },
-            "dbmsParams": { "ref": "DbmsParams" },
         },
         "additionalProperties": false,
     },
@@ -371,6 +380,31 @@ export function RegisterRoutes(app: express.Express) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+    app.get('/api/metas',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                page: { "in": "query", "name": "page", "dataType": "double" },
+                perPage: { "in": "query", "name": "perPage", "dataType": "double" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiMetaController();
+
+
+            const promise = controller.getIndex.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.get('/api/metas/:metaId',
         authenticateMiddleware([{ "jwt": [] }]),
         function(request: any, response: any, next: any) {

@@ -1,6 +1,6 @@
 import { Request as exRequest } from "express";
-import { getRepository, getManager } from "typeorm";
-import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put, Delete } from "tsoa";
+import { getRepository, getManager, getConnection } from "typeorm";
+import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put, Delete, Query } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta, MetaStatus } from '../../entity/manager/Meta';
@@ -18,12 +18,25 @@ import FileParams from "../../interfaces/requestParams/FileParams";
 import { Application } from "../../entity/manager/Application";
 import { Stage } from "../../entity/manager/Stage";
 import ServiceParams from '../../interfaces/requestParams/ServiceParams';
+import Pagination from "../../util/Pagination";
 
 const property = require("../../../property.json")
 @Route("/api/metas")
 @Tags("Meta")
 export class ApiMetaController extends Controller {
 
+  @Get("/")
+  @Security("jwt")
+  public async getIndex(
+    @Request() request: exRequest,
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number
+  ):Promise<Pagination<Meta>>{
+    const pagination = new Pagination(Meta, getConnection());
+    const relations = [];
+    await pagination.findBySearchParams(relations, page, perPage, request.user.id);
+    return Promise.resolve(pagination);
+  }
   /**
    * meta의 id를 사용하여 meta의 상세 정보를 불러 올 수 있습니다.
    * meta의 Columns 정보를 포함합니다.
