@@ -29,57 +29,17 @@ export class SwaggerBuilder {
       };
 
       try {
-
         stage.metas.forEach((meta) => {
+          
           const service = meta.service;
+          console.log(service)
           let def = SwaggerBuilder.buildDef(meta);
           let modelTemplate = _.cloneDeep(ApiResponseTemplate);
           modelTemplate.properties.datas.items['$ref'] = `#/definitions/${service.entityName}_model`;
           doc.definitions[service.entityName+'_model'] = def;
           doc.definitions[service.entityName+'_api'] = modelTemplate;
-          doc.paths[`/api/${stage.application.nameSpace}/v${stage.name}/${service.entityName}`] = SwaggerBuilder.buildPath(meta);
+          doc.paths[`/${stage.application.nameSpace}/v${stage.name}/${service.entityName}`] = SwaggerBuilder.buildPath(meta);
         });
-        resolve(doc);
-      } catch(err) {
-        console.log(err);
-        reject();
-      }
-    });
-  }
-
-  static buildDoc = async (services?:Service[]) => {
-    return new Promise<any>(async(resolve, reject) => {
-      const serviceRepo = getRepository(Service);
-      let doc = {
-        "swagger": "2.0",
-        "info": {
-          "version": property.app.version,
-          "title": property.app.title,
-          "description": property.app.description
-        },
-        "host": property.host.replace(/https?(:\/\/)/gi, ""),
-        "schemes": ["http"],
-        "paths": {},
-        "definitions": {}
-      };
-
-      try {
-        if(!services) {
-          services = await serviceRepo.find({
-            relations: ["meta", "columns"],
-          });
-        }
-
-        // services.forEach((service) => {
-        //   let def = SwaggerBuilder.buildDef(service);
-        //   let modelTemplate = _.cloneDeep(ApiResponseTemplate);
-        //   modelTemplate.properties.datas.items['$ref'] = `#/definitions/${service.tableName}_model`;
-
-        //   doc.definitions[service.tableName+'_model'] = def;
-        //   doc.definitions[service.tableName+'_api'] = modelTemplate;
-
-        //   doc.paths[`/api/dataset/${service.tableName}`] = SwaggerBuilder.buildPath(service);
-        // });
         resolve(doc);
       } catch(err) {
         console.log(err);

@@ -15,7 +15,7 @@ describe('4-service Api', () => {
       const newService: ServiceParams = {
         metaId: metas[0].id,
         method: "GET",
-        entityName: "test-service",
+        entityName: "test-service2",
         description: "테스트를 위한 service 입니다."
       }
 
@@ -34,7 +34,7 @@ describe('4-service Api', () => {
       const newService: ServiceParams = {
         metaId: metas[1].id,
         method: "GET",
-        entityName: "test-service",
+        entityName: "test-service3",
         description: "테스트를 위한 service 입니다."
       }
 
@@ -53,7 +53,7 @@ describe('4-service Api', () => {
       const newService: ServiceParams = {
         metaId: metas[2].id,
         method: "GET",
-        entityName: "test-service",
+        entityName: "test-service4",
         description: "테스트를 위한 service 입니다."
       }
 
