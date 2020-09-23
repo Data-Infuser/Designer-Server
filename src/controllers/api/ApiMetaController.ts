@@ -19,6 +19,7 @@ import { Application } from "../../entity/manager/Application";
 import { Stage } from "../../entity/manager/Stage";
 import ServiceParams from '../../interfaces/requestParams/ServiceParams';
 import Pagination from "../../util/Pagination";
+import { ERROR_CODE } from '../../util/ErrorCodes';
 
 const property = require("../../../property.json")
 @Route("/api/metas")
@@ -66,9 +67,7 @@ export class ApiMetaController extends Controller {
       }
     })
 
-    if(!meta) {
-      throw new ApplicationError(404, "Meta Not Fount");
-    }
+    if(!meta) { throw new ApplicationError(404, ERROR_CODE.META.META_NOT_FOUND); }
 
     return Promise.resolve(meta);
   }
@@ -95,11 +94,16 @@ export class ApiMetaController extends Controller {
       || database.length == 0 
       || user.length == 0 
       || table.length == 0) {
-      throw new ApplicationError(400, "Need all params");
+      throw new ApplicationError(400, ERROR_CODE.META.NEED_ALL_PARAM);
     }
 
-    const stage = await stageRepo.findOne(stageId);
-    if(!stage) {throw new ApplicationError(404, "Entity Not Found")}
+    const stage = await stageRepo.findOne({
+      where: {
+        id: stageId,
+        userId: request.user.id
+      }
+    });
+    if(!stage) {throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND)}
 
     const connectionInfo = {
       dbms: dbms,
@@ -121,7 +125,7 @@ export class ApiMetaController extends Controller {
         loadStrategy = new CubridMetaLoadStrategy();
         break;
       default:
-        throw new Error("unexceptable dbms");
+        throw new ApplicationError(400, ERROR_CODE.META.UNACCEPTABLE_DBMS)
     }
     const metaLoader = new MetaLoader(loadStrategy);
     const loaderResult = await metaLoader.loadMeta(connectionInfo);
@@ -205,7 +209,7 @@ export class ApiMetaController extends Controller {
         this.setStatus(201);
         return Promise.resolve(newMeta);
       default:
-        throw new Error("Unacceptable dataType");
+        throw new ApplicationError(400, ERROR_CODE.META.UNACCEPTABLE_FILE_TYPE)
     }        
   }
 
@@ -221,7 +225,7 @@ export class ApiMetaController extends Controller {
             loadStrategy = new CsvMetaLoadStrategy();
             break;
           default:
-            throw new Error("unexceptable file extension");
+            throw new ApplicationError(400, ERROR_CODE.META.UNACCEPTABLE_FILE_EXT)
         }
         const metaLoader = new MetaLoader(loadStrategy);
         const loaderResult = await metaLoader.loadMeta(fileParam);
@@ -272,8 +276,6 @@ export class ApiMetaController extends Controller {
     @Body() updateMetaParam: UpdateMetaParam,
     @Path('metaId') metaId: number,
   ) {
-    const metaColumnRepo = getRepository(MetaColumn);
-
     const meta = await getRepository(Meta).findOne({
       relations: ["columns", "service"],
       where: {
@@ -282,7 +284,7 @@ export class ApiMetaController extends Controller {
       }
     });
 
-    if(!meta) { throw new ApplicationError(404, "meta not found") }
+    if(!meta) { throw new ApplicationError(404, ERROR_CODE.META.META_NOT_FOUND); }
 
     let service:Service;
     if(updateMetaParam.service) {
@@ -321,7 +323,7 @@ export class ApiMetaController extends Controller {
       }
     });
 
-    if(!meta || !meta.service) { throw new ApplicationError(404, "meta not found") }
+    if(!meta || !meta.service) { throw new ApplicationError(404, ERROR_CODE.META.META_NOT_FOUND) }
 
     await getRepository(Service).delete(meta.service.id);
     this.setStatus(201);
