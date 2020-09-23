@@ -11,6 +11,7 @@ import { MetaStatus } from "../../entity/manager/Meta";
 import BullManager from "../../util/BullManager";
 import { getConnection } from 'typeorm';
 import Pagination from '../../util/Pagination';
+import { ERROR_CODE } from '../../util/ErrorCodes';
 
 @Route('/api/stages')
 @Tags('Stage')
@@ -40,12 +41,13 @@ export class ApiStageController extends Controller {
     const stage = await stageRepo.findOne({
       relations: ["metas", "metas.service", "application"],
       where: {
-        id: stageId
+        id: stageId,
+        userId: request.user.id
       }
     })
 
     if(!stage) {
-      throw new ApplicationError(404, "Stage Not Found");
+      throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND);
     }
 
     return stage;
@@ -62,16 +64,17 @@ export class ApiStageController extends Controller {
     const stage = await stageRepo.findOne({
       relations: ["metas", "metas.service", "application"],
       where: {
-        id: stageId
+        id: stageId,
+        userId: request.user.id
       }
     })
 
     if(!stage) {
-      throw new ApplicationError(404, "Stage Not Found");
+      throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND);
     } else if(!stage.metas.every( meta => meta.status === MetaStatus.METALOADED)) {
-      throw new ApplicationError(400, "Meta should be loaded before load data");
+      throw new ApplicationError(400, ERROR_CODE.STAGE.ALL_METAS_SHOULD_BE_LOADED);
     } else if(!stage.metas.every( meta => meta.service !== null)) {
-      throw new ApplicationError(400, "All metas should have service before load data");
+      throw new ApplicationError(400, ERROR_CODE.STAGE.ALL_METAS_SHOULD_HAVE_SERVICE);
     }
 
     stage.status = StageStatus.SCHEDULED;
@@ -104,15 +107,16 @@ export class ApiStageController extends Controller {
   ): Promise<Stage> {
     const stageRepo = getRepository(Stage);
 
-    const stage = await stageRepo.findOneOrFail({
+    const stage = await stageRepo.findOne({
       relations:['application'],
       where: {
-        id: id
+        id: id,
+        userId: request.user.id
       }
     })
 
-    if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
-    if(stage.status !== StageStatus.LOADED) throw new ApplicationError(400, 'Bad Request')
+    if(!stage) { throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND); }
+    if(stage.status !== StageStatus.LOADED) { throw new ApplicationError(400, ERROR_CODE.STAGE.STAGE_NOT_LOADED); }
     stage.status = StageStatus.DEPLOYED;
     await stageRepo.save(stage);
 
@@ -130,57 +134,17 @@ export class ApiStageController extends Controller {
     const stage = await stageRepo.findOneOrFail({
       relations:['application'],
       where: {
-        id: id
+        id: id,
+        userId: request.user.id
       }
     })
 
-    if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
-    if(stage.status !== StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
+    if(!stage) { throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND); }
+    if(stage.status !== StageStatus.DEPLOYED) { throw new ApplicationError(400, ERROR_CODE.STAGE.STAGE_NOT_DEPLOYED); }
 
     stage.status = StageStatus.LOADED;
     await stageRepo.save(stage);
 
     return Promise.resolve(stage);
   }
-
-  // @Delete('/{id}')
-  // @Security('jwt')
-  // public async delete(
-  //   @Request() request: exRequest,
-  //   @Path('id') id: number
-  // ): Promise<any> {
-  //   const stageRepo = getRepository(Stage);
-
-  //   const stage = await stageRepo.findOneOrFail({
-  //     relations:['application', 'services', 'services.meta'],
-  //     where: {
-  //       id: id
-  //     }
-  //   })
-
-  //   const files = []
-  //   stage.services.forEach(service => {
-  //     if(service.meta && service.meta.dataType === "file") {
-  //       files.push(service.meta.filePath);
-  //     }
-  //   });
-
-  //   if(stage.application.userId !== request.user.id) throw new ApplicationError(404, 'Not Found');
-  //   if(stage.status === StageStatus.DEPLOYED) throw new ApplicationError(400, 'Bad Request');
-  //   await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-  //     await transactionalEntityManager.remove(stage.services);
-  //     await transactionalEntityManager.remove(stage);
-  //     if(files.length > 0) {
-  //       files.forEach(file => {
-  //         fs.unlink(file, (err) => {
-  //           console.error(`${file} Unlink Failed`)
-  //           console.error(err);
-  //         })
-  //       })
-  //     }
-  //   })
-  //   stage.id = id;
-    
-  //   return Promise.resolve(stage);
-  // }
 }

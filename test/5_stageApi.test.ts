@@ -4,6 +4,7 @@ import ServiceParams from '../src/interfaces/requestParams/ServiceParams';
 import { MetaStatus } from '../src/entity/manager/Meta';
 import { metas } from './3_metaApi.test';
 import { Stage, StageStatus } from '../src/entity/manager/Stage';
+import { ERROR_CODE } from '../src/util/ErrorCodes';
 
 describe('5-stage Api', () => {
   it('token exist', (done) => {
@@ -67,7 +68,7 @@ describe('5-stage Api', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         expect(res).to.have.status(400);
-        expect(res.body.code).to.equal("All metas should have service before load data")
+        expect(res.body.code).to.equal(ERROR_CODE.STAGE.ALL_METAS_SHOULD_HAVE_SERVICE)
         done();
       });
     })    

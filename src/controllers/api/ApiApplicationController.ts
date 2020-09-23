@@ -11,6 +11,7 @@ import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 import { TrafficConfig, TrafficConfigType } from "../../entity/manager/TrafficConfig";
 import { Stage } from "../../entity/manager/Stage";
 import ApplicationParams from "../../interfaces/requestParams/ApplicationParams";
+import { ERROR_CODE } from '../../util/ErrorCodes';
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -83,7 +84,8 @@ export class ApiApplicationController extends Controller {
         userId: request.user.id
       }
     }
-    const app = await appRepo.findOneOrFail(findOptions);
+    const app = await appRepo.findOne(findOptions);
+    if(!app) { throw new ApplicationError(404, ERROR_CODE.APPLICATION.APPLICATION_NOT_FOUND) }
     return Promise.resolve(app);
   }
 
@@ -147,7 +149,7 @@ export class ApiApplicationController extends Controller {
     });
 
     if(application.userId !== request.user.id) {
-      return Promise.reject(new ApplicationError(404, "Not Found"));
+      throw new ApplicationError(404, ERROR_CODE.APPLICATION.APPLICATION_NOT_FOUND)
     }
 
     await applicationRepo.remove(application);
