@@ -31,8 +31,9 @@ export class SwaggerBuilder {
       try {
         stage.metas.forEach((meta) => {
           
-          const service = meta.service;
-          console.log(service)
+          const service = meta.service || {
+            entityName: "미설정"
+          };
           let def = SwaggerBuilder.buildDef(meta);
           let modelTemplate = _.cloneDeep(ApiResponseTemplate);
           modelTemplate.properties.datas.items['$ref'] = `#/definitions/${service.entityName}_model`;
