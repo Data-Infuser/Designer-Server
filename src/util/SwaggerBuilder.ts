@@ -32,14 +32,15 @@ export class SwaggerBuilder {
         stage.metas.forEach((meta) => {
           
           const service = meta.service || {
-            entityName: "미설정"
+            entityName: "미설정",
+            description: "미설정"
           };
           let def = SwaggerBuilder.buildDef(meta);
           let modelTemplate = _.cloneDeep(ApiResponseTemplate);
           modelTemplate.properties.datas.items['$ref'] = `#/definitions/${service.entityName}_model`;
           doc.definitions[service.entityName+'_model'] = def;
           doc.definitions[service.entityName+'_api'] = modelTemplate;
-          doc.paths[`/${stage.application.nameSpace}/v${stage.name}/${service.entityName}`] = SwaggerBuilder.buildPath(meta);
+          doc.paths[`/${stage.application.nameSpace}/v${stage.name}/${service.entityName}`] = SwaggerBuilder.buildPath(meta, service);
         });
         resolve(doc);
       } catch(err) {
@@ -64,11 +65,11 @@ export class SwaggerBuilder {
     return def;
   }
 
-  private static buildPath = (meta: Meta) => {
+  private static buildPath = (meta: Meta, service) => {
     let pathTemplate = _.cloneDeep(PathTemplate);
 
-    pathTemplate["get"].tags.push(meta.service.entityName);
-    pathTemplate["get"].description = meta.service.description;
+    pathTemplate["get"].tags.push(service.entityName);
+    pathTemplate["get"].description = service.description;
     // pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${service.tableName}_api`;
     meta.columns.forEach((column) => {
       column.params.forEach((param) => {
