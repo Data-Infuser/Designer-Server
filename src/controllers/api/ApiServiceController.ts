@@ -8,6 +8,7 @@ import { Application } from "../../entity/manager/Application";
 import fs from 'fs';
 import { Meta } from "../../entity/manager/Meta";
 import ServiceParams from "../../interfaces/requestParams/ServiceParams";
+import { ERROR_CODE } from '../../util/ErrorCodes';
 
 @Route("/api/services")
 @Tags("Service")
@@ -23,12 +24,17 @@ export class ApiServiceController extends Controller{
     const metaRepo = getRepository(Meta);
     const { metaId, method, entityName, description } = serviceParams;
     if(method.length == 0 || entityName.length == 0 || description.length == 0 || !metaId) {
-      throw new ApplicationError(400, "Need all params");
+      throw new ApplicationError(400, ERROR_CODE.SERVICE.NEED_ALL_PARAM);
     }
 
-    const meta = await metaRepo.findOneOrFail(metaId);
+    const meta = await metaRepo.findOne({
+      where: {
+        id: metaId,
+        userId: request.user.id
+      }
+    });
 
-    if(!meta) { throw new ApplicationError(404, "No Meta Found") }
+    if(!meta) { throw new ApplicationError(404, ERROR_CODE.META.META_NOT_FOUND) }
     
     const newService = new Service();
     newService.method = method;
@@ -54,15 +60,18 @@ export class ApiServiceController extends Controller{
     const serviceRepo = getRepository(Service);
     const { method, entityName, description } = serviceParams;
     if(method.length == 0 || entityName.length == 0 || description.length == 0 ) {
-      throw new ApplicationError(400, "Need all params");
+      throw new ApplicationError(400, ERROR_CODE.SERVICE.NEED_ALL_PARAM);
     }
 
-    const service = await serviceRepo.findOneOrFail({
+    const service = await serviceRepo.findOne({
       relations: ["meta", "meta.columns"],
       where: {
-        id: serviceId
+        id: serviceId,
+        userId: request.user.id
       }
     });
+    if(!service) { throw new ApplicationError(404, ERROR_CODE.SERVICE.SERVICE_NOT_FOUND); }
+
     service.method = method;
     service.entityName = entityName;
     service.description = description;
@@ -78,13 +87,15 @@ export class ApiServiceController extends Controller{
     @Path() serviceId: number
   ): Promise<any> {
     const serviceRepo = getRepository(Service);
-    const service = await serviceRepo.findOneOrFail({
+    const service = await serviceRepo.findOne({
       relations: ["application", "meta"],
       where: {
         id: serviceId,
         userId: request.user.id
       }
     })
+
+    if(!service) { throw new ApplicationError(404, ERROR_CODE.SERVICE.SERVICE_NOT_FOUND); }
 
     const filePath = service.meta && service.meta.dataType === 'file' ? service.meta.filePath : null;
 
