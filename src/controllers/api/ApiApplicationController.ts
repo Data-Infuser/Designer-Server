@@ -46,24 +46,6 @@ export class ApiApplicationController extends Controller {
     });
   }
 
-  @Get("/{applicationId}/api-docs")
-  //@Security("jwt")
-  public async getDocs(
-    @Path() applicationId: number
-  ): Promise<any>{
-    const appRepo = getRepository(Application);
-    const findOption:FindOneOptions = {
-      relations: ["services", "services.meta", "services.meta.columns", "services.meta.columns.params", "services.columns"],
-      where: {
-        id: applicationId
-      }
-    }
-    const app = await appRepo.findOneOrFail(findOption);
-    const doc = SwaggerBuilder.buildApplicationDoc(app);
-
-    return Promise.resolve(doc);
-  }
-
   /**
    * id를 사용하여 Appplication을 반환합니다.</br>
    * Stages와 trafficConfigs를 포함합니다.
@@ -118,7 +100,7 @@ export class ApiApplicationController extends Controller {
     newApplication.trafficConfigs = [dailyMaxTrafic, monthlyMaxTraffic];
 
     const stage = new Stage();
-    stage.name = `v${newApplication.lastVersion}`;
+    stage.name = `${newApplication.lastVersion}`;
     stage.userId = request.user.id;
     newApplication.stages = [stage];
     

@@ -49,7 +49,7 @@ describe('2-application Api', () => {
     })
 
     it('lastVersion should be same as stage name', (done) => {
-      expect(applicationEntity.stages[0].name).equal(`v${applicationEntity.lastStageVersion}`);
+      expect(applicationEntity.stages[0].name).equal(`${applicationEntity.lastStageVersion}`);
       done();
     })
   })

@@ -12,6 +12,7 @@ import BullManager from "../../util/BullManager";
 import { getConnection } from 'typeorm';
 import Pagination from '../../util/Pagination';
 import { ERROR_CODE } from '../../util/ErrorCodes';
+import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 
 @Route('/api/stages')
 @Tags('Stage')
@@ -51,6 +52,35 @@ export class ApiStageController extends Controller {
     }
 
     return stage;
+  }
+
+  /**
+   * 해당 API의 Swagger 문서를 불러옵니다.
+   * @param stageId 
+   * @param request 
+   */
+  @Get('/{stageId}/api-docs')
+  // @Security('jwt')
+  public async getStageSwagger(
+    @Path('stageId') stageId: number,
+    @Request() request: exRequest
+  ): Promise<any> {
+    const stageRepo = getRepository(Stage);
+
+    const stage = await stageRepo.findOne({
+      relations: ["metas", "metas.service", "application", "metas.columns", "metas.columns.params"],
+      where: {
+        id: stageId
+      }
+    })
+
+    if(!stage) {
+      throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND);
+    }
+
+    const doc = SwaggerBuilder.buildApplicationDoc(stage);
+
+    return doc;
   }
 
   @Post('/{stageId}/load-data')

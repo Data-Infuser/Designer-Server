@@ -1353,36 +1353,6 @@
 				}
 			}
 		},
-		"/api/applications/{applicationId}/api-docs": {
-			"get": {
-				"operationId": "GetDocs",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "applicationId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
 		"/api/applications/{applicationId}": {
 			"get": {
 				"operationId": "GetDetail",
@@ -2029,6 +1999,37 @@
 						"jwt": []
 					}
 				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "stageId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/stages/{stageId}/api-docs": {
+			"get": {
+				"operationId": "GetStageSwagger",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "해당 API의 Swagger 문서를 불러옵니다.",
+				"tags": [
+					"Stage"
+				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
