@@ -1390,6 +1390,42 @@
 				]
 			}
 		},
+		"/api/applications/{applicationId}/stages": {
+			"post": {
+				"operationId": "PostStage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Stage"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "applicationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/applications/{id}": {
 			"delete": {
 				"operationId": "Delete",

@@ -41,7 +41,7 @@ export class Application {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  get lastVersion() {
+  get nextVersion() {
     this.lastStageVersion += 1;
     return this.lastStageVersion;
   }

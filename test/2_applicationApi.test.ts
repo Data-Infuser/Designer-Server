@@ -15,8 +15,9 @@ describe('2-application Api', () => {
     done();
   })
 
+  let applicationEntity;
+
   describe('POST /', () => {
-    let applicationEntity;
     it('create application', (done) => {
       const applicationParams: ApplicationParams = {
         nameSpace: "test-api",
@@ -51,6 +52,41 @@ describe('2-application Api', () => {
     it('lastVersion should be same as stage name', (done) => {
       expect(applicationEntity.stages[0].name).equal(`${applicationEntity.lastStageVersion}`);
       done();
+    })
+  })
+
+  describe('GET /{id}', () => {
+    it('GET application by id', (done) => {
+      chai.request(application.app)
+      .get(`/api/applications/${applicationEntity.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200).and.have.property('body').and.have.keys(['id', 'nameSpace', 'title', 'description', 'createdAt', 'updatedAt', 'userId', 'trafficConfigs', 'stages', 'lastStageVersion']);
+        done();
+      })
+    })
+
+    it('Status should be 404', (done) => {
+      chai.request(application.app)
+      .get(`/api/applications/999`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      })
+    })
+  })
+
+  describe('POST /{id}/stages', () => {
+    it('GET application by id', (done) => {
+      chai.request(application.app)
+      .post(`/api/applications/${applicationEntity.id}/stages`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        expect(res.body.name).to.equal('2');
+        done();
+      })
     })
   })
 });

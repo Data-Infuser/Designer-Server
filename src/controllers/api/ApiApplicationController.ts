@@ -12,6 +12,7 @@ import { TrafficConfig, TrafficConfigType } from "../../entity/manager/TrafficCo
 import { Stage } from "../../entity/manager/Stage";
 import ApplicationParams from "../../interfaces/requestParams/ApplicationParams";
 import { ERROR_CODE } from '../../util/ErrorCodes';
+import { request } from 'http';
 
 @Route("/api/applications")
 @Tags("Applications")
@@ -55,7 +56,7 @@ export class ApiApplicationController extends Controller {
   @Get("/{applicationId}")
   @Security("jwt")
   public async getDetail(
-    @Path() applicationId: number,
+    @Path('applicationId') applicationId: number,
     @Request() request: exRequest
   ): Promise<Application>{
     const appRepo = getRepository(Application);
@@ -66,8 +67,10 @@ export class ApiApplicationController extends Controller {
         userId: request.user.id
       }
     }
+    
     const app = await appRepo.findOne(findOptions);
     if(!app) { throw new ApplicationError(404, ERROR_CODE.APPLICATION.APPLICATION_NOT_FOUND) }
+
     return Promise.resolve(app);
   }
 
@@ -100,7 +103,7 @@ export class ApiApplicationController extends Controller {
     newApplication.trafficConfigs = [dailyMaxTrafic, monthlyMaxTraffic];
 
     const stage = new Stage();
-    stage.name = `${newApplication.lastVersion}`;
+    stage.name = `${newApplication.nextVersion}`;
     stage.userId = request.user.id;
     newApplication.stages = [stage];
     
@@ -115,6 +118,37 @@ export class ApiApplicationController extends Controller {
 
     this.setStatus(201);
     return Promise.resolve(newApplication);
+  }
+
+  @Post("/{applicationId}/stages")
+  @Security("jwt")
+  public async postStage(
+    @Request() request: exRequest,
+    @Path('applicationId') applicationId: number
+  ){
+    const appRepo = getRepository(Application);
+    const findOptions: FindOneOptions = {
+      relations: ["stages", "trafficConfigs"],
+      where: {
+        id: applicationId,
+        userId: request.user.id
+      }
+    }
+    
+    const app = await appRepo.findOne(findOptions);
+    if(!app) { throw new ApplicationError(404, ERROR_CODE.APPLICATION.APPLICATION_NOT_FOUND) }
+
+    const stage = new Stage();
+    stage.name = stage.name = `${app.nextVersion}`;
+    stage.userId = request.user.id;
+    stage.applicationId = app.id;
+
+    await getManager().transaction(async transactionEntityManager => {
+      await transactionEntityManager.save(app);
+      await transactionEntityManager.save(stage);
+    });
+    this.setStatus(201);
+    return Promise.resolve(stage);
   }
 
   @Delete("/{id}")
@@ -243,8 +277,4 @@ interface MetaParamSaveParams {
 interface TrafficConfigParam {
   type: string,
   maxCount: number
-}
-
-interface StageParams {
-  name: string
 }
