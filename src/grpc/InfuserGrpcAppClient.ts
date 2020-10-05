@@ -1,35 +1,10 @@
 import * as grpc from "grpc";
-import { LoginReq, AuthResult, AuthRes, RefreshTokenReq } from '../lib/infuser-protobuf/gen/proto/author/auth_pb';
-import { AuthServiceClient } from "../lib/infuser-protobuf/gen/proto/author/auth_grpc_pb";
 import ApplicationError from '../ApplicationError';
-import { UserReq, UserRes } from '../lib/infuser-protobuf/gen/proto/author/user_pb';
-import { UserServiceClient } from "../lib/infuser-protobuf/gen/proto/author/user_grpc_pb";
-import { ERROR_CODE } from '../util/ErrorCodes';
-import { RegistParams } from "../controllers/api/AuthController";
 import { AppManagerClient } from "../lib/infuser-protobuf/gen/proto/author/app_grpc_pb";
-import { AppReq, AppRes } from '../lib/infuser-protobuf/gen/proto/author/app_pb.d';
-import { Application } from '../entity/manager/Application';
+import { AppReq, AppRes } from '../lib/infuser-protobuf/gen/proto/author/app_pb';
 import { Stage } from "../entity/manager/Stage";
 
 const property = require("../../property.json");
-
-// message AppReq {
-//   uint32 app_id = 2;
-//   string name_space = 1;
-
-//   message AppTraffic {
-//     string unit = 1;
-//     uint32 value = 2;
-//     uint32 seq = 3;
-//   }
-//   repeated AppTraffic traffics = 3;
-
-//   message Operation {
-//     string end_point = 1;
-//     uint32 operation_id = 2;
-//   }
-//   repeated Operation operations = 4;
-// }
 
 class InfuserGrpcAppClient {
   private static _instance: InfuserGrpcAppClient;
@@ -144,4 +119,4 @@ class InfuserGrpcAppClient {
   }
 }
 
-export default InfuserGrpcAuthorClient;
+export default InfuserGrpcAppClient;

@@ -13,6 +13,7 @@ import { getConnection } from 'typeorm';
 import Pagination from '../../util/Pagination';
 import { ERROR_CODE } from '../../util/ErrorCodes';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
+import InfuserGrpcAppClient from '../../grpc/InfuserGrpcAppClient';
 
 @Route('/api/stages')
 @Tags('Stage')
@@ -138,7 +139,7 @@ export class ApiStageController extends Controller {
     const stageRepo = getRepository(Stage);
 
     const stage = await stageRepo.findOne({
-      relations:['application'],
+      relations:['application', 'application.trafficConfigs', 'meta', 'meta.services'],
       where: {
         id: id,
         userId: request.user.id
@@ -148,8 +149,18 @@ export class ApiStageController extends Controller {
     if(!stage) { throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND); }
     if(stage.status !== StageStatus.LOADED) { throw new ApplicationError(400, ERROR_CODE.STAGE.STAGE_NOT_LOADED); }
     stage.status = StageStatus.DEPLOYED;
-    await stageRepo.save(stage);
 
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+    try {
+      InfuserGrpcAppClient.Instance.create(stage);
+      await queryRunner.manager.save(stage);
+    } catch(err) {
+      await queryRunner.rollbackTransaction();
+      throw new ApplicationError(500, err.message);
+    } finally {
+      await queryRunner.release();
+    }
     return Promise.resolve(stage);
   }
 
@@ -173,7 +184,18 @@ export class ApiStageController extends Controller {
     if(stage.status !== StageStatus.DEPLOYED) { throw new ApplicationError(400, ERROR_CODE.STAGE.STAGE_NOT_DEPLOYED); }
 
     stage.status = StageStatus.LOADED;
-    await stageRepo.save(stage);
+    
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+    try {
+      InfuserGrpcAppClient.Instance.destroy(stage);
+      await queryRunner.manager.save(stage);
+    } catch(err) {
+      await queryRunner.rollbackTransaction();
+      throw new ApplicationError(500, err.message);
+    } finally {
+      await queryRunner.release();
+    }
 
     return Promise.resolve(stage);
   }
