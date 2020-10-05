@@ -132,4 +132,28 @@ describe('5-stage Api', () => {
     })
 
   })
+
+  describe("Delete /{id}", () => {
+    let stage;
+    it('Create new Stage', (done) => {
+      chai.request(application.app)
+      .post(`/api/applications/1/stages`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        stage = res.body;
+        done();
+      })
+    })
+
+    it('Delete stage', (done) => {
+      chai.request(application.app)
+      .delete(`/api/stages/${stage.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      })
+    })
+  })
 });

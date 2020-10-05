@@ -177,4 +177,27 @@ export class ApiStageController extends Controller {
 
     return Promise.resolve(stage);
   }
+
+  @Delete('/{id}')
+  @Security('jwt')
+  public async delete(
+    @Request() request: exRequest,
+    @Path('id') id: number
+  ) {
+    const stageRepo = getRepository(Stage);
+
+    const stage = await stageRepo.findOneOrFail({
+      where: {
+        id: id,
+        userId: request.user.id
+      }
+    })
+
+    if(!stage) { throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND); }
+    if(stage.status === StageStatus.DEPLOYED) { throw new ApplicationError(400, ERROR_CODE.STAGE.DEPLOYED_STAGE_CANNOT_BE_DELETED); }
+
+    await stageRepo.delete(stage);
+
+    return Promise.resolve(stage);
+  }
 }
