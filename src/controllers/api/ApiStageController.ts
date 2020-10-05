@@ -196,8 +196,8 @@ export class ApiStageController extends Controller {
     if(!stage) { throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND); }
     if(stage.status === StageStatus.DEPLOYED) { throw new ApplicationError(400, ERROR_CODE.STAGE.DEPLOYED_STAGE_CANNOT_BE_DELETED); }
 
-    await stageRepo.delete(stage);
-
+    await stageRepo.remove(stage);
+    
     return Promise.resolve(stage);
   }
 }

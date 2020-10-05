@@ -40,7 +40,7 @@ export class ApiMetaController extends Controller {
     @Query('perPage') perPage?: number
   ):Promise<Pagination<Meta>>{
     const pagination = new Pagination(Meta, getConnection());
-    const relations = [];
+    const relations = ["stage", "stage.application"];
     await pagination.findBySearchParams(relations, page, perPage, request.user.id);
     return Promise.resolve(pagination);
   }
