@@ -128,7 +128,17 @@ describe('5-stage Api', () => {
           done();
         });
       })
-      
+
+      it('Stage can be deployed', (done) => {
+        chai.request(application.app)
+        .post('/api/stages/1/deploy')
+        .set('Authorization', `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res).to.have.status(201);
+          expect(res.body.status).to.equal(StageStatus.DEPLOYED);
+          done();
+        });
+      })
     })
 
   })

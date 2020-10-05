@@ -52,7 +52,6 @@ class InfuserGrpcAppClient {
       })
       appRequst.setOperationsList(operations);
 
-
       this._appClient.create(appRequst, (err: grpc.ServiceError, response: AppRes) => {
         if(err) {
           reject(new Error(err.message));

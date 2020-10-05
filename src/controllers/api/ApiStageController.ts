@@ -139,7 +139,7 @@ export class ApiStageController extends Controller {
     const stageRepo = getRepository(Stage);
 
     const stage = await stageRepo.findOne({
-      relations:['application', 'application.trafficConfigs', 'meta', 'meta.services'],
+      relations:['application', 'application.trafficConfigs', 'metas', 'metas.service'],
       where: {
         id: id,
         userId: request.user.id
@@ -153,7 +153,7 @@ export class ApiStageController extends Controller {
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.startTransaction();
     try {
-      InfuserGrpcAppClient.Instance.create(stage);
+      await InfuserGrpcAppClient.Instance.create(stage);
       await queryRunner.manager.save(stage);
     } catch(err) {
       await queryRunner.rollbackTransaction();
@@ -188,7 +188,7 @@ export class ApiStageController extends Controller {
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.startTransaction();
     try {
-      InfuserGrpcAppClient.Instance.destroy(stage);
+      await InfuserGrpcAppClient.Instance.destroy(stage);
       await queryRunner.manager.save(stage);
     } catch(err) {
       await queryRunner.rollbackTransaction();
