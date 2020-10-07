@@ -161,6 +161,8 @@ export class ApiStageController extends Controller {
     } finally {
       await queryRunner.release();
     }
+
+    this.setStatus(201);
     return Promise.resolve(stage);
   }
 
@@ -196,7 +198,8 @@ export class ApiStageController extends Controller {
     } finally {
       await queryRunner.release();
     }
-
+    
+    this.setStatus(201);
     return Promise.resolve(stage);
   }
 

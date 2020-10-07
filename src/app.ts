@@ -90,7 +90,6 @@ export class Application {
       res: ExResponse,
       next: NextFunction
     ): ExResponse | void {
-      console.log(err);
 
       if (err instanceof JsonWebTokenError) {
         return res.status(401).json({
