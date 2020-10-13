@@ -68,7 +68,7 @@ export class SwaggerBuilder {
   private static buildPath = (meta: Meta, service) => {
     let pathTemplate = _.cloneDeep(PathTemplate);
 
-    pathTemplate["get"].tags.push(service.entityName);
+    pathTemplate["get"].tags.push("API 목록");
     pathTemplate["get"].description = service.description;
     // pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${service.tableName}_api`;
     meta.columns.forEach((column) => {
