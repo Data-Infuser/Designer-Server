@@ -1122,6 +1122,39 @@
 				}
 			}
 		},
+		"/api/metas/{metaId}/api-docs": {
+			"get": {
+				"operationId": "GetApiDoc",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"description": "meta의 id를 사용하여 meta의 상세 정보를 불러 올 수 있습니다.\nmeta의 Columns 정보를 포함합니다.",
+				"tags": [
+					"Meta"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "metaId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/metas/dbms": {
 			"post": {
 				"operationId": "PostDbms",

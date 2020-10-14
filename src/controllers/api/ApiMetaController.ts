@@ -20,6 +20,7 @@ import { Stage } from "../../entity/manager/Stage";
 import ServiceParams from '../../interfaces/requestParams/ServiceParams';
 import Pagination from "../../util/Pagination";
 import { ERROR_CODE } from '../../util/ErrorCodes';
+import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 
 const property = require("../../../property.json")
 @Route("/api/metas")
@@ -70,6 +71,33 @@ export class ApiMetaController extends Controller {
     if(!meta) { throw new ApplicationError(404, ERROR_CODE.META.META_NOT_FOUND); }
 
     return Promise.resolve(meta);
+  }
+
+  /**
+   * meta의 id를 사용하여 meta의 상세 정보를 불러 올 수 있습니다.
+   * meta의 Columns 정보를 포함합니다.
+   * @param metaId 
+   * @param request 
+   */
+  @Get("/{metaId}/api-docs")
+  public async getApiDoc(
+    @Path() metaId: number,
+    @Request() request: exRequest
+  ): Promise<String> {
+    const metaRepo = getRepository(Meta);
+
+    const meta = await metaRepo.findOne({
+      relations: ["columns", "service", "stage", "stage.application", "columns.params"],
+      where: {
+        id: metaId
+      }
+    })
+
+    if(!meta) { throw new ApplicationError(404, ERROR_CODE.META.META_NOT_FOUND); }
+
+    const doc = SwaggerBuilder.buildApplicationDoc(meta.stage, meta);
+
+    return Promise.resolve(doc);
   }
 
   /**
