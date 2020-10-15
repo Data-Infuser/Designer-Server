@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, ManyToOne, OneToMany, OneToOne, Unique} from "typeorm";
 import { MetaColumn } from "./MetaColumn";
 
 
@@ -13,12 +13,16 @@ export enum ParamOperatorType {
 }
 
 @Entity()
+@Unique("MetaParam_Unique_Per_Column", ["metaColumn", "operator"])
 export class MetaParam {
   @PrimaryGeneratedColumn()
   id: number;
 
   @ManyToOne(type => MetaColumn, metaColumn => metaColumn.params, { nullable: true, onDelete: 'CASCADE' })
   metaColumn: MetaColumn;
+
+  @Column()
+  metaColumnId: number;
 
   @Column({
     type: "enum",

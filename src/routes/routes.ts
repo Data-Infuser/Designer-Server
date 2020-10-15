@@ -11,6 +11,8 @@ import { ApiDatabaseConnectionController } from './../controllers/api/ApiDatabas
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ApiFileController } from './../controllers/api/ApiFileController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ApiMetaParamController } from './../controllers/api/ApiMetaParamController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ApiServiceController } from './../controllers/api/ApiServiceController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ApiStageController } from './../controllers/api/ApiStageController';
@@ -161,6 +163,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": { "dataType": "double", "required": true },
             "metaColumn": { "ref": "MetaColumn", "required": true },
+            "metaColumnId": { "dataType": "double", "required": true },
             "operator": { "ref": "ParamOperatorType", "required": true },
             "description": { "dataType": "string", "required": true },
             "isRequired": { "dataType": "boolean", "required": true },
@@ -313,6 +316,17 @@ const models: TsoaRoute.Models = {
             "user": { "dataType": "string", "required": true },
             "pwd": { "dataType": "string", "required": true },
             "dbms": { "ref": "AcceptableDbms", "required": true },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaParamParams": {
+        "dataType": "refObject",
+        "properties": {
+            "metaColumnId": { "dataType": "double", "required": true },
+            "operator": { "ref": "ParamOperatorType", "required": true },
+            "description": { "dataType": "string", "required": true },
+            "isRequired": { "dataType": "boolean" },
         },
         "additionalProperties": false,
     },
@@ -909,6 +923,54 @@ export function RegisterRoutes(app: express.Express) {
 
 
             const promise = controller.postFile.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/api/meta-params/:id',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                metaId: { "in": "path", "name": "id", "required": true, "dataType": "double" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiMetaParamController();
+
+
+            const promise = controller.get.apply(controller, validatedArgs as any);
+            promiseHandler(controller, promise, response, next);
+        });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.post('/api/meta-params',
+        authenticateMiddleware([{ "jwt": [] }]),
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                postParam: { "in": "body", "name": "postParam", "required": true, "ref": "MetaParamParams" },
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new ApiMetaParamController();
+
+
+            const promise = controller.post.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

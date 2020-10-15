@@ -455,6 +455,10 @@
 					"metaColumn": {
 						"$ref": "#/components/schemas/MetaColumn"
 					},
+					"metaColumnId": {
+						"type": "number",
+						"format": "double"
+					},
 					"operator": {
 						"$ref": "#/components/schemas/ParamOperatorType"
 					},
@@ -476,6 +480,7 @@
 				"required": [
 					"id",
 					"metaColumn",
+					"metaColumnId",
 					"operator",
 					"description",
 					"isRequired",
@@ -847,6 +852,30 @@
 					"user",
 					"pwd",
 					"dbms"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MetaParamParams": {
+				"properties": {
+					"metaColumnId": {
+						"type": "number",
+						"format": "double"
+					},
+					"operator": {
+						"$ref": "#/components/schemas/ParamOperatorType"
+					},
+					"description": {
+						"type": "string"
+					},
+					"isRequired": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"metaColumnId",
+					"operator",
+					"description"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1880,6 +1909,78 @@
 										"format": "binary"
 									}
 								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/meta-params/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaParam"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"MetaParam"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/meta-params": {
+			"post": {
+				"operationId": "Post",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MetaParam"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"MetaParam"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MetaParamParams"
 							}
 						}
 					}
