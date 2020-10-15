@@ -5,6 +5,7 @@ import { MetaParam, ParamOperatorType } from "../../entity/manager/MetaParam";
 import ApplicationError from '../../ApplicationError';
 import { ERROR_CODE } from "../../util/ErrorCodes";
 import { Meta } from "../../entity/manager/Meta";
+import { MetaParamParams } from "../../interfaces/requestParams/MetaParamParams";
 
 @Route("/api/meta-params")
 @Tags("MetaParam")
@@ -39,7 +40,6 @@ export class ApiMetaParamController extends Controller {
     try {
       await paramRepo.save(newParam);  
     } catch (err) {
-      console.log(JSON.stringify(err));
       if(err.code && err.code === "ER_DUP_ENTRY") {
         throw new ApplicationError(401, ERROR_CODE.METAPARAM.META_PARAM_DUPLICATE)
       } else {
@@ -50,11 +50,4 @@ export class ApiMetaParamController extends Controller {
     return Promise.resolve(newParam);
   }
 
-}
-
-interface MetaParamParams {
-  metaColumnId: number,
-  operator: ParamOperatorType,
-  description: string,
-  isRequired?: boolean
 }

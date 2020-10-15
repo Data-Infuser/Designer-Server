@@ -216,6 +216,18 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "MetaParamParams": {
+        "dataType": "refObject",
+        "properties": {
+            "id": { "dataType": "double" },
+            "metaColumnId": { "dataType": "double" },
+            "operator": { "ref": "ParamOperatorType" },
+            "description": { "dataType": "string" },
+            "isRequired": { "dataType": "boolean" },
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MetaColumnParam": {
         "dataType": "refObject",
         "properties": {
@@ -226,6 +238,7 @@ const models: TsoaRoute.Models = {
             "isSearchable": { "dataType": "boolean", "required": true },
             "isNullable": { "dataType": "boolean", "required": true },
             "dateFormat": { "dataType": "string" },
+            "params": { "dataType": "array", "array": { "ref": "MetaParamParams" } },
         },
         "additionalProperties": false,
     },
@@ -316,17 +329,6 @@ const models: TsoaRoute.Models = {
             "user": { "dataType": "string", "required": true },
             "pwd": { "dataType": "string", "required": true },
             "dbms": { "ref": "AcceptableDbms", "required": true },
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "MetaParamParams": {
-        "dataType": "refObject",
-        "properties": {
-            "metaColumnId": { "dataType": "double", "required": true },
-            "operator": { "ref": "ParamOperatorType", "required": true },
-            "description": { "dataType": "string", "required": true },
-            "isRequired": { "dataType": "boolean" },
         },
         "additionalProperties": false,
     },

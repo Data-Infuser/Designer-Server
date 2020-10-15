@@ -188,6 +188,12 @@ describe('3-meta Api', () => {
         column.size = 100;
         column.isSearchable = true;
         column.isNullable = true;
+        column["params"] = {
+          metaColumnId: column.id,
+          operator: "lt",
+          description: "description",
+          isRequired: false
+        }
       });
       chai.request(application.app)
       .put(`/api/metas/${metaEntity.id}/columns`)

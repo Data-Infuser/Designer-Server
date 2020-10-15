@@ -609,6 +609,29 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"MetaParamParams": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"metaColumnId": {
+						"type": "number",
+						"format": "double"
+					},
+					"operator": {
+						"$ref": "#/components/schemas/ParamOperatorType"
+					},
+					"description": {
+						"type": "string"
+					},
+					"isRequired": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"MetaColumnParam": {
 				"properties": {
 					"id": {
@@ -633,6 +656,12 @@
 					},
 					"dateFormat": {
 						"type": "string"
+					},
+					"params": {
+						"items": {
+							"$ref": "#/components/schemas/MetaParamParams"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -852,30 +881,6 @@
 					"user",
 					"pwd",
 					"dbms"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MetaParamParams": {
-				"properties": {
-					"metaColumnId": {
-						"type": "number",
-						"format": "double"
-					},
-					"operator": {
-						"$ref": "#/components/schemas/ParamOperatorType"
-					},
-					"description": {
-						"type": "string"
-					},
-					"isRequired": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"metaColumnId",
-					"operator",
-					"description"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1117,7 +1122,7 @@
 						}
 					}
 				},
-				"description": "Meta의 Columns 정보를 수정 할 수 있습니다.",
+				"description": "Meta의 Columns 정보를 수정 할 수 있습니다.\\n\n해당 entity의 id가 있는 경우 update, 없는 경우 Insert를 수행합니다.",
 				"tags": [
 					"Meta"
 				],

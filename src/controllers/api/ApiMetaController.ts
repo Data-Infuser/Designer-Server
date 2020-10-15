@@ -1,6 +1,6 @@
 import { Request as exRequest } from "express";
 import { getRepository, getManager, getConnection } from "typeorm";
-import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put, Delete, Query } from "tsoa";
+import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put, Delete, Query, Patch } from "tsoa";
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta, MetaStatus } from '../../entity/manager/Meta';
@@ -21,6 +21,8 @@ import ServiceParams from '../../interfaces/requestParams/ServiceParams';
 import Pagination from "../../util/Pagination";
 import { ERROR_CODE } from '../../util/ErrorCodes';
 import { SwaggerBuilder } from "../../util/SwaggerBuilder";
+import { MetaParamParams } from "../../interfaces/requestParams/MetaParamParams";
+import { MetaParam } from "../../entity/manager/MetaParam";
 
 const property = require("../../../property.json")
 @Route("/api/metas")
@@ -281,7 +283,7 @@ export class ApiMetaController extends Controller {
     const metaColumnRepo = getRepository(MetaColumn);
     await metaColumnRepo.save(metaColumnsParam.columns)
     const meta = await getRepository(Meta).findOne({
-      relations: ["columns"],
+      relations: ["columns", "columns.params"],
       where: {
         id: metaId
       }
@@ -291,7 +293,8 @@ export class ApiMetaController extends Controller {
   }
 
   /**
-   * Meta의 Columns 정보를 수정 할 수 있습니다.
+   * Meta의 Columns 정보를 수정 할 수 있습니다.\n
+   * 해당 entity의 id가 있는 경우 update, 없는 경우 Insert를 수행합니다.
    * 
    * @param request
    * @param updateMetaParam 변경된 Meta.columns를 { columns: [] } 형식
@@ -331,6 +334,11 @@ export class ApiMetaController extends Controller {
     await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
       if(updateMetaParam.columns) { await transactionalEntityManager.save(MetaColumn, updateMetaParam.columns) };
       if(updateMetaParam.service) { await transactionalEntityManager.save(service) };
+      for(let column of updateMetaParam.columns) {
+        if(column.params) {
+          await transactionalEntityManager.save(MetaParam, column.params);
+        }
+      }
     });
     
     this.setStatus(201);
@@ -357,6 +365,7 @@ export class ApiMetaController extends Controller {
     this.setStatus(201);
     return Promise.resolve();
   }
+
 }
 
 interface UpdateMetaParam {
@@ -376,4 +385,5 @@ interface MetaColumnParam {
   isSearchable: boolean,
   isNullable: boolean,
   dateFormat?: string
+  params?: MetaParamParams[]
 }
