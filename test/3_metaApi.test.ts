@@ -188,12 +188,6 @@ describe('3-meta Api', () => {
         column.size = 100;
         column.isSearchable = true;
         column.isNullable = true;
-        column["params"] = {
-          metaColumnId: column.id,
-          operator: "lt",
-          description: "description",
-          isRequired: false
-        }
       });
       chai.request(application.app)
       .put(`/api/metas/${metaEntity.id}/columns`)
@@ -215,6 +209,44 @@ describe('3-meta Api', () => {
         column.size = 100;
         column.isSearchable = true;
         column.isNullable = true;
+        column["params"] = [{
+          metaColumnId: column.id,
+          operator: "lt",
+          description: "description",
+          isRequired: false
+        }]
+      });
+      const service = {
+        method: 'GET',
+        entityName: 'test-service',
+        description: '테스트를 위한 서비스입니다.\n서비스가 생성되어야 합니다.',
+      }
+      chai.request(application.app)
+      .put(`/api/metas/${metaEntity.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        service: service,
+        columns: metaEntity.columns
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(201);
+        metaEntity = res.body;
+        done();
+      })
+    })
+
+    it('Shoud meta column & service updated2', (done) => {
+      metaEntity.columns.forEach(column => {
+        column.columnName = `${column.id}-column-${column.originalColumnName}-test2`
+        column.size = 100;
+        column.isSearchable = true;
+        column.isNullable = true;
+        column["params"].push({
+          metaColumnId: column.id,
+          operator: "eq",
+          description: "description",
+          isRequired: false
+        })
       });
       const service = {
         method: 'GET',

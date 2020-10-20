@@ -77,7 +77,8 @@ class RedisManager {
       loginId: infuserUser.loginId,
       username: infuserUser.username
     }));
-    await this.expire(infuserUser.token, infuserUser.expireAt - Math.floor(Date.now() / 1000));
+    const expireIn = infuserUser.expireAt - Math.floor(Date.now() / 1000);
+    await this.expire(infuserUser.token, expireIn);
     return Promise.resolve();
   }
 

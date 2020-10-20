@@ -654,6 +654,9 @@
 					"isNullable": {
 						"type": "boolean"
 					},
+					"isHidden": {
+						"type": "boolean"
+					},
 					"dateFormat": {
 						"type": "string"
 					},
@@ -670,7 +673,8 @@
 					"type",
 					"size",
 					"isSearchable",
-					"isNullable"
+					"isNullable",
+					"isHidden"
 				],
 				"type": "object",
 				"additionalProperties": false

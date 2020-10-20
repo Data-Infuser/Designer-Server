@@ -342,7 +342,12 @@ export class ApiMetaController extends Controller {
     });
     
     this.setStatus(201);
-    return Promise.resolve(meta);
+    return Promise.resolve(await getRepository(Meta).findOne({
+      relations: ["columns", "columns.params", "service"],
+      where: {
+        id: meta.id
+      }
+    }));
   }
 
   @Delete('/{metaId}/service')
@@ -384,6 +389,7 @@ interface MetaColumnParam {
   size: number,
   isSearchable: boolean,
   isNullable: boolean,
+  isHidden: boolean,
   dateFormat?: string
   params?: MetaParamParams[]
 }
