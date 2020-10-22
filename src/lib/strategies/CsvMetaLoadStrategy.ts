@@ -115,8 +115,15 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
         if(types[j] === AcceptableType.VARCHAR) continue;
 
         //기존 Type과 새로 판별한 Type이 다른 경우 Varchar로 변경
+        //단 INTEGER의 경우 DOUBLE로 처리하는 것은 가능해야함
         const availableType = this.availableType(records[i][j]);
-        if(availableType !== types[j]) types[j] = AcceptableType.VARCHAR;
+        if(availableType !== types[j]) {
+          if((availableType === AcceptableType.DOUBLE && types[j] === AcceptableType.INTEGER) || (availableType === AcceptableType.INTEGER && types[j] === AcceptableType.DOUBLE)) {
+            types[j] = AcceptableType.DOUBLE
+          } else {
+            types[j] = AcceptableType.VARCHAR;
+          }
+        }
       }
 
       //전체 타입이 varchar로 유츄되는 경우 더이상 Type을 확인하지 않고 break;
