@@ -71,12 +71,12 @@ describe('0-File Meta Load', () => {
 
   it('Csv type check', (done) => {
     const testRecords = [
-      [ '123', 'hello' , '1992-02-13', '0.123' ], //int
-      [ '0', '19920213', '1992-02-13', '0.999'], //varchar
-      [ '9999999','hello.231', '1992-02-13 19:00', '1.999' ] //date
+      [ '123', 'hello' , '1992-02-13', '0.123', "1", "0.9", "1" ], //int
+      [ '0', '19920213', '1992-02-13', '0.999', "0.9", "1", "0.9"], //varchar
+      [ '9999999','hello.231', '1992-02-13 19:00', '1.999', "3", "3", "ㅁㄴㅇㄹ" ] //date
     ]
-    const types = new CsvMetaLoadStrategy().checkTypes(testRecords);
-    const expectedTypes = [AcceptableType.INTEGER, AcceptableType.VARCHAR, AcceptableType.DATE, AcceptableType.DOUBLE]
+    const types = new CsvMetaLoadStrategy().checkTypes(testRecords, 0);
+    const expectedTypes = [AcceptableType.INTEGER, AcceptableType.VARCHAR, AcceptableType.DATE, AcceptableType.DOUBLE, AcceptableType.DOUBLE, AcceptableType.DOUBLE, AcceptableType.VARCHAR]
     
     expect(types).to.eql(expectedTypes)
     done();

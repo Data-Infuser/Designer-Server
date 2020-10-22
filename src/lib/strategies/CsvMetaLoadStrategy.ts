@@ -68,7 +68,7 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
           meta.encoding = encoding;
           meta.samples = this.getSampleData(records);
           
-          const types = this.checkTypes(records);
+          const types = this.checkTypes(records, meta.skip);
 
           let columns = []
           for(let i = 0; i < header.length; i++) {
@@ -100,10 +100,10 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
    * @param records n x m의 csv records
    * @returns AcceptableType[]
    */
-  checkTypes(records:string[][]):AcceptableType[] {
+  checkTypes(records:string[][], skip: number):AcceptableType[] {
     const types = []
-    for(let i = 1; i < records.length; i++) {
-      if(i === 1) {
+    for(let i = skip; i < records.length; i++) {
+      if(i === skip) {
         for(let record of records[i]) {
           types.push(this.availableType(record))
         }
@@ -111,6 +111,7 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
       }
 
       for(let j = 0; j < records[i].length; j++) {
+        
         //type이 varchar인 경우 Type을 확인하지 않고 다음 loop로 진행
         if(types[j] === AcceptableType.VARCHAR) continue;
 
