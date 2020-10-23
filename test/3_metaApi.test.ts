@@ -5,6 +5,7 @@ import FileParams from '../src/interfaces/requestParams/FileParams';
 import ServiceParams from '../src/interfaces/requestParams/ServiceParams';
 import { MetaStatus } from '../src/entity/manager/Meta';
 import { Column } from 'typeorm';
+import { AcceptableType } from '../src/entity/manager/MetaColumn';
 
 export let metas = [];
 
@@ -185,7 +186,11 @@ describe('3-meta Api', () => {
     it('Shoud meta column updated', (done) => {
       metaEntity.columns.forEach(column => {
         column.columnName = `${column.id}-column-${column.originalColumnName}`
-        column.size = '100';
+        if(column.type === AcceptableType.DOUBLE) {
+          column.size = '16, 4';
+        } else {
+          column.size = '100';
+        }
         column.isSearchable = true;
         column.isNullable = true;
       });
@@ -206,7 +211,11 @@ describe('3-meta Api', () => {
     it('Shoud meta column & service updated', (done) => {
       metaEntity.columns.forEach(column => {
         column.columnName = `${column.id}-column-${column.originalColumnName}-test2`
-        column.size = '100';
+        if(column.type === AcceptableType.DOUBLE) {
+          column.size = '16, 4';
+        } else {
+          column.size = '100';
+        }
         column.isSearchable = true;
         column.isNullable = true;
         column["params"] = [{
@@ -238,7 +247,11 @@ describe('3-meta Api', () => {
     it('Shoud meta column & service updated2', (done) => {
       metaEntity.columns.forEach(column => {
         column.columnName = `${column.id}-column-${column.originalColumnName}-test2`
-        column.size = '100';
+        if(column.type === AcceptableType.DOUBLE) {
+          column.size = '16, 4';
+        } else {
+          column.size = '100';
+        }
         column.isSearchable = true;
         column.isNullable = true;
         column["params"].push({
