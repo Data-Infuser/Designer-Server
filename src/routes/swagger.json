@@ -372,8 +372,7 @@
 						"$ref": "#/components/schemas/AcceptableType"
 					},
 					"size": {
-						"type": "number",
-						"format": "double"
+						"type": "string"
 					},
 					"order": {
 						"type": "number",
@@ -645,8 +644,7 @@
 						"$ref": "#/components/schemas/AcceptableType"
 					},
 					"size": {
-						"type": "number",
-						"format": "double"
+						"type": "string"
 					},
 					"isSearchable": {
 						"type": "boolean"

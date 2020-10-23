@@ -101,6 +101,7 @@ class CsvMetaLoadStrategy implements MetaLoadStrategy {
    * @returns AcceptableType[]
    */
   checkTypes(records:string[][], skip: number):AcceptableType[] {
+    skip = skip + 1;
     const types = []
     for(let i = skip; i < records.length; i++) {
       if(i === skip) {

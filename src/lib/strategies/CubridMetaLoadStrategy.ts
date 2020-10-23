@@ -85,7 +85,7 @@ class CubridMetaLoadStrategy implements DbmsMetaLoadStrategy {
           metaCol.columnName = info[0];
           const convertedType = this.convertType(info[1]);
           metaCol.type = convertedType.type;
-          if(convertedType.size) metaCol.size = convertedType.size;
+          if(convertedType.size) metaCol.size = `${convertedType.size}`;
           metaCol.meta = meta;
           metaCol.order = i;
           columns.push(metaCol);

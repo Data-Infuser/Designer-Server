@@ -71,6 +71,7 @@ describe('0-File Meta Load', () => {
 
   it('Csv type check', (done) => {
     const testRecords = [
+      [ 'column', 'column' , 'column', 'column', "column", "column", "column" ],
       [ '123', 'hello' , '1992-02-13', '0.123', "1", "0.9", "1" ], //int
       [ '0', '19920213', '1992-02-13', '0.999', "0.9", "1", "0.9"], //varchar
       [ '9999999','hello.231', '1992-02-13 19:00', '1.999', "3", "3", "ㅁㄴㅇㄹ" ] //date

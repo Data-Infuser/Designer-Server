@@ -386,7 +386,7 @@ interface MetaColumnParam {
   id: number,
   columnName: string,
   type: AcceptableType,
-  size: number,
+  size: string,
   isSearchable: boolean,
   isNullable: boolean,
   isHidden: boolean,

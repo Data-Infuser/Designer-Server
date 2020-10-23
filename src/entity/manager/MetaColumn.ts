@@ -44,7 +44,7 @@ export class MetaColumn {
   originalType: AcceptableType;
 
   @Column({ nullable: true })
-  size: number;
+  size: string;
 
   @Column({ nullable: true })
   // xlsx 파일에서 column과 순서를 맞추기 위해서 사용

@@ -185,7 +185,7 @@ describe('3-meta Api', () => {
     it('Shoud meta column updated', (done) => {
       metaEntity.columns.forEach(column => {
         column.columnName = `${column.id}-column-${column.originalColumnName}`
-        column.size = 100;
+        column.size = '100';
         column.isSearchable = true;
         column.isNullable = true;
       });
@@ -206,7 +206,7 @@ describe('3-meta Api', () => {
     it('Shoud meta column & service updated', (done) => {
       metaEntity.columns.forEach(column => {
         column.columnName = `${column.id}-column-${column.originalColumnName}-test2`
-        column.size = 100;
+        column.size = '100';
         column.isSearchable = true;
         column.isNullable = true;
         column["params"] = [{
@@ -238,7 +238,7 @@ describe('3-meta Api', () => {
     it('Shoud meta column & service updated2', (done) => {
       metaEntity.columns.forEach(column => {
         column.columnName = `${column.id}-column-${column.originalColumnName}-test2`
-        column.size = 100;
+        column.size = '100';
         column.isSearchable = true;
         column.isNullable = true;
         column["params"].push({
