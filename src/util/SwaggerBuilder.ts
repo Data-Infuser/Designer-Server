@@ -4,13 +4,25 @@ import { Service } from "../entity/manager/Service";
 import { Application } from "../entity/manager/Application";
 import { Stage } from "../entity/manager/Stage";
 import { Meta } from "../entity/manager/Meta";
-import { MetaColumn } from "../entity/manager/MetaColumn";
+import { AcceptableType, MetaColumn } from "../entity/manager/MetaColumn";
 
 const ApiResponseTemplate = require("./swagger_template/api_response.json");
 const PathTemplate = require("./swagger_template/path_template.json");
 const property = require("../../property.json");
 
-
+const dataTypeDict = {
+  [AcceptableType.BIGINT]: 'integer',
+  [AcceptableType.INTEGER]: 'integer',
+  [AcceptableType.DOUBLE]: 'number',
+  [AcceptableType.BIT]: 'number',
+  [AcceptableType.DATE]: 'string',
+  [AcceptableType.DATETIME]: 'string',
+  [AcceptableType.TIME]: 'string',
+  [AcceptableType.VARCHAR]: 'string',
+  [AcceptableType.TEXT]: 'string',
+  [AcceptableType.LONGTEXT]: 'string',
+  [AcceptableType.BOOLEAN]: 'boolean'
+}
 export class SwaggerBuilder {
 
   static buildApplicationDoc = async (stage:Stage, meta?:Meta) => {
@@ -71,7 +83,7 @@ export class SwaggerBuilder {
 
     _.forEach(meta.columns, (col: MetaColumn) => {
       def.properties[col.columnName] = {
-        "type": col.type
+        "type": SwaggerBuilder.dbDataTypeToSwaggerDataType(col.type)
       }
     });
 
@@ -83,7 +95,21 @@ export class SwaggerBuilder {
 
     pathTemplate["get"].tags.push("API 목록");
     pathTemplate["get"].description = service.description;
-    // pathTemplate["get"].responses[200].schema["$ref"] = `#/definitions/${service.tableName}_api`;
+    pathTemplate["get"].responses = {
+      '200': {
+        description: "성공적으로 수행 됨",
+        schema: {
+          "$ref":`#/definitions/${service.entityName}_api`
+        }
+      },
+      '401': {
+        description: "인증 정보가 정확 하지 않음"
+      },
+      '500': {
+        description: "API 서버에 문제가 발생하였음"
+      }
+    }
+    
     meta.columns.forEach((column) => {
       column.params.forEach((param) => {
         const json:any = {
@@ -98,4 +124,9 @@ export class SwaggerBuilder {
 
     return pathTemplate;
   }
+  
+  static dbDataTypeToSwaggerDataType = (type: string) => {
+    return dataTypeDict[type] || 'string';
+  }
+  
 }
