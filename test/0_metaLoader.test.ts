@@ -5,7 +5,7 @@ import MetaLoadStrategy from '../src/lib/MetaLoadStrategy';
 import XlsxMetaLoadStrategy from '../src/lib/strategies/XlsxMetaLoadStrategy';
 import MetaLoaderFileParam from '../src/lib/interfaces/MetaLoaderFileParam';
 import CsvMetaLoadStrategy from '../src/lib/strategies/CsvMetaLoadStrategy';
-import { AcceptableType } from "../src/entity/manager/MetaColumn";
+import { AcceptableType, MetaColumn } from "../src/entity/manager/MetaColumn";
 
 var path = require('path');
 
@@ -40,6 +40,34 @@ describe('0-File Meta Load', () => {
         }
       })
       done();
+    });
+    
+  });
+
+  it('Load meta from xlsx-typed', (done) => {
+    const metaLoadStrategy = new XlsxMetaLoadStrategy()
+    let metaLoaderFileParam:MetaLoaderFileParam = {
+      ext: 'xlsx',
+      filePath: path.resolve(__dirname, 'filesForTest/그늘막설치현황_type.xlsx'),
+      originalFileName: '그늘막설치현황_type',
+      sheet: 0,
+      skip: 0,
+      title: '그늘막 설치 현황_type'
+    };
+    
+
+    new MetaLoader(metaLoadStrategy).loadMeta(metaLoaderFileParam).then((result) => {
+      expect(result).to.satisfy( result => {
+        if(result.meta.filePath === (path.resolve(__dirname, 'filesForTest/그늘막설치현황_type.xlsx')) && result.columns.length === 18) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      done();
+    }).catch(err => {
+      console.error(err);
+      done(err);
     });
     
   });
