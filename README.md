@@ -19,6 +19,9 @@ Data Infuser 프로젝트에서 REST API를 통해 파일 데이터, Database �
    > npm install tsoa -g
  * package 설치
    > npm install
+ * submodule 설치
+   > git submodule init
+   > git submodule update
 
 ## Usage
 
