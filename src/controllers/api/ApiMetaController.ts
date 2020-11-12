@@ -4,14 +4,7 @@ import { Tags, Route, Post, Security, Request, Body, Controller, Get, Path, Put,
 import { Service } from '../../entity/manager/Service';
 import ApplicationError from "../../ApplicationError";
 import { Meta, MetaStatus } from '../../entity/manager/Meta';
-import MysqlMetaLoadStrategy from "../../lib/strategies/MysqlMetaLoadStrategy";
-import MetaLoader from "../../lib/MetaLoader";
-import MetaLoadStrategy from "../../lib/MetaLoadStrategy";
-import XlsxMetaLoadStrategy from "../../lib/strategies/XlsxMetaLoadStrategy";
-import CubridMetaLoadStrategy from "../../lib/strategies/CubridMetaLoadStrategy";
-import CsvMetaLoadStrategy from "../../lib/strategies/CsvMetaLoadStrategy";
 import BullManager from '../../util/BullManager';
-import MetaLoaderFileParam from "../../lib/interfaces/MetaLoaderFileParam";
 import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import DbmsParams from "../../interfaces/requestParams/DbmsParams";
 import FileParams from "../../interfaces/requestParams/FileParams";
@@ -135,48 +128,31 @@ export class ApiMetaController extends Controller {
     });
     if(!stage) {throw new ApplicationError(404, ERROR_CODE.STAGE.STAGE_NOT_FOUND)}
 
-    const connectionInfo = {
-      dbms: dbms,
-      username: user,
-      password: password,
-      hostname: host,
-      port: port,
-      database: database,
-      tableNm: table,
-      title: title
-    }
+    const queryRunner = await getConnection().createQueryRunner()
 
-    let loadStrategy: MetaLoadStrategy;
-    switch(connectionInfo.dbms) {
-      case 'mysql':
-        loadStrategy = new MysqlMetaLoadStrategy();
-        break;
-      case 'cubrid':
-        loadStrategy = new CubridMetaLoadStrategy();
-        break;
-      default:
-        throw new ApplicationError(400, ERROR_CODE.META.UNACCEPTABLE_DBMS)
-    }
-    const metaLoader = new MetaLoader(loadStrategy);
-    const loaderResult = await metaLoader.loadMeta(connectionInfo);
-    const meta: Meta = loaderResult.meta;
-    const columns = loaderResult.columns;
-
+    const meta: Meta = new Meta();
+    meta.dbms = dbms;
+    meta.dbUser = user;
+    meta.pwd = password;
+    meta.host = host;
+    meta.port = port;
+    meta.db = database;
+    meta.table = table;
+    meta.title = title;
     meta.stageId = stage.id;
     meta.userId = request.user.id;
-    await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-      await transactionalEntityManager.save(meta);
-      await transactionalEntityManager.save(columns);
-    });
+    meta.status = MetaStatus.METALOAD_SCHEDULED;
+    try {
+      await queryRunner.manager.save(meta);
+      BullManager.Instance.setMetaLoaderSchedule(meta.id);
+    } catch(err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
 
-    const updatedMeta = await metaRepo.findOneOrFail({
-      relations: ["stage", "columns"],
-      where: {
-        id: meta.id
-      }
-    });
     this.setStatus(201);
-    return Promise.resolve(updatedMeta);
+    return Promise.resolve(meta);
   }
 
   /**
@@ -192,27 +168,28 @@ export class ApiMetaController extends Controller {
     @Request() request: exRequest,
     @Body() params: FileParams
   ): Promise<Meta> {
-    const serviceRepo = getRepository(Service);
+    const queryRunner = await getConnection().createQueryRunner()
     switch(params.dataType) {
       case 'file':
-        const fileParam:MetaLoaderFileParam = {
-          title: params.title,
-          skip: params.skip,
-          sheet: params.sheet,
-          filePath: params.filePath,
-          originalFileName: params.originalFileName,
-          ext: params.ext
-        }
-        const loaderResult = await this.loadMetaFromFile(fileParam)
-        const meta: Meta = loaderResult.meta;
-        const columns: MetaColumn[] = loaderResult.columns;
-        
+        const meta: Meta = new Meta();
+        meta.title = params.title;
+        meta.skip = params.skip;
+        meta.sheet = params.sheet;
+        meta.filePath = params.filePath;
+        meta.originalFileName = params.originalFileName;
+        meta.extension = params.ext;        
         meta.stageId = params.stageId;
         meta.userId = request.user.id;
-        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.save(meta);
-          await transactionalEntityManager.save(columns);
-        });
+        meta.status = MetaStatus.METALOAD_SCHEDULED;
+        await queryRunner.startTransaction();
+        try {
+          await queryRunner.manager.save(meta);
+          BullManager.Instance.setMetaLoaderSchedule(meta.id);
+        } catch(err) {
+          await queryRunner.rollbackTransaction();
+        } finally {
+          await queryRunner.release();
+        }
         this.setStatus(201);
         return Promise.resolve(meta);
       case 'file-url':
@@ -229,41 +206,21 @@ export class ApiMetaController extends Controller {
         newMeta.userId = request.user.id;
         newMeta.status = MetaStatus.DOWNLOAD_SCHEDULED;
         const fileName = `${request.user.id}-${Date.now()}.${params.ext}`
-        await getManager().transaction("SERIALIZABLE", async transactionalEntityManager => {
-          await transactionalEntityManager.save(newMeta);
-          /**
-           * TODO: Jonqueue에서 사용하는 ServiceId 확인 후 스케쥴 등록 기능 수정 필요
-           */
-          BullManager.Instance.setMetaLoaderSchedule(newMeta.id, params.url, fileName);
-        });
+        await queryRunner.startTransaction();
+        try {
+          await queryRunner.manager.save(newMeta);
+          BullManager.Instance.setDownloadSchedule(newMeta.id, params.url, fileName);
+        } catch(err) {
+          await queryRunner.rollbackTransaction();
+        } finally {
+          await queryRunner.release();
+        }
+
         this.setStatus(201);
         return Promise.resolve(newMeta);
       default:
         throw new ApplicationError(400, ERROR_CODE.META.UNACCEPTABLE_FILE_TYPE)
     }        
-  }
-
-  public async loadMetaFromFile(fileParam:MetaLoaderFileParam):Promise<any> {
-    return new Promise( async (resolve, reject) => {
-      try {
-        let loadStrategy: MetaLoadStrategy;
-        switch(fileParam.ext) {
-          case 'xlsx':
-            loadStrategy = new XlsxMetaLoadStrategy();
-            break;
-          case 'csv':
-            loadStrategy = new CsvMetaLoadStrategy();
-            break;
-          default:
-            throw new ApplicationError(400, ERROR_CODE.META.UNACCEPTABLE_FILE_EXT)
-        }
-        const metaLoader = new MetaLoader(loadStrategy);
-        const loaderResult = await metaLoader.loadMeta(fileParam);
-        resolve(loaderResult)
-      } catch (err) {
-        reject(err);
-      }
-    })
   }
 
   /**

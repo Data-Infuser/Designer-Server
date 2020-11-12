@@ -11,6 +11,7 @@ export enum MetaStatus {
   DEFAULT = "default",
   DOWNLOAD_SCHEDULED = "download-scheduled",
   DOWNLOAD_DONE = "download-done",
+  METALOAD_SCHEDULED = "metaload-scheduled",
   METALOADED = "meta-loaded",
   DATA_LOAD_SCHEDULED = "data_load_scheduled",
   DATA_LOADED = "loaded",

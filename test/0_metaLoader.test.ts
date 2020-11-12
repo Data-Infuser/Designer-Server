@@ -1,10 +1,5 @@
 import * as fs from "fs"
 import { expect } from "chai";
-import MetaLoader from '../src/lib/MetaLoader';
-import MetaLoadStrategy from '../src/lib/MetaLoadStrategy';
-import XlsxMetaLoadStrategy from '../src/lib/strategies/XlsxMetaLoadStrategy';
-import MetaLoaderFileParam from '../src/lib/interfaces/MetaLoaderFileParam';
-import CsvMetaLoadStrategy from '../src/lib/strategies/CsvMetaLoadStrategy';
 import { AcceptableType, MetaColumn } from "../src/entity/manager/MetaColumn";
 
 var path = require('path');

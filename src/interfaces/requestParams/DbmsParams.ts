@@ -1,7 +1,9 @@
+import { AcceptableDbms } from "../../entity/manager/DatabaseConnection";
+
 export default interface DbmsParams {
   stageId: number,
   title: string,
-  dbms: string,
+  dbms: AcceptableDbms,
   host: string,
   port: string,
   database: string,
