@@ -17,6 +17,8 @@ class BullManager {
   dataLoaderQueue: Bull.Queue;
   metaLoaderQueue: Bull.Queue;
 
+  crawlerQueue: Bull.Queue;
+
   public static setupBull(server: express.Application) {
     BullManager._instance = new BullManager();
     const redisInfo = {
@@ -30,9 +32,9 @@ class BullManager {
     }
     BullManager._instance.dataLoaderQueue = new Bull('dataLoader', redisInfo);
     BullManager._instance.metaLoaderQueue = new Bull('metaLoader', redisInfo);
+    BullManager._instance.crawlerQueue = new Bull('crawler', redisInfo);
 
-    bullBoard.setQueues([BullManager._instance.dataLoaderQueue])
-    bullBoard.setQueues([BullManager._instance.metaLoaderQueue])
+    bullBoard.setQueues([BullManager._instance.dataLoaderQueue, BullManager._instance.crawlerQueue, BullManager._instance.metaLoaderQueue ])
     server.use('/bulls', bullBoard.UI)
 
     BullManager._instance.metaLoaderQueue.on('global:completed', function(jobId, result) {
