@@ -131,6 +131,7 @@ export class ApiMetaController extends Controller {
     const queryRunner = await getConnection().createQueryRunner()
 
     const meta: Meta = new Meta();
+    meta.dataType = 'dbms';
     meta.dbms = dbms;
     meta.dbUser = user;
     meta.pwd = password;
@@ -172,6 +173,7 @@ export class ApiMetaController extends Controller {
     switch(params.dataType) {
       case 'file':
         const meta: Meta = new Meta();
+        meta.dataType = 'file';
         meta.title = params.title;
         meta.skip = params.skip;
         meta.sheet = params.sheet;
@@ -197,6 +199,7 @@ export class ApiMetaController extends Controller {
          * JobScheduler에 등록을 실패 하는 경우에도 Rollback
          */
         const newMeta = new Meta();
+        newMeta.dataType = 'file-url';
         newMeta.remoteFilePath = params.url;
         newMeta.dataType = params.dataType;
         newMeta.extension = params.ext;
