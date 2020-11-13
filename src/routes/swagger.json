@@ -6,6 +6,101 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Application": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"nameSpace": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"trafficConfigs": {
+						"items": {
+							"$ref": "#/components/schemas/TrafficConfig"
+						},
+						"type": "array"
+					},
+					"stages": {
+						"items": {
+							"$ref": "#/components/schemas/Stage"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"nameSpace",
+					"title",
+					"description",
+					"userId",
+					"trafficConfigs",
+					"stages",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TrafficConfig": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"application": {
+						"$ref": "#/components/schemas/Application"
+					},
+					"applicationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"type": "string"
+					},
+					"maxCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"application",
+					"applicationId",
+					"type",
+					"maxCount",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AcceptableDbms": {
 				"enum": [
 					"mysql",
@@ -184,101 +279,6 @@
 					"entityName",
 					"userId",
 					"meta",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Application": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"nameSpace": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "number",
-						"format": "double"
-					},
-					"trafficConfigs": {
-						"items": {
-							"$ref": "#/components/schemas/TrafficConfig"
-						},
-						"type": "array"
-					},
-					"stages": {
-						"items": {
-							"$ref": "#/components/schemas/Stage"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"nameSpace",
-					"title",
-					"description",
-					"userId",
-					"trafficConfigs",
-					"stages",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"TrafficConfig": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"application": {
-						"$ref": "#/components/schemas/Application"
-					},
-					"applicationId": {
-						"type": "number",
-						"format": "double"
-					},
-					"type": {
-						"type": "string"
-					},
-					"maxCount": {
-						"type": "number",
-						"format": "double"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"application",
-					"applicationId",
-					"type",
-					"maxCount",
 					"createdAt",
 					"updatedAt"
 				],
@@ -489,6 +489,53 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ApplicationParams": {
+				"properties": {
+					"nameSpace": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"dailyMaxCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"monthlyMaxCount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"nameSpace",
+					"title",
+					"description",
+					"dailyMaxCount",
+					"monthlyMaxCount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TrafficConfigParam": {
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"maxCount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"type",
+					"maxCount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Pagination_Meta_": {
 				"properties": {
 					"items": {
@@ -529,7 +576,7 @@
 						"type": "string"
 					},
 					"dbms": {
-						"type": "string"
+						"$ref": "#/components/schemas/AcceptableDbms"
 					},
 					"host": {
 						"type": "string"
@@ -732,161 +779,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ApplicationParams": {
-				"properties": {
-					"nameSpace": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"dailyMaxCount": {
-						"type": "number",
-						"format": "double"
-					},
-					"monthlyMaxCount": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"nameSpace",
-					"title",
-					"description",
-					"dailyMaxCount",
-					"monthlyMaxCount"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"TrafficConfigParam": {
-				"properties": {
-					"type": {
-						"type": "string"
-					},
-					"maxCount": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"type",
-					"maxCount"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"DatabaseConnection": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"connectionName": {
-						"type": "string"
-					},
-					"hostname": {
-						"type": "string"
-					},
-					"port": {
-						"type": "string"
-					},
-					"database": {
-						"type": "string"
-					},
-					"username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"dbms": {
-						"$ref": "#/components/schemas/AcceptableDbms"
-					},
-					"userId": {
-						"type": "number",
-						"format": "double"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"connectionName",
-					"hostname",
-					"port",
-					"database",
-					"username",
-					"password",
-					"dbms",
-					"userId",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"DescTableResult": {
-				"properties": {
-					"field": {
-						"type": "string"
-					},
-					"type": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"field",
-					"type"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"DatabaseConnectionCreateParams": {
-				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"host": {
-						"type": "string"
-					},
-					"port": {
-						"type": "string"
-					},
-					"db": {
-						"type": "string"
-					},
-					"user": {
-						"type": "string"
-					},
-					"pwd": {
-						"type": "string"
-					},
-					"dbms": {
-						"$ref": "#/components/schemas/AcceptableDbms"
-					}
-				},
-				"required": [
-					"title",
-					"host",
-					"port",
-					"db",
-					"user",
-					"pwd",
-					"dbms"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"Pagination_Stage_": {
 				"properties": {
 					"items": {
@@ -1028,6 +920,320 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/api/applications": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "perPage",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "Put",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Application"
+								}
+							}
+						}
+					}
+				},
+				"description": "Application을 생성합니다 </br>\nApplication을 생성하며 default stage(v1)를 함께 생성합니다.",
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ApplicationParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/applications/{applicationId}": {
+			"get": {
+				"operationId": "GetDetail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Application"
+								}
+							}
+						}
+					}
+				},
+				"description": "id를 사용하여 Appplication을 반환합니다.</br>\nStages와 trafficConfigs를 포함합니다.",
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "applicationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/applications/{applicationId}/stages": {
+			"post": {
+				"operationId": "PostStage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Stage"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "applicationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/applications/{id}": {
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/applications/{id}/traffic-configs": {
+			"get": {
+				"operationId": "GetTrafficConfigs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TrafficConfig"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "PostTrafficConfigs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TrafficConfig"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Applications"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/TrafficConfigParam"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/files": {
+			"post": {
+				"operationId": "PostFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.\n  body param 정보는 tsoa.json을 참고해주세요.",
+				"tags": [
+					"File"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/metas": {
 			"get": {
 				"operationId": "GetIndex",
@@ -1342,584 +1548,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/api/applications": {
-			"get": {
-				"operationId": "Get",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "perPage",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "Put",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Application"
-								}
-							}
-						}
-					}
-				},
-				"description": "Application을 생성합니다 </br>\nApplication을 생성하며 default stage(v1)를 함께 생성합니다.",
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ApplicationParams"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/applications/{applicationId}": {
-			"get": {
-				"operationId": "GetDetail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Application"
-								}
-							}
-						}
-					}
-				},
-				"description": "id를 사용하여 Appplication을 반환합니다.</br>\nStages와 trafficConfigs를 포함합니다.",
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "applicationId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/applications/{applicationId}/stages": {
-			"post": {
-				"operationId": "PostStage",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Stage"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "applicationId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/applications/{id}": {
-			"delete": {
-				"operationId": "Delete",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/applications/{id}/traffic-configs": {
-			"get": {
-				"operationId": "GetTrafficConfigs",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/TrafficConfig"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "PostTrafficConfigs",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/TrafficConfig"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Applications"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"items": {
-									"$ref": "#/components/schemas/TrafficConfigParam"
-								},
-								"type": "array"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/database-connections": {
-			"get": {
-				"operationId": "Get",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"perPage": {
-											"type": "number",
-											"format": "double"
-										},
-										"page": {
-											"type": "number",
-											"format": "double"
-										},
-										"totalCount": {
-											"type": "number",
-											"format": "double"
-										},
-										"dbcs": {
-											"items": {
-												"$ref": "#/components/schemas/DatabaseConnection"
-											},
-											"type": "array"
-										}
-									},
-									"required": [
-										"perPage",
-										"page",
-										"totalCount",
-										"dbcs"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Database Connection"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "perPage",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "Post",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DatabaseConnection"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Database Connection"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/DatabaseConnectionCreateParams"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/database-connections/{connectionId}": {
-			"get": {
-				"operationId": "GetTablesInConnection",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DatabaseConnection"
-								}
-							}
-						}
-					}
-				},
-				"description": "DB에 접속하여 Table 목록을 불러옵니다.",
-				"tags": [
-					"Database Connection"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "connectionId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"delete": {
-				"operationId": "Delete",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Database Connection"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "connectionId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/database-connections/{connectionId}/tables": {
-			"get": {
-				"operationId": "GetConnection",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"type": "string"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"description": "Database Connection의 상세 정보를 보여줍니다.",
-				"tags": [
-					"Database Connection"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"description": "Database Connection의 id",
-						"in": "path",
-						"name": "connectionId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/api/database-connections/{connectionId}/tables/{tableName}": {
-			"get": {
-				"operationId": "GetTable",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/DescTableResult"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"description": "DB에 접속하여 Table의 컬럼 목록과 정보를 가져옵니다.",
-				"tags": [
-					"Database Connection"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "connectionId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"description": "정보를 가져오려는 테이블 명",
-						"in": "path",
-						"name": "tableName",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/files": {
-			"post": {
-				"operationId": "PostFile",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"description": "File upload의 경우 api doc 생성을 위해서는 tsoa.json에 param 설정을 해야함.\n  body param 정보는 tsoa.json을 참고해주세요.",
-				"tags": [
-					"File"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary"
-									}
-								}
-							}
-						}
-					}
-				}
 			}
 		},
 		"/api/meta-params/{id}": {

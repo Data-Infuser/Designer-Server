@@ -143,9 +143,12 @@ export class ApiMetaController extends Controller {
     meta.stageId = stage.id;
     meta.userId = request.user.id;
     meta.status = MetaStatus.METALOAD_SCHEDULED;
+
+    await queryRunner.startTransaction();
     try {
       await queryRunner.manager.save(meta);
       BullManager.Instance.setMetaLoaderSchedule(meta.id);
+      await queryRunner.commitTransaction();
     } catch(err) {
       await queryRunner.rollbackTransaction();
     } finally {
@@ -187,6 +190,7 @@ export class ApiMetaController extends Controller {
         try {
           await queryRunner.manager.save(meta);
           BullManager.Instance.setMetaLoaderSchedule(meta.id);
+          await queryRunner.commitTransaction();
         } catch(err) {
           await queryRunner.rollbackTransaction();
         } finally {
@@ -213,6 +217,7 @@ export class ApiMetaController extends Controller {
         try {
           await queryRunner.manager.save(newMeta);
           BullManager.Instance.setDownloadSchedule(newMeta.id, params.url, fileName);
+          await queryRunner.commitTransaction();
         } catch(err) {
           await queryRunner.rollbackTransaction();
         } finally {
