@@ -7,7 +7,7 @@ Data Infuser 프로젝트에서 REST API를 통해 파일 데이터, Database �
 
 ## Environment
  * nodeJS v12.16.3
- * MySQL 8.0.x
+ * MariaDB v10.1
 
 ## Installation
 
