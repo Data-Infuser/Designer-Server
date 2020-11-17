@@ -1,7 +1,8 @@
 import { Route, Tags, Request, Post, Security } from "tsoa";
 import { Request as exRequest, Response, NextFunction, response, Router } from "express";
 import multer from "multer";
-import ApplicationError from "../../ApplicationError";
+import multerS3 from "multer-s3";
+import FileManager from '../../lib/file-manager/FileManager';
 
 const property = require("../../../property.json")
 
@@ -17,10 +18,21 @@ export class ApiFileController {
   @Security("jwt")
   public async postFile(
     @Request() request: exRequest
-  ): Promise<any> {
+  ): Promise<any> {  
     await this.handleFile(request);
-    const filePath = request.file.path;
+    let filePath;
+    switch(FileManager.Instance.type) {
+      case 's3':
+        filePath = request.file.key;
+        break;
+      case 'local':
+        filePath = request.file.path;
+        break;
+      default:
+        filePath = null;
+    }
     const originalFileName:string = request.file.originalname;
+    
     const originalFileNameTokens = originalFileName.split(".");
     const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
 
@@ -29,20 +41,45 @@ export class ApiFileController {
       originalFileName,
       ext
     })
+
   };
 
   private handleFile(request: exRequest): Promise<any> {
-    var storage = multer.diskStorage({
-      destination: function (req, file, cb) {
-        cb(null, property["upload-dist"].localPath)
-      },
-      filename: function (req, file, cb) {
-        const originalFileName:string = file.originalname;
-        const originalFileNameTokens = originalFileName.split(".");
-        const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
-        cb(null, req.user.id + "-" + Date.now() + "." + ext)
-      }
-    })
+    const filePath = FileManager.Instance.getLocalPath();
+    var storage
+    switch(FileManager.Instance.type) {
+      case 's3':
+        storage = multerS3({
+          s3: FileManager.Instance.getS3Object(),
+          bucket: FileManager.Instance.getBucket(),
+          metadata: function (req, file, cb) {
+            cb(null, {fieldName: file.fieldname});
+          },
+          key: function (req, file, cb) {
+            const originalFileName:string = file.originalname;
+            const originalFileNameTokens = originalFileName.split(".");
+            const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
+            cb(null, "u-"+req.user.id + "-" + Date.now() + "." + ext)
+          }
+        })
+        break;
+      case 'local':
+        storage = multer.diskStorage({
+          destination: function (req, file, cb) {
+            cb(null, filePath)
+          },
+          filename: function (req, file, cb) {
+            const originalFileName:string = file.originalname;
+            const originalFileNameTokens = originalFileName.split(".");
+            const ext = originalFileNameTokens[originalFileNameTokens.length - 1]
+            cb(null, "u-"+req.user.id + "-" + Date.now() + "." + ext)
+          }
+        })
+        break;
+      default:
+        throw Error('Error on FileManager')
+    }
+    
     const multerSingle = multer({ storage }).single("file");
     return new Promise((resolve, reject) => {
       multerSingle(request, undefined, async (error) => {

@@ -182,7 +182,7 @@ export class ApiMetaController extends Controller {
         meta.sheet = params.sheet;
         meta.filePath = params.filePath;
         meta.originalFileName = params.originalFileName;
-        meta.extension = params.ext;        
+        meta.extension = params.ext;
         meta.stageId = params.stageId;
         meta.userId = request.user.id;
         meta.status = MetaStatus.METALOAD_SCHEDULED;

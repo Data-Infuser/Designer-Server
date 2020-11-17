@@ -24,6 +24,41 @@ Data Infuser 프로젝트에서 REST API를 통해 파일 데이터, Database �
    
    > git submodule update
 
+  ### File System 설정
+  * 파일 저장은 S3 또는 local file system 두가지가 선택이 가능합니다.
+
+  |타입|설명|
+  |-----|------|
+  |local|로컬 파일 시스템에 파일을 저장하는 경우 사용합니다. node js 기본 라이브러리인 fs를 사용합니다.|
+  |s3|AWS s3 또는 ncloud ObjStrg를 사용하는 경우 사용합니다. aws-sdk를 사용하여 파일 관리를 합니다.|
+
+  * 파일 저장소 사용시 설정 예시
+  ```
+  "uploadDist": {
+    "type": "local",
+    "localPath": "/Users/chunghyup/projects/api-gen/api-designer/server/upload",
+    "awsConfigPath": "",
+    "s3Bucket": ""
+  }
+  ```
+
+  * S3 저장소 사용시 설정 예시
+  ```
+  "uploadDist": {
+    "type": "s3",
+    "localPath": "",
+    "awsConfigPath": "./src/config/aws-config.json",
+    "s3Bucket": "data-infuser-test"
+  }
+  ```
+
+  환경 변수를 이용하여 AWS를 설정하는 경우 awsConfigPath를 'aws'로 설정
+  
+  |환경변수|설명|
+  |---|---|
+  |AWS_ACCESS_KEY_ID|aws credential access key id|
+  |AWS_SECRET_ACCESS_KEY|aws credential secret access key|
+
 ## Usage
 
 임시 파일 업로드를 위한 디렉토리를 생성해야 합니다.
