@@ -2,8 +2,7 @@ import express from 'express';
 import bullBoard from 'bull-board';
 import Bull from 'bull';
 import { Stage } from '../entity/manager/Stage';
-
-const property = require("../../property.json");
+import property from "../config/propertyConfig";
 
 class BullManager {
   private static _instance: BullManager;
@@ -18,8 +17,8 @@ class BullManager {
     BullManager._instance = new BullManager();
     const redisInfo = {
       redis: {
-        port: property["jobqueue-redis"].port,
-        host: property["jobqueue-redis"].host
+        port: property.jobqueueRedis.port,
+        host: property.jobqueueRedis.host
       }
     }
     if(process.env.NODE_ENV !== "production") {

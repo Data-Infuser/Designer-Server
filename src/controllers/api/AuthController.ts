@@ -1,12 +1,8 @@
 import { Request as exRequest } from "express";
-import { getRepository } from "typeorm";
 import { Route, Post, Body, Tags, SuccessResponse, Controller, Get, Security, Request } from "tsoa";
 import InfuserGrpcAuthorClient from "../../grpc/InfuserGrpcAuthorClient";
 import RedisManager from "../../util/RedisManager";
 import jwt from 'jsonwebtoken';
-import { UserReq } from '../../../build/src/lib/infuser-protobuf/gen/proto/author/user_pb';
-
-const property = require("../../../property.json");
 
 interface LoginParams {
   username: string,

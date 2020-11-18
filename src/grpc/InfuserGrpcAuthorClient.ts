@@ -6,8 +6,7 @@ import { UserReq, UserRes } from '../lib/infuser-protobuf/gen/proto/author/user_
 import { UserServiceClient } from "../lib/infuser-protobuf/gen/proto/author/user_grpc_pb";
 import { ERROR_CODE } from '../util/ErrorCodes';
 import { RegistParams } from "../controllers/api/AuthController";
-
-const property = require("../../property.json");
+import property from "../config/propertyConfig";
 
 class InfuserGrpcAuthorClient {
   private static _instance: InfuserGrpcAuthorClient;
@@ -16,7 +15,7 @@ class InfuserGrpcAuthorClient {
   private _userClient: UserServiceClient;
 
   constructor() {
-    const server = `${property.grpc.auth.host}:${property.grpc.auth.port}`
+    const server = `${property.auth.host}:${property.auth.grpcPort}`
     this._authClient = new AuthServiceClient(server, grpc.credentials.createInsecure());
     this._userClient = new UserServiceClient(server, grpc.credentials.createInsecure());
   }

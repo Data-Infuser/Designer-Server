@@ -1,7 +1,6 @@
 import redis from 'redis';
 import { InfuserUser } from '../controllers/api/AuthController';
-
-const properties = require("../../property.json");
+import property from "../config/propertyConfig";
 
 class RedisManager {
   private static _instance: RedisManager;
@@ -22,8 +21,8 @@ class RedisManager {
   private async createClient():Promise<redis.RedisClient> {
     return new Promise((resolve, reject) => {
       const client = redis.createClient({
-        host: properties.redis.host,
-        port: properties.redis.port
+        host: property.redis.host,
+        port: property.redis.port
       })
 
       client.on("connect", () => {

@@ -15,15 +15,13 @@ import { RegisterRoutes } from './routes/routes';
 import swaggerUi from "swagger-ui-express";
 import BullManager from "./util/BullManager";
 import * as grpc from "grpc";
-import * as protoLoader from "@grpc/proto-loader";
 import setupApplications from "./grpc/applications";
 import swagger from './routes/swagger.json';
 import ormConfig from "./config/ormConfig";
+import property from "./config/propertyConfig";
 import { ValidateError } from "tsoa";
-import { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
+import { JsonWebTokenError } from "jsonwebtoken";
 import RedisManager from "./util/RedisManager";
-
-const property = require("../property.json")
 
 export class Application {
   app: express.Application;
@@ -128,13 +126,13 @@ export class Application {
   setupGrpcServer() {
     this.grpcServer = new grpc.Server();
     setupApplications(this.grpcServer);
-    this.grpcServer.bind(`0.0.0.0:${property.grpcPort}`, grpc.ServerCredentials.createInsecure());
+    this.grpcServer.bind(`${property.server.host}:${property.server.grpcPort}`, grpc.ServerCredentials.createInsecure());
     this.grpcServer.start();
   }
 
   startServer(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.server = this.app.listen(property.port, () => {
+      this.server = this.app.listen(property.server.port, () => {
         resolve(true);
       });
     });
