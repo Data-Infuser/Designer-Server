@@ -8,7 +8,6 @@ import BullManager from '../../util/BullManager';
 import { MetaColumn, AcceptableType } from "../../entity/manager/MetaColumn";
 import DbmsParams from "../../interfaces/requestParams/DbmsParams";
 import FileParams from "../../interfaces/requestParams/FileParams";
-import { Application } from "../../entity/manager/Application";
 import { Stage } from "../../entity/manager/Stage";
 import ServiceParams from '../../interfaces/requestParams/ServiceParams';
 import Pagination from "../../util/Pagination";
@@ -17,7 +16,6 @@ import { SwaggerBuilder } from "../../util/SwaggerBuilder";
 import { MetaParamParams } from "../../interfaces/requestParams/MetaParamParams";
 import { MetaParam } from "../../entity/manager/MetaParam";
 
-const property = require("../../../property.json")
 @Route("/api/metas")
 @Tags("Meta")
 export class ApiMetaController extends Controller {

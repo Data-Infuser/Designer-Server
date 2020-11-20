@@ -4,8 +4,6 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 import FileManager from '../../lib/file-manager/FileManager';
 
-const property = require("../../../property.json")
-
 @Route("/api/files")
 @Tags("File")
 export class ApiFileController {

@@ -1,7 +1,7 @@
 const propertyJson = require("../../property.json");
 
-const uploadDist_origin = propertyJson['uploadDist'];
 const jobqueueRedis_origin = propertyJson['jobqueueRedis'];
+const uploadDist_origin = propertyJson['uploadDist'];
 const grpc_origin = propertyJson['grpc'];
 const redis_origin = propertyJson['redis'];
 
@@ -12,8 +12,11 @@ const uploadDist = {
     s3Bucket: process.env.DESIGNER_UPLOAD_S3_BUCKET || uploadDist_origin.s3Bucket
 }
 
-const port = process.env.DESIGNER_PORT || propertyJson.port;
-const grpcPort = process.env.DESIGNER_GRPC_PORT || propertyJson.grpcPort;
+const server = {
+    host: process.env.DESIGNER_HOST || propertyJson.host,
+    port: process.env.DESIGNER_PORT || propertyJson.port,
+    grpcPort: process.env.DESIGNER_GRPC_PORT || propertyJson.grpcPort
+}
 
 const jobqueueRedis = {
     host: process.env.DESIGNER_JOB_QUEUE_HOST || jobqueueRedis_origin.host,
@@ -33,9 +36,8 @@ const grpc = {
 }
 
 const propertyConfigs = {
-    port,
+    server,
     redis,
-    grpcPort,
     uploadDist,
     jobqueueRedis,
     grpc

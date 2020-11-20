@@ -1,14 +1,11 @@
-import { getRepository } from "typeorm";
 import _ from "lodash";
-import { Service } from "../entity/manager/Service";
-import { Application } from "../entity/manager/Application";
 import { Stage } from "../entity/manager/Stage";
 import { Meta } from "../entity/manager/Meta";
 import { AcceptableType, MetaColumn } from "../entity/manager/MetaColumn";
+import property from "../config/propertyConfig";
 
 const ApiResponseTemplate = require("./swagger_template/api_response.json");
 const PathTemplate = require("./swagger_template/path_template.json");
-const property = require("../../property.json");
 
 const dataTypeDict = {
   [AcceptableType.BIGINT]: 'integer',
@@ -34,7 +31,7 @@ export class SwaggerBuilder {
           "title": stage.application.title,
           "description": stage.application.description
         },
-        "host": property.host.replace(/https?(:\/\/)/gi, ""),
+        "host": property.server.host + ":" + property.server.port,
         "schemes": ["http"],
         "paths": {},
         "definitions": {}

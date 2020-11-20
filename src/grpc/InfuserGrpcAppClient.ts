@@ -3,8 +3,7 @@ import ApplicationError from '../ApplicationError';
 import { AppManagerClient } from "../lib/infuser-protobuf/gen/proto/author/app_grpc_pb";
 import { AppReq, AppRes } from '../lib/infuser-protobuf/gen/proto/author/app_pb';
 import { Stage } from "../entity/manager/Stage";
-
-const property = require("../../property.json");
+import property from "../config/propertyConfig";
 
 class InfuserGrpcAppClient {
   private static _instance: InfuserGrpcAppClient;

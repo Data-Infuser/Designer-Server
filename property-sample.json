@@ -1,25 +1,25 @@
 {
-  "port": 3000,
-  "grpcPort": 50000,
-  "host": "http://localhost:3000",
-  "apiServerUrl": "http://localhost:3000",
-  "dataLoaderUrl": "http://localhost:4000",
-  "upload-dist": {
-    "type": "local",
-    "localPath": "/Users/chunghyup/projects/api-gen/api-designer/server/upload"
-  },
-  "jobqueue-redis": {
-    "host": "localhost",
-    "port": 6379
-  },
-  "redis": {
-    "host": "localhost",
-    "port": 6379
-  },
-  "grpc": {
+    "server": {
+        "host": "localhost",
+        "port": 3000,
+        "grpcPort": 50000
+    },
     "auth": {
-      "host": "13.125.199.14",
-      "port": 9090
+        "host": "1.1.1.1",
+        "grpcPort": 9090
+    },
+    "uploadDist": {
+        "type": "local",
+        "localPath": "XXX",
+        "awsConfigPath": "",
+        "s3Bucket": ""
+    },
+    "jobqueueRedis": {
+        "host": "localhost",
+        "port": 6379
+    },
+    "redis": {
+        "host": "localhost",
+        "port": 6379
     }
-  }
 }

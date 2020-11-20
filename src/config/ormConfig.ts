@@ -8,11 +8,11 @@ const datasetConnectionInfo = ormConfigJson[1];
 
 const  defaultConnection: ConnectionOptions = {
   type: "mariadb",
-  host: process.env.DESIGNER_DB_HOSTNAME || defaultConnectionInfo.host,
-  port: Number(process.env.DESIGNER_DB_PORT) || defaultConnectionInfo.port,
-  username: process.env.DESIGNER_DB_USERNAME || defaultConnectionInfo.username,
-  password: process.env.DESIGNER_DB_PASSWORD || defaultConnectionInfo.password,
-  database: process.env.DESIGNER_DB_DATABASE || defaultConnectionInfo.database,
+  host: process.env.DESIGNER_META_DB_HOSTNAME || defaultConnectionInfo.host,
+  port: Number(process.env.DESIGNER_META_DB_PORT) || defaultConnectionInfo.port,
+  username: process.env.DESIGNER_META_DB_USERNAME || defaultConnectionInfo.username,
+  password: process.env.DESIGNER_META_DB_PASSWORD || defaultConnectionInfo.password,
+  database: process.env.DESIGNER_META_DB_NAME || defaultConnectionInfo.database,
   synchronize: true,
   logging: false,
   entities: [
