@@ -52,7 +52,7 @@ Data Infuser 프로젝트에서 REST API를 통해 파일 데이터, Database �
   }
   ```
 
-  환경 변수를 이용하여 AWS를 설정하는 경우 awsConfigPath를 'aws'로 설정
+  환경 변수를 이용하여 AWS를 설정하는 경우 awsConfigPath를 'env'로 설정
   
   |환경변수|설명|
   |---|---|
@@ -119,6 +119,47 @@ ts-node를 운영으로 사용하기에는, 메모리 점유, deploy후 빌드 �
 ./build 에 js로 빌드된 결과물이 저장됩니다.
 
 배포시 js로 빌드된 프로젝트를 배포
+
+### Environment variables
+
+  운영 배포시에는 환경 변수를 이용하여 환경 설정을 하도록 구성되어 있습니다.
+
+  따라서 아래 json파일이 아닌 아래 환경변수를 Docker 생성시 같이 넣어주어야 합니다.
+
+  |환경변수|설명|비고|
+  |---|---|---|
+  |# AWS SDK 관련 설정|
+  |AWS_ACCESS_KEY_ID|aws credential access key id|-|
+  |AWS_SECRET_ACCESS_KEY|aws credential secret access key|-|\
+  |# 기본 서버 설정|
+  |DESIGNER_PORT|Express server가 binding될 port|-|
+  |DESIGNER_GRPC_PORT|gRPC server가 binding될 port|-|
+  |# 기본 DB 접속 정보|
+  |DESIGNER_DB_HOSTNAME|designer DB host|-|
+  |DESIGNER_DB_PORT|designer DB port|-|
+  |DESIGNER_DB_USERNAME|designer DB username|-|
+  |DESIGNER_DB_PASSWORD|designer DB password|-|
+  |DESIGNER_DB_DATABASE|designer DB database|-|
+  |# 데이터셋 DB 접속 정보|
+  |DESIGNER_DATASET_HOSTNAME|Dataset DB host|-|
+  |DESIGNER_DATASET_PORT|Dataset DB port|-|
+  |DESIGNER_DATASET_USERNAME|Dataset DB username|-|
+  |DESIGNER_DATASET_PASSWORD|Dataset DB password|-|
+  |DESIGNER_DATASET_DATABASE|Dataset DB database|-|
+  |# 파일 저장소 설정|
+  |DESIGNER_UPLOAD_DIST_TYPE|파일 저장소의 type을 입력 local과 s3 두가지를 지원합니다.| 'local'/'s3'|
+  |DESIGNER_UPLOAD_DIST_LOCAL_PATH|type이 'local'인 경우 해당 경로로 파일 저장 또는 파일 읽기를 수행|-|
+  |DESIGNER_UPLOAD_AWS_CONFIG_PATH|type이 's3'인 경우 해당 경로의 aws-config 파일을 이용하여 AWS-SDK를 생성합니다.|Docker를 사용하는 경우 'env'로 입력하여 환경 변수로 AWS-SDK를 생성하도록 하여야 합니다.|
+  |DESIGNER_UPLOAD_S3_BUCKET|s3내에 생성된 bucket 명을 입력|-|
+  |# Job Queue 설정|
+  |DESIGNER_JOB_QUEUE_HOST|잡큐로 사용 할 redis host|-|
+  |DESIGNER_JOB_QUEUE_PORT|잡큐로 사용 할 redis port|-|
+  |# Redis 설정|
+  |DESIGNER_REDIS_HOST|서버 캐시로 사용 할 redist host|-|
+  |DESIGNER_REDIS_PORT|서버 캐시로 사용 할 redist port|-|
+  |# 다른 MS를 위한 gRPC 설정|
+  |GRPC_AUTHOR_HOST|Author gRPC서버의 host|-|
+  |GRPC_AUTHOR_PORT|Author gRPC서버의 port|-|
 
 ## DEPLOY
 

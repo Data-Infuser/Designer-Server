@@ -36,11 +36,11 @@ export class Application {
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
     this.app.use(methodOverride('_method'));
-    this.app.use(session({
-      resave: true,
-      saveUninitialized: true,
-      secret: 'long-long-long-secret-string-1313513tefgwdsvbjkvasd'
-    }));
+    // this.app.use(session({
+    //   resave: true,
+    //   saveUninitialized: true,
+    //   secret: 'long-long-long-secret-string-1313513tefgwdsvbjkvasd'
+    // }));
 
     this.app.use(flash());
     this.app.use(function(req, res, next) {

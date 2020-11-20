@@ -8,11 +8,11 @@ const datasetConnectionInfo = ormConfigJson[1];
 
 const  defaultConnection: ConnectionOptions = {
   type: "mariadb",
-  host: process.env.DESIGNER_HOSTNAME || defaultConnectionInfo.host,
-  port: Number(process.env.DESIGNER_PORT) || defaultConnectionInfo.port,
-  username: process.env.DESIGNER_USERNAME || defaultConnectionInfo.username,
-  password: process.env.DESIGNER_PASSWORD || defaultConnectionInfo.password,
-  database: process.env.DESIGNER_DB_NAME || defaultConnectionInfo.database,
+  host: process.env.DESIGNER_DB_HOSTNAME || defaultConnectionInfo.host,
+  port: Number(process.env.DESIGNER_DB_PORT) || defaultConnectionInfo.port,
+  username: process.env.DESIGNER_DB_USERNAME || defaultConnectionInfo.username,
+  password: process.env.DESIGNER_DB_PASSWORD || defaultConnectionInfo.password,
+  database: process.env.DESIGNER_DB_DATABASE || defaultConnectionInfo.database,
   synchronize: true,
   logging: false,
   entities: [
@@ -38,7 +38,7 @@ const datasetConnection: ConnectionOptions =  {
   port: Number(process.env.DESIGNER_DATASET_PORT) || datasetConnectionInfo.port,
   username: process.env.DESIGNER_DATASET_USERNAME || datasetConnectionInfo.username,
   password: process.env.DESIGNER_DATASET_PASSWORD || datasetConnectionInfo.password,
-  database: process.env.DESIGNER_DATASET_DB_NAME || datasetConnectionInfo.database,
+  database: process.env.DESIGNER_DATASET_DATABASE || datasetConnectionInfo.database,
   synchronize: false,
   logging: true,
   entities: [
